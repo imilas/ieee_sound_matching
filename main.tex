@@ -1,37 +1,29 @@
-\documentclass[lettersize,journal]{IEEEtran}% \documentclass[twocolumn,10pt]{article}
-\usepackage[utf8]{inputenc}
-\usepackage{natbib}
-\usepackage{graphicx}
-\usepackage{stfloats} % for positioning of figure* on the same page
-\usepackage{caption}
-\usepackage{tikz}
-\usepackage[inline]{enumitem}
-\usepackage{amsmath}
-\usepackage{subcaption}
-\usepackage{graphicx}
-\usepackage[breaklinks=true,colorlinks=true, allcolors=blue]{hyperref}
-\usepackage{breakcites}
-\usepackage{microtype}
-\usepackage{lipsum}
-\usepackage{xcolor}
+\documentclass[lettersize,journal]{IEEEtran}
+\usepackage{amsmath,amsfonts}
+\usepackage{algorithmic}
+\usepackage{algorithm}
 \usepackage{array}
-\usepackage{float}
-\usepackage{adjustbox}
-\usepackage{listings}
+\usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{csquotes}
 \usepackage{makecell}
-\usepackage{pdfpages}
+% my added packages and commands =======================
+\usepackage[numbers]{natbib} %removed cite package
+\usepackage{tikz}
+\usepackage{adjustbox}
+\usepackage{listings}
+
+\usepackage{caption}               % re-enable caption functionality
+\captionsetup[lstlisting]{justification=centering, singlelinecheck=false}
 
 \usetikzlibrary{positioning,shapes.geometric}
-\usepackage[acronym,toc]{glossaries}
 
-
-% \input{glossary.tex}
-
-% Initialize the glossary
-\makeglossaries
-
+\providecommand{\gls}[1]{#1}
 \definecolor{highlight}{RGB}{00,150,00}
 \definecolor{todo}{RGB}{200,50,00}
 \definecolor{rank1}{HTML}{70FF70}
@@ -63,35 +55,36 @@
 \newcommand{\OutDomain}{\textbf{Out-Domain Generation}}
 
 \newcommand{\BPNoise}{\textbf{BP-Noise}}  
-\newcommand{\AddSineSaw}{\textbf{Additive-SineSaw}}  
+\newcommand{\AddSineSaw}{\textbf{Add-SineSaw}}  
 \newcommand{\AmpMod}{\textbf{Noise-AM}}  
 \newcommand{\FMMod}{\textbf{SineSaw-AM}}  
 
-
 \input{code_style}
+%  ================================
 
-\title{Sound Similarity, Sound Matching, and Differentiable Audio Synthesizer Control}
-\author{ }
 
 \begin{document}
 
-\printglossary
-\clearpage
+\title{Sound Similarity, Sound Matching, and Differentiable Audio Synthesizer Control}
 
+\author{-}
 \maketitle
+
+
 \begin{abstract}
 Manual sound design with a synthesizer is an iterative process. When an artist has a target sound in mind, they listen to the output of their chosen synthesizer, determine whether the output is closer or farther from the target, and adjust the synthesizer's parameters until satisfied. There are practically an infinite number of parameter combinations, and their effect on the output sound is hard to predict. Iterative sound-matching is the automation of this process, more formally, the automatic programming of an audio synthesizer to generate outputs similar to a target sound while guided by a loss function that quantifies sound similarity.
 Past works in sound-matching often relied on a narrow range of synthesizers and overlooked the possible interactions between the loss function and synthesis parameters.
-% There are critical choices which need to be made in sound-matching: these are the choice of synthesizer, algorithms for search and optimization, the source of sounds, and similarity (or loss) functions.  We categorize sound-matching works based on these choices, and point out a number of unresolved issues and interesting yet unexplored areas. 
 We analyzed the interplay between four simple subtractive, additive, and FM synthesizers when guided by four different novel or established similarity functions.
 For each loss function and synthesizer pair, we ran 300 experiments with randomized initial values and targets, and used the final parameter configurations and spectrogram distances as key performance evaluation metrics of the performance. A post-hoc analysis of these performance measures showed that the best‐performing loss function varies based on the method of synthesis at hand, which highlights the value of novel similarity measures and de-prioritizes the search for the elusive universally optimal sound similarity measure.
 \end{abstract}
 
-%  Like other problems in computing science, there appears to be an ever present drive towards finding optimal solutions to the problem, and outperforming state-of-the-art.
+\begin{IEEEkeywords}
+Machine Learning, Signal Processing, Sound-Matching
+\end{IEEEkeywords}
 
 \section{Introduction}
 \subsection{Digital Synthesis With Sound-Matching}
-Since the 1970s, artists such as Suzanne Ciani~\cite{ciani_life_in_waves} have explored the use of audio synthesizers to replicate natural sounds---such as a bottle cap popping off---in a way that preserves the essential qualities of the original while showcasing the characteristics of the synthesizer. This approach goes beyond mere replication and uses synthesizers for artistic re-interpretation of sounds. Inspired by this, we aim to emulate and automate this process using digital audio synthesizers.
+Since the 1970s, artists such as Suzanne Ciani~\cite{ciani_life_in_waves} have explored the use of audio synthesizers to replicate natural sounds—such as a bottle cap popping off—in a way that preserves the essential qualities of the original while showcasing the characteristics of the synthesizer. This approach goes beyond mere replication and uses synthesizers for artistic re-interpretation of sounds. Inspired by this, we aim to emulate and automate this process using digital audio synthesizers.
 
 A digital audio synthesizer is any software used for the creation and manipulation of audio. Since the advent of digital signal processing (\gls{DSP}) in the 1960s~\cite{stranneby2004digital}, a wide variety of parametric audio generation functions have been proposed~\cite{lyons1997understanding,russ1999sound,shier2020spiegelib}. Manual sound design with a synthesizer is an iterative process of trial and error; when the artist has a desired (or target) sound in mind, sound design involves listening to the output, determining whether the output is closer or farther from the target, and adjusting the parameters accordingly until the target is reached~\cite{russ1999sound}. This paper explores the automation of this process, which we call \textit{iterative sound-matching}.
 
@@ -109,9 +102,7 @@ Considering the interplay between the two problems, we design experiments that a
 An important caveat is that this work takes a \textit{differentiable}, machine learning (\gls{ML}) inspired approach to iterative sound-matching. A differentiable approach requires differentiable loss and synthesizer functions, allowing the synthesizer parameters to be updated using gradient descent~\cite{goodfellow2016deep,boyd2004convex}. Ideally, these updates are in a direction that improves audio similarity by reducing loss. Differentiable iterative sound-matching has only recently become viable thanks to continued advances in both computation hardware~\cite{moore2012introduction,schaller1997moore}, and machine learning software~\cite{deepmind2020jax,paszke2019pytorch}.
  
  As we discuss in Section~\ref{sec:related_works}, nearly all past works pertaining to iterative sound-matching have used genetic algorithms (\gls{GA})~\cite{holland1992genetic} where parameters are randomly changed with hopes of increasing similarity. Differentiable settings have the benefit of making more directed updates to the synthesizer parameters, but have major drawbacks. Other than requiring more computation power, differentiable functions require careful implementation of operations that are continuous, numerically stable, and of course, differentiable. 
-
  
-
 
 
 \section{Background}
@@ -302,7 +293,6 @@ Uzrad \textit{\textit{et al.}}~\cite{uzrad2024diffmoog} & DDSP chains & Synth. C
 \label{tab:summary}
 \end{table*}
 
-
 \section{Past Works}
 \label{sec:related_works}
 Table~\ref{tab:summary} contains an overview of relevant literature, covering important works in sound-matching.  Earlier works in this domain focused on FM synthesis and genetic algorithms (or direct optimization methods)\cite{justice1979analytic,horner1993machine,mitchell2007evolutionary}. Along with the exponential increase in computation power, later works utilized a wider range of approaches to parameter search, estimation, and audio synthesis; particularly with supervised learning and neural networks (\gls{NN})~\cite{yee2018automatic,engel2020ddsp,esling2019flow}. 
@@ -325,7 +315,7 @@ Recent years have seen more works in sound-matching using machine learning techn
 
 % Programming synthesizers and querying sounds by imitating human vocals has also been a subject of interest~\cite{Cartwright2014SynthAssistQA,siamesevocalimitation2018}. For example, Cartwright and Pardo created a framework for searching pre-made patches for a synthesizer to best imitate vocals using audio features such as pitch, spectral centroid, and loudness~\cite{Cartwright2014SynthAssistQA}. 
 
-Esling \textit{et al.} also noted the issue of using P-Loss in sound-matching~\cite{esling2019flow}, considering the non-linear mapping between parameters of a synth and the audio output. In their approach, dubbed as \textquote{flowsynth}, they used a large parameter-to-audio dataset for a commercial \gls{VST} synthesizer. In flowsynth, audio is encoded to an auditory space, using a NN autoencoding approach~\cite{hinton2006reducing}. The encodings in the auditory space can then be converted to the parameter space, but only for that particular synthesizer. Using P-Loss and Spectral Convergence (Frobenius norm of the spectrograms) as metrics, flowsynth outperformed other NN approaches that did not use an auditory to parameter space conversion, but formal hearing tests were not conducted.
+Esling \textit{et al.} also noted the issue of using P-Loss in sound-matching~\cite{esling2019flow}, considering the non-linear mapping between parameters of a synth and the audio output. In their approach, dubbed as ``flowsynth'', they used a large parameter-to-audio dataset for a commercial \gls{VST} synthesizer. In flowsynth, audio is encoded to an auditory space, using a NN autoencoding approach~\cite{hinton2006reducing}. The encodings in the auditory space can then be converted to the parameter space, but only for that particular synthesizer. Using P-Loss and Spectral Convergence (Frobenius norm of the spectrograms) as metrics, flowsynth outperformed other NN approaches that did not use an auditory to parameter space conversion, but formal hearing tests were not conducted.
 
 Masuda \textit{et al.} also applied supervised learning to synthesizer parameter estimation~\cite{masuda2021soundmatch}. Their work highlights the issue of non-linearity in parameter-to-synthesizer outputs and out-of-domain search. This work uses a differentiable subtractive synthesizer (two oscillators and an LP filter). A NN model was pre-trained using an in-domain dataset of randomly selected parameters and P-Loss. After training, the model was fine-tuned using 20,000 out-of-domain sounds from the NSynth dataset~\cite{engel2017neural} and multi-scale spectrogram loss~\cite{engel2020ddsp}. This approach proved more effective---that is, lower multi-level spectral difference in out-of-domain tests---than baseline models, which were either not exposed to out-of-domain sounds or trained exclusively with P-Loss. Subjective hearing tests were conducted, showing a preference for the fine-tuned model~\cite{masuda2021soundmatch}. 
 
@@ -346,8 +336,6 @@ Uzrad \textit{et al.}~\cite{uzrad2024diffmoog} took another unique approach to s
 Uzrad \textit{et al.}\cite{uzrad2024diffmoog} used log-spectral distance (LSD) as their loss function, where   
 $\text{LSD} = \| \log(S(t)) - \log(S(x)) \|_F$, S is the mel-spectrogram of the sounds and F is the Frobenius norm~\cite{golub2013matrix}. The Frobenius norm of a matrix $A$ is defined as
 $ \|A\|_F = \sqrt{\sum_{i,j} |a_{ij}|^2}$. Here, $A$ would be the 2D matrix resulting from subtracting two log-spectrograms. Along with other works, \textbf{non-convexity of loss surfaces when applying gradient optimization} is a noted issue~\cite{turian2020sorry,vahidi2023mesostructures,uzrad2024diffmoog}. 
-
-
 
 \section{What is Lacking In the Field}
 \label{sec:lacking}
@@ -377,6 +365,7 @@ Based on the weaknesses noted above, we propose four problems that need to be ad
 \end{enumerate}
 
 In Section~\ref{sec:what_is_done}, we discuss our work in simultaneously bridging the knowledge gap with regards to the \LossSelect~and \SynthSelect~problems. The latter two issues are left for future work; possible approaches are discussed in Sections~\ref{sec:summary_conclusion} and~\ref{sec:future}.
+
 
 \section{Programs, Methodology, and Results}
 \label{sec:what_is_done}
@@ -447,6 +436,7 @@ For each program, we provide the Faust code~\cite{orlarey2009faust}. Faust is a 
  \end{enumerate}
 
 A general overview of the programs and the predefined parameter ranges is given in Table~\ref{tab:programs}. In the following subsections, we describe the programs and their parameters in more detail, followed by the methodology in Section~\ref{sec:methodology} and results in Section~\ref{sec:results_posthoc}.
+
 \begin{table*}[htbp]
 \centering
 \begin{adjustbox}{max width=\textwidth}
@@ -470,7 +460,10 @@ A general overview of the programs and the predefined parameter ranges is given 
 
 \subsubsection{\BPNoise}
 \label{sec:program0}
-\begin{lstlisting}[caption={\BPNoise}, label={lst:program0},language=Faust,float,floatplacement=htbp,xleftmargin=2em,xrightmargin=1em,firstnumber=0]
+
+
+\begin{lstlisting}[caption={\BPNoise}, label={lst:program0}, language=Faust,
+                  float, floatplacement=htbp, xleftmargin=1em, xrightmargin=0.5em, firstnumber=0]
 import("stdfaust.lib");
 lp_cut = hslider("lp_cut",900,50,1000,1);
 hp_cut = hslider("hp_cut",100,1,120,1);
@@ -478,12 +471,10 @@ process = no.noise:fi.lowpass(3,lp_cut):fi.highpass(10,hp_cut);
 \end{lstlisting}
 
 \BPNoise{} is a bare bones example of subtractive synthesis using digital filters~\cite{smith2007introduction}. Despite the ubiquity of subtractive synthesis in practical sound design, it has rarely been tested in differentiable sound-matching. In this program, a noise signal is fed through a band-pass (BP) filter. This removes the frequencies outside the low-pass (LP) and high-pass (HP) cutoffs. The noise generator produces all frequencies with random variation over time. The LP filter removes frequencies over its threshold frequency, and the HP removes frequencies lower than its threshold~\cite{smith2007introduction}. The search parameters are the cutoff thresholds for the LP and HP filters. Listing~\ref{lst:program0} shows the Faust code for \BPNoise.
-
-
 \subsubsection{\AddSineSaw}
 \label{sec:program1}
 
-\begin{lstlisting}[caption={\AddSineSaw}, label={lst:program1},language=Faust,float,floatplacement=TBH,xleftmargin=2em,xrightmargin=1em,firstnumber=0]
+\begin{lstlisting}[caption={\AddSineSaw}, label={lst:program1},language=Faust,float,floatplacement=TBH,xleftmargin=1em,xrightmargin=0.5em,firstnumber=0]
 import("stdfaust.lib");
 saw_freq = hslider("saw_freq",800,20,1000,1);
 sine_freq = hslider("sine_freq",300,20,1000,1);
@@ -496,7 +487,7 @@ process = sineOsc(sine_freq)+sawOsc(saw_freq);
 
 \subsubsection{\AmpMod}
 \label{sec:program2}
-\begin{lstlisting}[caption={\AmpMod}, label={lst:program2},language=Faust,float,floatplacement=TBH,xleftmargin=2em,xrightmargin=1em,firstnumber=0]
+\begin{lstlisting}[caption={\AmpMod}, label={lst:program2},language=Faust,float,floatplacement=TBH,xleftmargin=1em,xrightmargin=0.5em,firstnumber=0]
 import("stdfaust.lib");
 amp = hslider("amp",0.5,0,5,0.01);
 modulator = hslider("modulator",0.5,0,4,0.01);
@@ -509,7 +500,7 @@ process = no.noise*sineOsc(modulator)*amp;
 \subsubsection{\FMMod}
 
 \label{sec:program3}
-\begin{lstlisting}[caption={\FMMod}, label={lst:program3},language=Faust,float,floatplacement=TBH,xleftmargin=2em,xrightmargin=1em,firstnumber=0]
+\begin{lstlisting}[caption={\FMMod}, label={lst:program3},language=Faust,float,floatplacement=TBH,xleftmargin=1em,xrightmargin=0.5em,firstnumber=0]
 import("stdfaust.lib");
 carrier = hslider("carrier",100,20,1000,1);
 amp = hslider("amp",6,1,20,1);
@@ -574,133 +565,138 @@ We use color-coded violin plots to visualize the best performers for each progra
 
 \subsubsection{\BPNoise}
 For this synthesizer program, the spectrogram-based models performed the best. This makes intuitive sense, as the visual effects of a band-pass filter on white noise are readily apparent in a spectrogram. As shown in Figure~\ref{fig:npsk_p0}, manual hearing test and MSS selected \SIMSESpec~as the best performer and \LoneSpec~as the second-best performer, while P-loss gave the reverse order. 
-\begin{figure}[htbp]
-    % \centering
- \begin{minipage}{0.045\textwidth}
-    \footnotesize
-    \raggedleft
-    \vspace{-0.4 cm} SIMSE\\[0.25 cm]
-    L1\\[0.26 cm]
-    JTFS\\[0.26 cm]
-    DTW
-\end{minipage}%
-\begin{minipage}{\textwidth}
-    \centering
-    \subfloat[Likert Scores]{
-        \includegraphics[width=0.3\textwidth]{images/npsk_likert_0.png}
-        \label{fig:p0_hearing}
-    }\hspace{-0.425cm}  % Reduce space between figures
-    \subfloat[Inverse P-Loss]{
-        \includegraphics[width=0.3\textwidth]{images/npsk_P-Loss_0.png}
-        \label{fig:p0_P-Loss}
-    }\hspace{-0.5cm}  % Reduce space between figures
-    \subfloat[Inverse MSS]{
-        \includegraphics[width=0.3\textwidth]{images/npsk_MSS_0.png}
-        \label{fig:p0_MSS}
-    }
-\end{minipage}
-    \caption{\BPNoise~bootstrapped distributions and ranks given by NPSK. Ranks and their corresponding colors from best to worst are \colorbox{rank1}{\textcolor{black}{\textbf{1}}} \colorbox{rank2}{\textcolor{white}{\textbf{2}}} \colorbox{rank3}{\textcolor{white}{\textbf{3}}} \colorbox{rank4}{\textcolor{black}{\textcolor{white}{\textbf{4}}}}
-}
 
+\begin{figure*}[htbp]
+    \centering
+    \begin{minipage}{0.03\textwidth}
+        \footnotesize
+        \raggedleft
+        \vspace{-.2cm}
+        SIMSE\\[0.6cm]
+        L1\\[0.65cm]
+        JTFS\\[0.65cm]
+        DTW
+    \end{minipage}%
+    \begin{minipage}{0.95\textwidth}
+        \centering
+        \subfloat[Likert Scores]{
+            \includegraphics[width=0.3\textwidth]{images/npsk_likert_0.png}
+            \label{fig:p0_hearing}
+        }\hspace{0.005\textwidth} % Reduced space between figures
+        \subfloat[Inverse P-Loss]{
+            \includegraphics[width=0.3\textwidth]{images/npsk_P-Loss_0.png}
+            \label{fig:p0_P-Loss}
+        }\hspace{0.005\textwidth} % Reduced space between figures
+        \subfloat[Inverse MSS]{
+            \includegraphics[width=0.3\textwidth]{images/npsk_MSS_0.png}
+            \label{fig:p0_MSS}
+        }
+    \end{minipage}
+    \vspace{-0.5em}
+    \caption{\BPNoise~bootstrapped distributions and ranks given by NPSK. Ranks and their corresponding colors from best to worst are \colorbox{rank1}{\textcolor{black}{\textbf{1}}}, \colorbox{rank2}{\textcolor{white}{\textbf{2}}}, \colorbox{rank3}{\textcolor{white}{\textbf{3}}}, \colorbox{rank4}{\textcolor{white}{\textbf{4}}}.}
     \label{fig:npsk_p0}
-\end{figure}
+\end{figure*}
+\begin{figure*}[htbp]
+    \centering
+    \begin{minipage}{0.03\textwidth}
+        \footnotesize
+        \raggedleft
+        \vspace{-.2cm}
+        SIMSE\\[0.6cm]
+        L1\\[0.65cm]
+        JTFS\\[0.65cm]
+        DTW
+    \end{minipage}%
+    \begin{minipage}{0.95\textwidth}
+        \centering
+        \subfloat[Likert Scores]{
+            \includegraphics[width=0.3\textwidth]{images/npsk_likert_1.png}
+            \label{fig:p1_hearing}
+        }\hspace{0.005\textwidth} % Reduced space between figures
+        \subfloat[Inverse P-Loss]{
+            \includegraphics[width=0.3\textwidth]{images/npsk_P-Loss_1.png}
+            \label{fig:p1_P-Loss}
+        }\hspace{0.005\textwidth} % Reduced space between figures
+        \subfloat[Inverse MSS]{
+            \includegraphics[width=0.3\textwidth]{images/npsk_MSS_1.png}
+            \label{fig:p1_MSS}
+        }
+    \end{minipage}
+    \vspace{-0.5em}
+    \caption{\AddSineSaw~bootstrapped distributions and ranks given by NPSK.}
+    \label{fig:npsk_p1}
+\end{figure*}
+\begin{figure*}[htbp]
+    \centering
+    \begin{minipage}{0.03\textwidth}
+        \footnotesize
+        \raggedleft
+        \vspace{-.2cm}
+        SIMSE\\[0.6cm]
+        L1\\[0.65cm]
+        JTFS\\[0.65cm]
+        DTW
+    \end{minipage}%
+    \begin{minipage}{0.95\textwidth}
+        \centering
+        \subfloat[Likert Scores]{
+            \includegraphics[width=0.3\textwidth]{images/npsk_likert_2.png}
+            \label{fig:p2_hearing}
+        }\hspace{0.005\textwidth} % Reduced space between figures
+        \subfloat[Inverse P-Loss]{
+            \includegraphics[width=0.3\textwidth]{images/npsk_P-Loss_2.png}
+            \label{fig:p2_P-Loss}
+        }\hspace{0.005\textwidth} % Reduced space between figures
+        \subfloat[Inverse MSS]{
+            \includegraphics[width=0.3\textwidth]{images/npsk_MSS_2.png}
+            \label{fig:p2_MSS}
+        }
+    \end{minipage}
+    \vspace{-0.5em}
+    \caption{\AmpMod~bootstrapped distributions and ranks given by NPSK.}
+    \label{fig:npsk_p2}
+\end{figure*}
+\begin{figure*}[htbp]
+    \centering
+    \begin{minipage}{0.03\textwidth}
+        \footnotesize
+        \raggedleft
+        \vspace{-.2cm}
+        SIMSE\\[0.6cm]
+        L1\\[0.65cm]
+        JTFS\\[0.65cm]
+        DTW
+    \end{minipage}%
+    \begin{minipage}{0.95\textwidth}
+        \centering
+        \subfloat[Likert Scores]{
+            \includegraphics[width=0.3\textwidth]{images/npsk_likert_3.png}
+            \label{fig:p3_hearing}
+        }\hspace{0.005\textwidth} % Reduced space between figures
+        \subfloat[Inverse P-Loss]{
+            \includegraphics[width=0.3\textwidth]{images/npsk_P-Loss_3.png}
+            \label{fig:p3_P-Loss}
+        }\hspace{0.005\textwidth} % Reduced space between figures
+        \subfloat[Inverse MSS]{
+            \includegraphics[width=0.3\textwidth]{images/npsk_MSS_3.png}
+            \label{fig:p3_MSS}
+        }
+    \end{minipage}
+    \vspace{-0.5em}
+    \caption{\FMMod~bootstrapped distributions and ranks given by NPSK.}
+    \label{fig:npsk_p3}
+\end{figure*}
 
 \subsubsection{\AddSineSaw}
 As shown in Figure~\ref{fig:npsk_p1}, JTFS was the best performing loss function in all evaluation methods. Moreover, all evaluation methods produced identical results. 
-\begin{figure}[htbp]
-    % \centering
- \begin{minipage}{0.045\textwidth}
-    \footnotesize
-    \raggedleft
-    \vspace{-0.4 cm} SIMSE\\[0.25 cm]
-    L1\\[0.26 cm]
-    JTFS\\[0.26 cm]
-    DTW
-\end{minipage}%
-\begin{minipage}{\textwidth}
-    \centering
-    \subfloat[Likert Scores]{
-        \includegraphics[width=0.3\textwidth]{images/npsk_likert_1.png}
-        \label{fig:p1_hearing}
-    }\hspace{-0.425cm}  % Reduce space between figures
-    \subfloat[Inverse P-Loss]{
-        \includegraphics[width=0.3\textwidth]{images/npsk_P-Loss_1.png}
-        \label{fig:p1_P-Loss}
-    }\hspace{-0.5cm}  % Reduce space between figures
-    \subfloat[Inverse MSS]{
-        \includegraphics[width=0.3\textwidth]{images/npsk_MSS_1.png}
-        \label{fig:p1_MSS}
-    }
-\end{minipage}
-    \caption{\AddSineSaw~bootstrapped distributions and ranks given by NPSK. 
-}
-    \label{fig:npsk_p1}
-\end{figure}
 
 \subsubsection{\AmpMod}
 IP-Loss and manual hearing tests yield identical rankings, and MSS results vary for for ranks 2 to 4.  It is not surprising that MSS results differ from the hearing tests, as we saw in Table~\ref{tab:kruskal_auto}, MSS showed no significant differences between groups. As shown in Figure~\ref{fig:npsk_p2}, all models selected \DTWEnv~as the best performer. This may be due to \DTWEnv's focus on periodic changes in loudness.
-\begin{figure}[H]
-    % \centering
- \begin{minipage}{0.045\textwidth}
-    \footnotesize
-    \raggedleft
-    \vspace{-0.4 cm} SIMSE\\[0.25 cm]
-    L1\\[0.26 cm]
-    JTFS\\[0.26 cm]
-    DTW
-\end{minipage}%
-\begin{minipage}{\textwidth}
-    \centering
-    \subfloat[Likert Scores]{
-        \includegraphics[width=0.3\textwidth]{images/npsk_likert_2.png}
-        \label{fig:p2_hearing}
-    }\hspace{-0.425cm}  % Reduce space between figures
-    \subfloat[Inverse P-Loss]{
-        \includegraphics[width=0.3\textwidth]{images/npsk_P-Loss_2.png}
-        \label{fig:p2_P-Loss}
-    }\hspace{-0.5cm}  % Reduce space between figures
-    \subfloat[Inverse MSS]{
-        \includegraphics[width=0.3\textwidth]{images/npsk_MSS_2.png}
-        \label{fig:p2_MSS}
-    }
-\end{minipage}
-    \caption{\AmpMod~bootstrapped distributions and ranks given by NPSK. 
-}
-    \label{fig:npsk_p2}
-\end{figure}
 
 \subsubsection{\FMMod}
 \DTWEnv~is again the best performer here. As shown in Figure~\ref{fig:npsk_p3}, all methods of analysis gave identical rankings to all programs.
 
-\begin{figure}[H]
-    % \centering
- \begin{minipage}{0.045\textwidth}
-    \footnotesize
-    \raggedleft
-    \vspace{-0.4 cm} SIMSE\\[0.25 cm]
-    L1\\[0.26 cm]
-    JTFS\\[0.26 cm]
-    DTW
-\end{minipage}%
-\begin{minipage}{\textwidth}
-    \centering
-    \subfloat[Likert Scores]{
-        \includegraphics[width=0.3\textwidth]{images/npsk_likert_3.png}
-        \label{fig:p3_hearing}
-    }\hspace{-0.425cm}  % Reduce space between figures
-    \subfloat[Inverse P-Loss]{
-        \includegraphics[width=0.3\textwidth]{images/npsk_P-Loss_3.png}
-        \label{fig:p3_P-Loss}
-    }\hspace{-0.5cm}  % Reduce space between figures
-    \subfloat[Inverse MSS]{
-        \includegraphics[width=0.3\textwidth]{images/npsk_MSS_3.png}
-        \label{fig:p3_MSS}
-    }
-\end{minipage}
-    \caption{\FMMod~bootstrapped distributions and ranks given by NPSK. 
-}
-    \label{fig:npsk_p3}
-\end{figure}
+
 
 \subsection{Consistency In Rankings}
 
@@ -716,6 +712,7 @@ Perhaps the most important takeaway from our analysis is that the loss function 
 We also see that the novel \SIMSESpec{} and \DTWEnv{} loss functions (to our knowledge, not previously used in iterative sound-matching), lead to the best results in three of the four programs. This shows room for further creative approaches to differentiable sound-similarity measures, particularly since we observed that SOTA loss functions can be ineffective depending on the design of a synthesizer. 
 
 Finally, we surprisingly see somewhat consistent results between the rankings assigned by manual hearing tests (which we take as the ground truth), and automatic measures of P-Loss and MSS. Due to the simplicity of our programs and the occasional deviations, we cannot conclude that these automatic measures are substitutes for actual hearing.
+
 
 \section{Summary and Conclusion}
 \label{sec:summary_conclusion}
@@ -748,11 +745,9 @@ Like nearly all previous work in sound-matching, the main measure of success her
 
 
 
-\clearpage
-\bibliographystyle{alpha}
+
+\bibliographystyle{IEEEtran}
 \bibliography{references}
-
-
-% Include the appendix from the separate file
-\include{appendix}
 \end{document}
+
+
