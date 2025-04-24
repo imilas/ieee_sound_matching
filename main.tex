@@ -727,8 +727,6 @@ The main hypothesis tested here is whether the performance of differentiable los
  We considered P-Loss and MSS as performance measures, commonly used in other sound-matching works, and compared their rankings to those given by blind hearing tests. We observed that automatic performance measures and manual listening tests were often (though not always) in agreement. Manual verification of sound-matching results remains a necessity for future works.  
 
 \section{Weaknesses}
-% synthesizer simplicity
-% arbitrary parameter selection
 Compared to previous work, we presented a relatively more cohesive approach to iterative sound-matching which utilizes and compares four loss functions and four synthesis methods. However, there are many other untested methods of synthesis that can be combined in practically infinite ways. 
 
 To limit the scope of our experiments, we had no choice but to use arbitrary parameters for the various signal processing functions. We used bare-bones versions of STFT and JTFS with fixed parameters. We did not test complex synthesizers, which may use different signal generation functions in parallel or sequentially. Arbitrary hyperparameters such as learning rate and max number of iterations were selected for the DL pipeline, and only the RMSProp optimizer was tested. 
