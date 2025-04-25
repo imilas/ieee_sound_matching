@@ -60,20 +60,17 @@
 \newcommand{\FMMod}{\textbf{SineSaw-AM}}  
 
 \input{code_style}
+
 %  ================================
-
-
 \begin{document}
-
 \title{Sound Similarity, Sound Matching, and Differentiable Audio Synthesizer Control}
 
 \author{-}
 \maketitle
 
-
 \begin{abstract}
 Manual sound design with a synthesizer is an iterative process. When an artist has a target sound in mind, they listen to the output of their chosen synthesizer, determine whether the output is closer or farther from the target, and adjust the synthesizer's parameters until satisfied. There are practically an infinite number of parameter combinations, and their effect on the output sound is hard to predict. Iterative sound-matching is the automation of this process, more formally, the automatic programming of an audio synthesizer to generate outputs similar to a target sound while guided by a loss function that quantifies sound similarity.
-Past works in sound-matching often relied on a narrow range of synthesizers and overlooked the possible interactions between the loss function and synthesis parameters.
+Past works in sound-matching often relied on a narrow range of synthesizers and overlooked the possible interactions between the loss function and synthesizer parameters.
 We analyzed the interplay between four simple subtractive, additive, and FM synthesizers when guided by four different novel or established similarity functions.
 For each loss function and synthesizer pair, we ran 300 experiments with randomized initial values and targets, and used the final parameter configurations and spectrogram distances as key performance evaluation metrics of the performance. A post-hoc analysis of these performance measures showed that the best‐performing loss function varies based on the method of synthesis at hand, which highlights the value of novel similarity measures and de-prioritizes the search for the elusive universally optimal sound similarity measure.
 \end{abstract}
@@ -84,7 +81,7 @@ Machine Learning, Signal Processing, Sound-Matching
 
 \section{Introduction}
 \subsection{Digital Synthesis With Sound-Matching}
-Since the 1970s, artists such as Suzanne Ciani~\cite{ciani_life_in_waves} have explored the use of audio synthesizers to replicate natural sounds—such as a bottle cap popping off—in a way that preserves the essential qualities of the original while showcasing the characteristics of the synthesizer. This approach goes beyond mere replication and uses synthesizers for artistic re-interpretation of sounds. Inspired by this, we aim to emulate and automate this process using digital audio synthesizers.
+Since the 1970s, artists such as Suzanne Ciani~\cite{ciani_life_in_waves} have explored the use of audio synthesizers to replicate natural sounds—such as a bottle cap popping off—in a way that preserves the essential qualities of the original while showcasing the characteristics of the synthesizer. This approach goes beyond mere replication and uses synthesizers for artistic re-interpretation of sounds. Pursuing this idea, we aim to emulate and automate this process using digital audio synthesizers.
 
 A digital audio synthesizer is any software used for the creation and manipulation of audio. Since the advent of digital signal processing (\gls{DSP}) in the 1960s~\cite{stranneby2004digital}, a wide variety of parametric audio generation functions have been proposed~\cite{lyons1997understanding,russ1999sound,shier2020spiegelib}. Manual sound design with a synthesizer is an iterative process of trial and error; when the artist has a desired (or target) sound in mind, sound design involves listening to the output, determining whether the output is closer or farther from the target, and adjusting the parameters accordingly until the target is reached~\cite{russ1999sound}. This paper explores the automation of this process, which we call \textit{iterative sound-matching}.
 
@@ -119,7 +116,7 @@ A digital audio synthesizer is any software used for the creation and manipulati
 The simplest form of DSP function is a sinusoidal tone. For example, consider:
 \[ x(n) = sin( 2\pi n T)\]
 
-where $T$ represents time in seconds, and $n$ is the frequency parameter. If $n$ is 1, then $x(n)$ would be a waveform with a frequency of 1 hertz as the value of $x(n)$ would oscillate once per second. Waveform generators are called oscillators for this reason. If $n$ is in the range of 30 to 14,000 (the upper limit can be higher for some), $x(n)$ would be an audible tone~\cite{smith2007mathematics,jilek2014reference}.
+where $T$ represents time in seconds, and $n$ is the frequency parameter. If $n$ is 1, then $x(n)$ would be a waveform with a frequency of 1 hertz, meaning that the value of $x(n)$ oscillates to the same point once every second. Waveform generators are called oscillators for this reason. If $n$ is in the range of 30 to 14,000 (the upper limit can be higher for some), $x(n)$ would be an audible tone~\cite{smith2007mathematics,jilek2014reference}.
 
 Since the advent of digital signal processing in the 1960s~\cite{stranneby2004digital}, a wide variety of parametric audio generation functions have been proposed~\cite{lyons1997understanding,russ1999sound,shier2020spiegelib}. This includes oscillators, filters, equalizers, and envelopes, which can be used sequentially or in parallel~\cite{lyons1997understanding,russ1999sound}.  Sound design with a synthesizer is done by modifying the parameters of the functions until reaching a desired output~\cite{roads1996computer,pinch2004analog}.  
 
@@ -329,7 +326,7 @@ Differentiable loss functions that use spectrogram differences can be computatio
 \|\phi(t) - \phi(x)\|_2^2 = \langle \tilde{\theta} - \theta | \mathbf{M}(\theta) | \tilde{\theta} - \theta \rangle + O(\|\tilde{\theta} - \theta\|_2^3). \tag{4}
 \]
 
-During the training phase, this metric is calculated alongside the training of the neural parameter estimator. After training, PNP can be used as a fast approximation of the loss function, $\|\phi(t) - \phi(x)\|_2^2 $. Han \textit{et al.} observed slight improvements to run-time (for testing) and minor improvements to the loss values under certain conditions. These experiments were based on supervised learning and physical modeling (of a drum head) for synthesis~\cite{smith2010physical}, and compared PNP, P-Loss, MSS, and JTFS functions~\cite{han2023perceptual}. This approach was more recently applied to other supervised settings using physical and FM synthesizers~\cite{han2024learning}.
+During the training phase, this metric is calculated alongside the training of the neural parameter estimator. After training, PNP can be used as a fast approximation of the loss function, $\|\phi(t) - \phi(x)\|_2^2 $. Han \textit{et al.} observed improvements to run-time (for testing) and slight reduction of the loss values under certain conditions. These experiments were based on supervised learning and physical modeling (of a drum head) for synthesis~\cite{smith2010physical}, and compared PNP, P-Loss, MSS, and JTFS functions~\cite{han2023perceptual}. This approach was more recently applied to other supervised settings using physical and FM synthesizers~\cite{han2024learning}\textcolor{red}{elaborate}.
 
 Uzrad \textit{et al.}~\cite{uzrad2024diffmoog} took another unique approach to sound-matching: using a differentiable \textit{synthesis chain} of DSP generators and effects and a loss function that combines P-Loss with a \textit{signal-chain loss}. Like other supervised learning replication approaches, during training a target sound $t$ is generated by random  $\theta$ parameter selection, and a model attempts to an output $\tilde{\theta}$ that generates a sound similar to $t$. The synthesizer is a customizable chain of effects, which feed one output as input to the next step of the chain; signal-chain loss compares the parameter and output difference at every output step in the chain~\cite{uzrad2024diffmoog}. Possible chain functionalities are FM/AM, Low Frequency Oscillators (\gls{LFO}), filters, and envelopes. Like the results shown by Masuda \textit{et al.}~\cite{masuda2021soundmatch}, better out-of-domain results were achieved when pre-trained on in-domain data and fine-tuned using out-of-domain NSynth data~\cite{engel2017neural}. 
 
