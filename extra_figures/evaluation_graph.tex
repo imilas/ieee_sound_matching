@@ -2,12 +2,12 @@
 \begin{figure*}
 \resizebox{\linewidth}{!}{ % Automatically scales diagram to fit page width
 \begin{tikzpicture}[
-    function/.style={rectangle, draw, rounded corners, minimum width=2cm, minimum height=1cm, text centered, node distance=1.5cm},
-    distribution/.style={ellipse, draw, minimum width=2cm, minimum height=1cm, text centered, node distance=1.2cm},
+    function/.style={rectangle, draw, rounded corners, minimum width=2cm, minimum height=1cm, text centered, node distance=1cm},
+    distribution/.style={ellipse, draw, minimum width=1cm, minimum height=0cm, text centered, node distance=0.3cm},
     gaussian/.style={draw, smooth, samples=100, domain=-2.5:2.5},
     snpk/.style={rectangle, draw, rounded corners, minimum width=2.5cm, minimum height=1cm, text centered, node distance=1.5cm, fill=blue!20},
-    level 1/.style={sibling distance=6cm, level distance=2cm},
-    level 2/.style={sibling distance=2cm, level distance=3cm},
+    level 1/.style={sibling distance=6cm, level distance=1cm},
+    level 2/.style={sibling distance=2cm, level distance=1.2cm},
     mss/.style={fill=red!50, draw=black},
     ploss/.style={fill=blue!50, draw=black},
     likert/.style={fill=green!40, draw=black}
@@ -85,31 +85,33 @@
     };
 
 % Label for the second row (Distributions)
-\node at (0,-6.5) {\textbf{$\longleftarrow$\ \ \large Bootstrapped Distributions\ \ $\longrightarrow$}};
+\node at (0,-4) {\textbf{$\longleftarrow$\ \ \large Bootstrapped Distributions\ \ $\longrightarrow$}};
+% Left side: SNPK with MSS
 
 % Left side: SNPK with MSS
-\node[snpk, text height=5ex, align=center, fill=red!30, draw=black] at (-6,-9) {SNPK with 4 \\ MSS distributions};
-\draw[->] (-6,-9.5) -- (-6,-10.5) node[below, below] {\textbf{Ranks 1-4}};
-\draw[red!40, thick] (-4.5, -8.4) -- (-2.75, -7.75);  % Line 1
-\draw[red!40, thick] (-5.25, -8.4) -- (-3.5, -7.75);  % Line 2
-\draw[red!40, thick] (-5.75, -8.4) -- (-5.5, -7.75);  % Line 3
-\draw[red!40, thick] (-6.25, -8.4) -- (-9, -7.75);  % Line 4
+\node[snpk, text height=5ex, align=center, fill=red!30, draw=black] at (-6,-6) {SNPK with 4 \\ MSS distributions};
+\draw[->] (-6,-6.5) -- (-6,-7.5) node[below, below] {\textbf{Ranks 1-4}};
+\draw[red!40, thick] (-4.5, -5.4) -- (-2.75, -4.75);  % Line 1
+\draw[red!40, thick] (-5.25, -5.4) -- (-3.5, -4.75);  % Line 2
+\draw[red!40, thick] (-5.75, -5.4) -- (-5.5, -4.75);  % Line 3
+\draw[red!40, thick] (-6.25, -5.4) -- (-9, -4.75);    % Line 4
 
 % Middle: SNPK with P-Loss
-\node[snpk, text height=5ex, align=center, fill=blue!40, draw=black] at (0,-9) {SNPK with 4 \\ P-Loss distributions};
-\draw[->] (0,-9.5) -- (0,-10.5) node[below, below] {\textbf{Ranks 1-4}};
-\draw[blue!40, thick] (1.5, -8.4) -- (3.25, -7.75);  % Line 1
-\draw[blue!40, thick] (0.75, -8.4) -- (1.5, -7.75);  % Line 2
-\draw[blue!40, thick] (-0.25, -8.4) -- (-1, -7.75);  % Line 3
-\draw[blue!40, thick] (-0.75, -8.4) -- (-3, -7.75);  % Line 4
+\node[snpk, text height=5ex, align=center, fill=blue!40, draw=black] at (0,-6) {SNPK with 4 \\ P-Loss distributions};
+\draw[->] (0,-6.5) -- (0,-7.5) node[below, below] {\textbf{Ranks 1-4}};
+\draw[blue!40, thick] (1.5, -5.4) -- (3.25, -4.75);   % Line 1
+\draw[blue!40, thick] (0.75, -5.4) -- (1.5, -4.75);   % Line 2
+\draw[blue!40, thick] (-0.25, -5.4) -- (-1, -4.75);   % Line 3
+\draw[blue!40, thick] (-0.75, -5.4) -- (-3, -4.75);   % Line 4
 
 % Right side: SNPK with Likert
-\node[snpk, text height=5ex, align=center, fill=green!30, draw=black] at (6,-9) {SNPK with 4 \\ Likert distributions};
-\draw[->] (6,-9.5) -- (6,-10.5) node[below, below] {\textbf{Ranks 1-4}};
-\draw[green!50, thick] (7.5, -8.4) -- (8.75, -7.75);  % Line 1
-\draw[green!50, thick] (6.75, -8.4) -- (6, -7.75);    % Line 2
-\draw[green!50, thick] (6.25, -8.4) -- (4, -7.75);   % Line 3
-\draw[green!50, thick] (5.75, -8.4) -- (3, -7.75);     % Line 4
+\node[snpk, text height=5ex, align=center, fill=green!30, draw=black] at (6,-6) {SNPK with 4 \\ Likert distributions};
+\draw[->] (6,-6.5) -- (6,-7.5) node[below, below] {\textbf{Ranks 1-4}};
+\draw[green!50, thick] (7.5, -5.4) -- (8.75, -4.75);  % Line 1
+\draw[green!50, thick] (6.75, -5.4) -- (6, -4.75);    % Line 2
+\draw[green!50, thick] (6.25, -5.4) -- (4, -4.75);    % Line 3
+\draw[green!50, thick] (5.75, -5.4) -- (3, -4.75);    % Line 4
+
 
 \end{tikzpicture}
 }

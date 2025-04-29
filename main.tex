@@ -180,7 +180,7 @@ To give a formal definition of sound-matching, we expand the definition given by
     \item $L$: Loss or error function. $L(\theta,t)$ is a measure of distance between $x$ and $t$. Often proportional to the subtraction of their representations, or $ \phi(x) - \phi(t)$
 \end{itemize}
 
-We view the implementation of these components not as an optimization problem with a correct answer, but a \textit{creative} endeavor depending on the artist's needs. Consider the case where the goal is to create an 8-bit version of a high quality, organic snare drum~\cite{collins2007loop}: in such a case, there is no optimal or ``correct" version of an 8-bit snare sound, and multiple correct answers exist.   
+It could be argued that the implementation of these components is not an optimization problem with a correct answer, but a \textit{creative} endeavor depending on the artist's needs. Consider the case where the goal is to create an 8-bit version of a high quality, organic snare drum~\cite{collins2007loop}: in such a case, there is no optimal or ``correct" version of an 8-bit snare sound, and multiple correct answers exist.   
 
 \subsection{Sound Matching Types}
 \label{sec:matching_types}
@@ -194,11 +194,11 @@ The choice of domain depends on whether we want to use the same synthesizer for 
 \subsubsection{Replication vs Imitation}
 Regardless of the domain, the generation goal can be \textit{replication} or \textit{imitation} of the target sound. In replication, the goal is to make an identical copy of the target sound. With imitation, the goal is to make new sounds that only retain a subset of the target's sonic features. While closely related to the in-domain versus out-of-domain problem, the choice of replication versus imitation is more dependent on how the loss and representation functions are defined. 
 
-From a signal perspective, replication is a scenario where the goal is to find a $\theta$ such that $t-x=0$ where $x=g(\theta)$. From a sound perspective, this definition of replication is unnecessarily restrictive, as $t$ and $x$ can sound identical but contain very different values. For example, if $t$ and $x$ were periodic waveforms at an audible frequency $f$ with different phase values, their subtraction would not be 0, yet they would sound identical to our ears, as our ears are insensitive to phase values~\cite{moore2012introduction}. Representation functions such as STFT spectrograms or Mel-frequency cepstral coefficients (\gls{MFCC}) become viable in these cases, as they allow for separation and removal of the phase information within an audio signal. The \textit{sound replication} goal can be defined, in layman's terms, as ``$x$ sounds exactly like $t$". More formally, the goal is to find parameters such that $\phi(t)-\phi(x)=0$, where $\phi$ transforms an audio into a spectrogram that removes the phase information from sounds, but otherwise represents the sonic information as accurately as possible.
+% From a signal perspective, replication is a scenario where the goal is to find a $\theta$ such that $t-x=0$ where $x=g(\theta)$. From a sound perspective, this definition of replication is unnecessarily restrictive, as $t$ and $x$ can sound identical but contain very different values. For example, if $t$ and $x$ were periodic waveforms at an audible frequency $f$ with different phase values, their subtraction would not be 0, yet they would sound identical to our ears, as our ears are insensitive to phase values~\cite{moore2012introduction}. Representation functions such as STFT spectrograms or Mel-frequency cepstral coefficients (\gls{MFCC}) become viable in these cases, as they allow for separation and removal of the phase information within an audio signal. The \textit{sound replication} goal can be defined, in layman's terms, as ``$x$ sounds exactly like $t$". More formally, the goal is to find parameters such that $\phi(t)-\phi(x)=0$, where $\phi$ transforms an audio into a spectrogram that removes the phase information from sounds, but otherwise represents the sonic information as accurately as possible.
 
-With \textit{sound imitation}, the goal is the replication of some aspect of the target sound. Instrument conversion is a common example of imitation. As an example, a note played by a violin is converted to the same note played by a piano. Conversion of even longer pieces has been made possible with large enough datasets~\cite{engel2020ddsp}. Imitation of sound envelopes (how the loudness changes over time) is another interesting idea~\cite{caspe2023envelope}. Transfer of other sound properties such as reverb and delay has; also been a subject of research~\cite{engel2020ddsp}. 
+% With \textit{sound imitation}, the goal is the replication of some aspect of the target sound. Instrument conversion is a common example of imitation. As an example, a note played by a violin is converted to the same note played by a piano. Conversion of even longer pieces has been made possible with large enough datasets~\cite{engel2020ddsp}. Imitation of sound envelopes (how the loudness changes over time) is another interesting idea~\cite{caspe2023envelope}. Transfer of other sound properties such as reverb and delay has also been a subject of research~\cite{engel2020ddsp}. 
 
-A target sound can have many properties of interest, and the imitation task is the transfer of a subset of those properties to other sounds. Relative to replication, imitation is a very open ended goal. From a research point of view, success in the replication task can be measured more reliably, often without the need for manual evaluation. With imitation, listening tests are needed to ensure quality of outputs, particularly in a supervised learning setting where learning is done by examples~\cite{salimi2020make,masuda2021soundmatch}. The need for subjective evaluations has perhaps contributed to the lack of research in imitation and out-of-domain sound-matching.
+% A target sound can have many properties of interest, and the imitation task is the transfer of a subset of those properties to other sounds. Relative to replication, imitation is a very open ended goal. From a research point of view, success in the replication task can be measured more reliably, often without the need for manual evaluation. With imitation, listening tests are needed to ensure quality of outputs, particularly in a supervised learning setting where learning is done by examples~\cite{salimi2020make,masuda2021soundmatch}. The need for subjective evaluations has perhaps contributed to the lack of research in imitation and out-of-domain sound-matching.
 
 \subsubsection{Supervised Versus Direct Optimization}
 \label{sec:optimization}
@@ -211,17 +211,17 @@ The goal of sound-matching is to find the optimal parameters $\theta^*$ that min
 
 The heuristics in past works can be broadly split into two categories:
 \begin{enumerate}
-    \item Supervised methods which use datasets of sound and parameter pairs to describe the generation objective. Often with a large number of input and output examples~\cite{engel2020ddsp,salimi2020make,yee2018automatic,esling2019flow}
-    \item Unsupervised or \textit{direct sound optimization} methods~\cite{uzrad2024diffmoog}. Usually require at most one target example, and a loss function that measures the difference between the target and synthesizer outputs. 
+    \item Supervised (or inference) methods which use datasets of sound and parameter pairs to describe the generation objective. Often with a large number of input and output examples~\cite{engel2020ddsp,salimi2020make,yee2018automatic,esling2019flow}
+    \item Unsupervised or \textit{direct sound optimization} methods~\cite{horner1993machine,mitchell2007evolutionary,yee2018automatic,vahidi2023mesostructures}. Usually require at most one target example, and a loss function that measures the difference between the target and synthesizer outputs. 
 \end{enumerate}
 
-Genetic algorithms (\gls{GA})~\cite{holland1992genetic} can be used for direct sound optimization, and have been the earliest and most common heuristic in sound-matching~\cite{horner1993machine,mitchell2007evolutionary,yee2018automatic,uzrad2024diffmoog}. These algorithms start with arbitrary parameter sets that can be treated as an evolving population where the genomes are the parameter values. The most fit members of the group are the parameters which perform the best in the loss function. The most fit parameters create a new generation of parameters via mutation (random change in subset of parameters) and crossovers (combination of parameter sets), and the process repeats until the goal or a maximum number of generations is reached. 
+Genetic algorithms (\gls{GA})~\cite{holland1992genetic} can be used for direct sound optimization, and have been the earliest and most common heuristic in sound-matching~\cite{horner1993machine,mitchell2007evolutionary,yee2018automatic}. These algorithms start with arbitrary parameter sets that can be treated as an evolving population where the genomes are the parameter values. The most fit members of the group are the parameters which perform the best in the loss function, and create a new generation of parameters via mutation (random change in subset of parameters) and crossovers (combination of parameter sets); this process repeats until the goal or a maximum number of generations is reached. 
 
-One important aspect of the heuristics is whether they imitate the iterative nature of manual sound design---that is, listening to the output and adjusting the synthesizer parameters recursively until the desired goal is reached. Supervised methods generate their final output in a single step, while direct sound optimization methods refine their outputs iteratively until termination, which resembles manual sound design more closely.
+% One important aspect of the heuristics is whether they imitate the iterative nature of manual sound design---that is, listening to the output and adjusting the synthesizer parameters recursively until the desired goal is reached. Supervised methods generate their final output in a single step, while direct sound optimization methods refine their outputs iteratively until termination, which resembles manual sound design more closely.
 
 \subsection{Iterative Sound Matching}
 \label{sec:iterative_sound_matching}
-The diagram in Figure~\ref{fig:sound_design_loop_iterative} shows a general model for iterative sound-matching that covers previous works in this domain. To begin the process, the parameters are arbitrarily initialized (usually random generation), the similarity of the target and output is measured, and the parameter is \textit{optimized} with the goal of increasing the similarity, or alternatively, reducing the loss. This process repeats until termination. 
+ Figure~\ref{fig:sound_design_loop_iterative} shows a general model for iterative sound-matching. To begin the process, the parameters are arbitrarily initialized (usually random generation), the similarity of the target and output is measured, and the parameter is \textit{optimized} with the goal of increasing the similarity, or alternatively, reducing the loss. This process repeats until termination. 
 
 \begin{figure}[ht]
     \centering
@@ -245,12 +245,12 @@ The diagram in Figure~\ref{fig:sound_design_loop_iterative} shows a general mode
     \draw[->, bend left] (new_theta) to node[midway, left, align=center] {} (start);
 
 \end{tikzpicture}
-    \caption{ Iterative approach to sound design. Synthesizer $g$ with arbitrary initialized parameters $\hat{\theta}$, creates sound $x$. The target sound $t$ is used as the goal. Parameters $\hat{\theta}$ are adjusted to minimize error (or loss) $L(\hat{\theta},t)$, where $L$ is proportional to the difference between the representations of $x$ and $t$. $\phi$ is the audio feature extractor, or representation function.}
+    % \caption{ Iterative approach to sound design. Synthesizer $g$ with arbitrary initialized parameters $\hat{\theta}$, creates sound $x$. The target sound $t$ is used as the goal. Parameters $\hat{\theta}$ are adjusted to minimize error (or loss) $L(\hat{\theta},t)$, where $L$ is proportional to the difference between the representations of $x$ and $t$. $\phi$ is the audio feature extractor, or representation function.}
+    \caption{ Iterative approach to sound design.}
     \label{fig:sound_design_loop_iterative}
 \end{figure}
 
-Genetic mutation has predominantly been the most common direct optimization method in previous works, particularly in non-differentiable settings. 
-In a differentiable setting, gradient descent can be used to directly optimize the parameters of a synthesizer~\cite{vahidi2023mesostructures}. In the upcoming ``Past Works'' section, we will discuss the evolution of prior sound-matching research, with \textit{differentiable iterative sound-matching} being the latest extension of the field.
+In the upcoming ``Past Works'' section, we will discuss the evolution of prior sound-matching research, with \textit{differentiable iterative sound-matching} being the latest extension of the field.
 
 
 \begin{table*}[t]
@@ -299,23 +299,27 @@ FM synthesizers are simple to implement, yet very expressive~\cite{chowning1973s
 \]
 Where $f(t)$ is the output signal, $I_c(t)$ is the carrier amplitude, $\omega_c$ is the carrier frequency, and $I_m(t)$ and $\omega_m$ are the envelope and frequency for the modulator~\cite{justice1979analytic}.  
 
- The sound-matching works that followed used other heuristics for finding the synthesizer parameters, yet the simple FM synthesizer structure remained unchanged. Horner \textit{et al.}~\cite{horner1993machine} used GAs for re-synthesis of sounds with an FM synthesizer using one modulator and one carrier oscillator, and the McAulay-Quatieri (MQ) method~\cite{mcaulay1986speech} for measuring loss. MQ calculates the STFT and marks the start and end of \textit{trends} in a sound with the assumption that the harmonic content belongs to trends that have a beginning and an end. 
+ The sound-matching works that followed used other heuristics for finding the synthesizer parameters, yet the simple FM synthesizer structure remained unchanged. Horner \textit{et al.}~\cite{horner1993machine} used GAs for re-synthesis of sounds with an FM synthesizer using one modulator and one carrier oscillator, and the McAulay-Quatieri method~\cite{mcaulay1986speech} for measuring loss. 
+ 
+ % MQ calculates the STFT and marks the start and end of \textit{trends} in a sound with the assumption that the harmonic content belongs to trends that have a beginning and an end. 
 
-Introduction of more complex models of synthesis such as wavetables~\cite{horner2003auto} and physical modeling~\cite{riionheimo2003parameter} rendered interesting results, but led to further questions about the nature and goals of sound-matching. Mitchell and Creasy noted the difficulty in distinguishing between \textit{inefficiency of the optimization engine} and \textit{synthesizer limitations} as the cause of failure or success in sound-matching~\cite{mitchell2007evolutionary}. They offered a \textit{contrived methodology} for finding the best evolutionary method for sound-matching using their FM synthesizer. The methodology postulates that the best search heuristic for in-domain search (where an exact target exists, and a wide range of targets can be produced by sampling from different points in the parameter space) would also be the best-performing heuristic for out-of-domain search on a dataset of muted trumpet tones~\cite{opolko1989mcgill}; however, testing was not extensive and yielded some contradictory results.
+Introduction of more complex models of synthesis such as wavetables~\cite{horner2003auto} and physical modeling~\cite{riionheimo2003parameter} rendered interesting results, but led to further questions about the nature and goals of sound-matching. Mitchell and Creasy noted the difficulty in distinguishing between ``inefficiency of the optimization engine'' and ``synthesizer limitations'' as the cause of failure or success in sound-matching~\cite{mitchell2007evolutionary}. They offered a \textit{contrived methodology} for finding the best evolutionary method for sound-matching using their FM synthesizer. The methodology postulates that the best search heuristic for in-domain search (where an exact target exists, and a wide range of targets can be produced by sampling from different points in the parameter space) would also be the best-performing heuristic for out-of-domain search on a dataset of muted trumpet tones~\cite{opolko1989mcgill}; however, testing was not extensive and yielded some contradictory results. As they noted, modifications to the synthesizer, loss function, and sound domain would lead to a problem with an entirely new search space~\cite{mitchell2007evolutionary}. 
 
-Testing sound-matching experiments can be difficult, in part due to the large number of parametric components and navigation of complex non-linear systems. The issue with finding the best approaches to sound-matching is exacerbated when slight changes to the pipeline render previous results moot. Perhaps due to these reasons, the contrived methodology was not extensively tested by Mitchell and Creasy, who only provided a single experiment where the best evolutionary strategy found by in-domain search would also perform well in out-of-domain synthesis. As they noted, modifications to the synthesizer, loss function, and sound domain would lead to a problem with an entirely new search space~\cite{mitchell2007evolutionary}. 
-
+% Testing sound-matching experiments can be difficult, in part due to the large number of parametric components and navigation of complex non-linear systems. The issue with finding the best approaches to sound-matching is exacerbated when slight changes to the pipeline render previous results moot. Perhaps due to these reasons, the contrived methodology was not extensively tested by Mitchell and Creasy, who only provided a single experiment where the best evolutionary strategy found by in-domain search would also perform well in out-of-domain synthesis.
 \subsection{Introduction of Deep-Learning}
 Recent years have seen more works in sound-matching using machine learning techniques. In 2018, Yee-King \textit{et al.} rendered 60,000 audio-parameter pairs from the \textit{Dexed} \gls{VST} synthesizer~\footnote{https://asb2m10.github.io/dexed/}, and showed that NNs trained on this dataset can outperform GA and hill-climber (\gls{HC})~\cite{hoffmann2000heuristic} methods in rendering speed, with slight improvements in MFCC error (used as an objective performance test). The speed improvement appears trivial, considering the iterative nature of GAs when compared to offline training of supervised models. For GAs and HC optimizer, MFCCs were used as a measure of performance as well as a loss function. For training the networks, P-loss was used, since differentiable MFCCs were not possible in their pipeline. Importantly, informal hearing tests revealed that the performance of even the best NN model was unsatisfactory, possibly due to the complex nature of the synthesizer, which features 155 parameters.
 
 
 % Programming synthesizers and querying sounds by imitating human vocals has also been a subject of interest~\cite{Cartwright2014SynthAssistQA,siamesevocalimitation2018}. For example, Cartwright and Pardo created a framework for searching pre-made patches for a synthesizer to best imitate vocals using audio features such as pitch, spectral centroid, and loudness~\cite{Cartwright2014SynthAssistQA}. 
 
-Esling \textit{et al.} also noted the issue of using P-Loss in sound-matching~\cite{esling2019flow}, considering the non-linear mapping between parameters of a synth and the audio output. In their approach, dubbed as ``flowsynth'', they used a large parameter-to-audio dataset for a commercial \gls{VST} synthesizer. In flowsynth, audio is encoded to an auditory space, using a NN autoencoding approach~\cite{hinton2006reducing}. The encodings in the auditory space can then be converted to the parameter space, but only for that particular synthesizer. Using P-Loss and Spectral Convergence (Frobenius norm of the spectrograms) as metrics, flowsynth outperformed other NN approaches that did not use an auditory to parameter space conversion, but formal hearing tests were not conducted.
+Esling \textit{et al.} noted the issue of using P-Loss in sound-matching~\cite{esling2019flow}, considering the non-linear mapping between parameters of a synth and the audio output. In their approach, dubbed as ``flowsynth'', they used a large parameter-to-audio dataset for a commercial \gls{VST} synthesizer. In flowsynth, audio is encoded to an auditory space, using a NN autoencoding approach~\cite{hinton2006reducing}. The encodings in the auditory space can then be converted to the parameter space, but only for that particular synthesizer. Using P-Loss and Spectral Convergence (Frobenius norm of the spectrograms) as metrics, flowsynth outperformed other NN approaches that did not use an auditory to parameter space conversion, but formal hearing tests were not conducted.
 
 Masuda \textit{et al.} also applied supervised learning to synthesizer parameter estimation~\cite{masuda2021soundmatch}. Their work highlights the issue of non-linearity in parameter-to-synthesizer outputs and out-of-domain search. This work uses a differentiable subtractive synthesizer (two oscillators and an LP filter). A NN model was pre-trained using an in-domain dataset of randomly selected parameters and P-Loss. After training, the model was fine-tuned using 20,000 out-of-domain sounds from the NSynth dataset~\cite{engel2017neural} and multi-scale spectrogram loss~\cite{engel2020ddsp}. This approach proved more effective---that is, lower multi-level spectral difference in out-of-domain tests---than baseline models, which were either not exposed to out-of-domain sounds or trained exclusively with P-Loss. Subjective hearing tests were conducted, showing a preference for the fine-tuned model~\cite{masuda2021soundmatch}. 
 
-Rather than focusing on a particular implementation, Shier \textit{et al.} presented Spieglib, a library for implementation of sound-matching pipelines (which Shier \textit{et al.} referred to as ``automatic parameter search'')~\cite{shier2020spiegelib}. This library provides extensible choices of deep-learning estimators with \textit{tensorflow}~\cite{abadi2016tensorflow}, genetic estimators with \textit{DEAP}~\cite{DEAP_JMLR2012}, feature extractors with \textit{librosa}~\cite{mcfee2015librosa}, and different choices for synthesizers, evaluators, dataloaders. Shier \textit{et al.} provide an example experiment using this library. This example has a setup similar to Yee-King \textit{et al.}~\cite{yee2018automatic}, where the \textit{Dexed} VST was used and different genetic and NN estimators were compared by using MFCC difference as the minimization objective. Depending on the NN architecture, MFCC or STFT spectrograms were used as the input. Unlike previous comparisons of NN and genetic algorithms, the best estimator was the multi-objective non-dominated sorting genetic algorithm III (NSGA-III). This algorithm had multiple minimization objectives: 13-band MFCC, STFT, and five spectral features. Shier \textit{et al.} report that all models performed relatively well at imitation of harmonic distributions, but the multi-objective function was the only optimizer which did \textit{not} struggle with matching temporal envelopes of the audio spectrum~\cite{shier2020spiegelib}.
+
+Rather than focusing on a particular implementation, Shier \textit{et al.} presented Spieglib, a library for implementation of sound-matching pipelines~\cite{shier2020spiegelib}. This library provides different choices for DNNs, GAs, synthesizers, and feature extractors. Shier \textit{et al.} presented an experiment with a similar setup to Yee-King \textit{et al.}~\cite{yee2018automatic}, however, they found a genetic algorithm to be the best performing.
+
+% Rather than focusing on a particular implementation, Shier \textit{et al.} presented Spieglib, a library for implementation of sound-matching pipelines (which Shier \textit{et al.} referred to as ``automatic parameter search'')~\cite{shier2020spiegelib}. This library provides extensible choices of deep-learning estimators with \textit{tensorflow}~\cite{abadi2016tensorflow}, genetic estimators with \textit{DEAP}~\cite{DEAP_JMLR2012}, feature extractors with \textit{librosa}~\cite{mcfee2015librosa}, and different choices for synthesizers, evaluators, dataloaders. Shier \textit{et al.} provide an example experiment using this library. This example has a setup similar to Yee-King \textit{et al.}~\cite{yee2018automatic}, where the \textit{Dexed} VST was used and different genetic and NN estimators were compared by using MFCC difference as the minimization objective. Depending on the NN architecture, MFCC or STFT spectrograms were used as the input. Unlike previous comparisons of NN and genetic algorithms, the best estimator was the multi-objective non-dominated sorting genetic algorithm III (NSGA-III). This algorithm had multiple minimization objectives: 13-band MFCC, STFT, and five spectral features. Shier \textit{et al.} report that all models performed relatively well at imitation of harmonic distributions, but the multi-objective function was the only optimizer which did \textit{not} struggle with matching temporal envelopes of the audio spectrum~\cite{shier2020spiegelib}.
 
 
 Differentiable loss functions that use spectrogram differences can be computationally expensive. To mitigate this, Han \textit{et al.}~\cite{han2023perceptual} introduced ``perceptual-neural-physical loss'' (PNP). PNP is an approximation of spectrogram loss functions; specifically, a loss function that uses the L2 norm of the difference between the features of two sounds, or $||\phi(t) - \phi(x)||^2_2$. PNP loss functions are fast and differentiable, but require training and parameter estimation. A Riemannian metric M needs to be calculated for the minimization of locally linear approximation of the ``true" spectral loss function~\cite{han2023perceptual}. 
@@ -327,32 +331,33 @@ Differentiable loss functions that use spectrogram differences can be computatio
 
 During the training phase, this metric is calculated alongside the training of the neural parameter estimator. After training, PNP can be used as a fast approximation of the loss function, $\|\phi(t) - \phi(x)\|_2^2 $. Han \textit{et al.} observed improvements to run-time (for testing) and slight reduction of the loss values under certain conditions. These experiments were based on supervised learning and physical modeling (of a drum head) for synthesis~\cite{smith2010physical}, and compared PNP, P-Loss, MSS, and JTFS functions~\cite{han2023perceptual}. This approach was more recently applied to other supervised settings using physical and FM synthesizers~\cite{han2024learning}\textcolor{red}{elaborate}.
 
-Uzrad \textit{et al.}~\cite{uzrad2024diffmoog} took another unique approach to sound-matching: using a differentiable \textit{synthesis chain} of DSP generators and effects and a loss function that combines P-Loss with a \textit{signal-chain loss}. Like other supervised learning replication approaches, during training a target sound $t$ is generated by random  $\theta$ parameter selection, and a model attempts to an output $\tilde{\theta}$ that generates a sound similar to $t$. The synthesizer is a customizable chain of effects, which feed one output as input to the next step of the chain; signal-chain loss compares the parameter and output difference at every output step in the chain~\cite{uzrad2024diffmoog}. Possible chain functionalities are FM/AM, Low Frequency Oscillators (\gls{LFO}), filters, and envelopes. Like the results shown by Masuda \textit{et al.}~\cite{masuda2021soundmatch}, better out-of-domain results were achieved when pre-trained on in-domain data and fine-tuned using out-of-domain NSynth data~\cite{engel2017neural}. 
+Uzrad \textit{et al.}~\cite{uzrad2024diffmoog} took another unique approach to sound-matching: using a differentiable \textit{synthesis chain} of DSP generators and effects and a loss function that combines P-Loss with a \textit{signal-chain loss}. The synthesizer is a customizable chain of effects, which feed one output as input to the next step of the chain; signal-chain loss compares the parameter and output difference at every output step in the chain~\cite{uzrad2024diffmoog}. Possible chain functionalities are FM/AM, Low Frequency Oscillators (\gls{LFO}), filters, and envelopes. Like the results shown by Masuda \textit{et al.}~\cite{masuda2021soundmatch}, better out-of-domain results were achieved when pre-trained on in-domain data and fine-tuned using out-of-domain NSynth data~\cite{engel2017neural}. 
 
-Uzrad \textit{et al.}\cite{uzrad2024diffmoog} used log-spectral distance (LSD) as their loss function, where   
-$\text{LSD} = \| \log(S(t)) - \log(S(x)) \|_F$, S is the mel-spectrogram of the sounds and F is the Frobenius norm~\cite{golub2013matrix}. The Frobenius norm of a matrix $A$ is defined as
-$ \|A\|_F = \sqrt{\sum_{i,j} |a_{ij}|^2}$. Here, $A$ would be the 2D matrix resulting from subtracting two log-spectrograms. Along with other works, \textbf{non-convexity of loss surfaces when applying gradient optimization} is a noted issue~\cite{turian2020sorry,vahidi2023mesostructures,uzrad2024diffmoog}. 
+% Uzrad \textit{et al.}\cite{uzrad2024diffmoog} used log-spectral distance (LSD) as their loss function, where   
+% $\text{LSD} = \| \log(S(t)) - \log(S(x)) \|_F$, S is the mel-spectrogram of the sounds and F is the Frobenius norm~\cite{golub2013matrix}. The Frobenius norm of a matrix $A$ is defined as
+% $ \|A\|_F = \sqrt{\sum_{i,j} |a_{ij}|^2}$. Here, $A$ would be the 2D matrix resulting from subtracting two log-spectrograms. Along with other works, \textbf{non-convexity of loss surfaces when applying gradient optimization} is a noted issue~\cite{turian2020sorry,vahidi2023mesostructures,uzrad2024diffmoog}. 
 
-\section{What is Lacking In the Field}
+\subsection{What is Lacking In the Field}
 \label{sec:lacking}
-  % First, we need to clearly define the characteristics we are looking for with non-generic loss functions, otherwise the chances of finding the sound(s) of interest is slim. Second, we need to move beyond direct replication, and focus on imitating target sounds that are outside the synthesizers capabilities. Third, more complex methods of synthesis need to be explored for iterative sound-matching. Fourth, we need to find optimization methods that can effectively navigate the the sinusoidal nature of loss function landscapes. 
+%   % First, we need to clearly define the characteristics we are looking for with non-generic loss functions, otherwise the chances of finding the sound(s) of interest is slim. Second, we need to move beyond direct replication, and focus on imitating target sounds that are outside the synthesizers capabilities. Third, more complex methods of synthesis need to be explored for iterative sound-matching. Fourth, we need to find optimization methods that can effectively navigate the the sinusoidal nature of loss function landscapes. 
 
-Based on the literature reviewed, we find several gaps in past research that makes the application of sound-matching for sound-designers difficult. Thus far, replication of in-domain sounds has been the main subject of research. With in-domain replication, we already have the target sound \textit{and} the program that makes it. This simplifies the problem of measuring performance and is the reason why this type of sound-matching research is by far the most common. However, practical application of sound-matching requires answers to much harder problems. Sound-matching would be an interesting creative tool if we could use it to either:
-\begin{enumerate}
- \item \textbf{Replicate out-of-domain sounds}: this would give us the  the parameters that could closely approximate a target sound, and we can modify the sound further by modulating the synthesizer. 
-\item \textbf{Imitate in-domain or out-of-domain sounds}: This would allow for applying the characteristics of one sound to another. 
-\end{enumerate}
+% Based on the literature reviewed, we find several gaps in past research that makes the application of sound-matching for sound-designers difficult. Thus far, replication of in-domain sounds has been the main subject of research. With in-domain replication, we already have the target sound \textit{and} the program that makes it. This simplifies the problem of measuring performance and is the reason why this type of sound-matching research is by far the most common. However, practical application of sound-matching requires answers to much harder problems. Sound-matching would be an interesting creative tool if we could use it to either:
+% \begin{enumerate}
+%  \item \textbf{Replicate out-of-domain sounds}: this would give us the  the parameters that could closely approximate a target sound, and we can modify the sound further by modulating the synthesizer. 
+% \item \textbf{Imitate in-domain or out-of-domain sounds}: This would allow for applying the characteristics of one sound to another. 
+% \end{enumerate}
 
-We need to be aware of the ``open set recognition'' (\gls{OSR}) problem here \cite{mundt2019open,gers2000learning}.  OSR is a well documented issue in DL that manifests when the set or category that the network is supposed to reject or accept cannot be explained via examples. With imitation or replication of out-of-domain sounds, we can expect issues related to OSR to occur, since target and output sounds would be from different domains~\cite{salimi2021percussive}. 
+% We need to be aware of the ``open set recognition'' (\gls{OSR}) problem here \cite{mundt2019open,gers2000learning}.  OSR is a well documented issue in DL that manifests when the set or category that the network is supposed to reject or accept cannot be explained via examples. With imitation or replication of out-of-domain sounds, we can expect issues related to OSR to occur, since target and output sounds would be from different domains~\cite{salimi2021percussive}. 
 
-Perhaps one method of addressing the OSR problem is the use of representations (or feature extraction) methods that reduce sounds to a feature vector in the same domain. For example, a representation that only looks at the envelope of sounds is far less likely to be subject to the OSR problem. \textcolor{highlight}{We highlight the lack of non-generic loss functions as a major weakness in previous works and an interesting area to explore}. 
+% Perhaps one method of addressing the OSR problem is the use of representations (or feature extraction) methods that reduce sounds to a feature vector in the same domain. For example, a representation that only looks at the envelope of sounds is far less likely to be subject to the OSR problem. \textcolor{highlight}{We highlight the lack of non-generic loss functions as a major weakness in previous works and an interesting area to explore}. 
 
-Another weakness \textcolor{highlight}{is that the synthesis methods in past works are not representative of the common methods used by sound designers and modern synthesizers}. Simple FM/AM synthesizers have generally been the go-to methods of sound-matching. We believe that general statements regarding the effectiveness of an approach to iterative sound-matching (particularly in regards to a loss function) can only be reasonably made in the context of the subset of the tested methods of synthesis.
-\textcolor{highlight}{The simplicity of parameter optimization approaches} is another area of weakness in past works. Classic genetic algorithms update the parameters randomly, while in recent differentiable settings, simple gradient descent methods are used. Past works have provided issues which arise in differentiable parameter estimation due to periodic loss functions. Perhaps the use of reinforcement learning (\gls{RL}), or other algorithms that continually learn from their environment, could help with this problem.
+% Another weakness \textcolor{highlight}{is that the synthesis methods in past works are not representative of the common methods used by sound designers and modern synthesizers}. Simple FM/AM synthesizers have generally been the go-to methods of sound-matching. We believe that general statements regarding the effectiveness of an approach to iterative sound-matching (particularly in regards to a loss function) can only be reasonably made in the context of the subset of the tested methods of synthesis.
+% \textcolor{highlight}{The simplicity of parameter optimization approaches} is another area of weakness in past works. Classic genetic algorithms update the parameters randomly, while in recent differentiable settings, simple gradient descent methods are used. Past works have provided issues which arise in differentiable parameter estimation due to periodic loss functions. Perhaps the use of reinforcement learning (\gls{RL}), or other algorithms that continually learn from their environment, could help with this problem.
 
-\subsection{Defining The Major Issues}
-\label{sec:addressing_problems}
-Based on the weaknesses noted above, we propose four problems that need to be addressed to improve the sound-matching field. 
+% \subsection{Defining The Major Issues}
+% \label{sec:addressing_problems}
+
+Having looked at the current available literature, we note four major areas of weakness in sound-matching:
 \begin{enumerate}
     \item \LossSelect: Is there a \textit{best performing} loss function, or is the selection of the loss function dependent on factors such as the sound domain, synthesizer capability and the desired characteristics of the output? 
     \item \SynthSelect: There is a lack of diversity in the synthesis methods used in sound-matching. The use of different DSP functions for iterative sound-matching and their effects on the outcome or the interactions with the loss function have not been tested.
@@ -360,12 +365,12 @@ Based on the weaknesses noted above, we propose four problems that need to be ad
     \item \OutDomain: Sound-matching with out-of-domain sounds is an unexplored area, yet a necessary one for practical applications for sound designers.
 \end{enumerate}
 
-In Section~\ref{sec:what_is_done}, we discuss our work in simultaneously bridging the knowledge gap with regards to the \LossSelect~and \SynthSelect~problems. The latter two issues are left for future work; possible approaches are discussed in Sections~\ref{sec:summary_conclusion} and~\ref{sec:future}.
+In Section~\ref{sec:progs_methodology_results}, we discuss our work in simultaneously bridging the knowledge gap with regards to the \LossSelect~and \SynthSelect~problems. The latter two issues are left for future work; possible approaches are discussed in Sections~\ref{sec:summary_conclusion} and~\ref{sec:future}.
 
 
 \section{Programs, Methodology, and Results}
-\label{sec:what_is_done}
-In this section we report the results of our efforts in addressing the first two problems. \textbf{We compare the performance of iterative sound-matching experiments, where four differentiable loss functions are applied to four differentiable synthesizers.} What we mean by performance is the similarity of the final output to the target, as measured by P-Loss, MSS, and manual listening.
+\label{sec:progs_methodology_results}
+Towards addressing the first two problems, we compare the performance iterative sound-matching experiments, where four differentiable loss functions are applied to four differentiable synthesizers. What we mean by performance is the similarity of the final output to the target, as measured by P-Loss, MSS, and manual listening.
 
 \textbf{The hypothesis here is that the best performing loss function for sound-matching is influenced by the method of synthesis}. The results of these experiments show that there is no universally optimal loss function, strengthening the idea that the selection of the loss function and synthesis method is not an optimization problem, but a subjective choice depending on the needs of the sound designer. 
 
@@ -373,10 +378,12 @@ In Section~\ref{sec:methodology} we lay out the experiment methodology. Section~
 
 \subsection{Experiment Methodology}
 \label{sec:methodology}
-We have highlighted the lack of attention given to the selection of loss functions in sound-matching, and noted that the few existing works addressing this issue evaluate their proposed losses using only simplistic sound synthesis methods. \textcolor{highlight}{We hypothesize that the best performing loss function is influenced by the synthesis techniques utilized in the synthesizer}. This hypothesis targets the issues of \LossSelect~and \SynthSelect. For our experiments, we test four different loss functions and compare their success in sound-matching using four different synthesizers. We verify the success of the sound-matching process using two automatic measures of sound similarity (MSS and P-Loss) and a manual blinded hearing test conducted by two of the authors where likert scores~\cite{jebb2021review} of 1-5 are assigned to a subset of targets and outputs. 
+% We have highlighted the lack of attention given to the selection of loss functions in sound-matching, and noted that the few existing works addressing this issue evaluate their proposed losses using only simplistic sound synthesis methods. \textcolor{highlight}{We hypothesize that the best performing loss function is influenced by the synthesis techniques utilized in the synthesizer}. This hypothesis targets the issues of \LossSelect~and \SynthSelect. 
 
-An \textit{experiment} is one iteration of sound-matching, given a loss function, target sound,
-and synthesizer program. When the final iteration is complete, a score is given (automatically with an algorithm or with manual listening) to an experiment that measures its success in replicating the target sound. Consider the following example: we have two loss functions, $L_1$ and $L_2$, and a single synthesizer program $P$ with a target parameter set $\theta^*$ where the sound output is $t$, or $P(\theta^*) = t$. We run a large number (in this case, 300 for each loss function) of experiments where we randomly set the initial ($\theta_0$) and target parameters ($\theta^*$) of $P$ and run an iterative sound-matching loop for each loss function, with max number of iterations set to 200. When the loop is terminated, we measure the similarity of the final output sound $x$ (where $P(\theta_{199}) = x$) to $t$, or if using P-Loss we compare $\theta_{199}$ to $\theta^*$. Since we ran 300 experiments for each loss, we can compare the bootstrapped distribution of losses or likert scores~\cite{jebb2021review} assigned by manual review to determine whether $L_1$ or $L_2$ led to better performance. This simplified example leads us to our methodolgy which has four loss functions, four synthesizer programs, and three different methods of scoring sound similarity.
+We test four different loss functions and compare their success in sound-matching using four different synthesizers. We verify the success of the sound-matching process using two automatic measures of sound similarity (MSS and P-Loss) and a manual blinded hearing test conducted by two of the authors where likert scores~\cite{jebb2021review} of 1-5 are assigned to a subset of targets and outputs. 
+
+An \textit{experiment} is one iteration of sound-matching given a loss function, target sound,
+and synthesizer program. When the final iteration is complete, a score is given (automatically with an algorithm or with manual listening) to an experiment that measures its success in replicating the target sound. Consider the following example: we have two loss functions, $L_1$ and $L_2$, and a single synthesizer program $P$ with a target parameter set $\theta^*$ where the sound output is $t$, or $P(\theta^*) = t$. We run a large number (in this case, 300 for each loss function) of experiments where we randomly set the initial ($\theta_0$) and target parameters ($\theta^*$) of $P$ and run an iterative sound-matching loop for each loss function, with max number of iterations set to 200. When the loop is terminated, we measure the similarity of the final output sound $x$ (where $P(\theta_{199}) = x$) to $t$, or if using P-Loss we compare $\theta_{199}$ to $\theta^*$. Having 300 experiments gives us a distribution of losses to determine whether $L_1$ or $L_2$ led to better performance. This simplified example leads us to our methodology which has four loss functions, four synthesizer programs, and three different methods of scoring sound similarity.
 
 
 \subsubsection{Determining Best Performers}
@@ -390,17 +397,17 @@ For each program, the loss functions are ranked using the non-parametric Scott-K
 
 \input{extra_figures/evaluation_graph.tex}
 
-\subsubsection{Training Parameters and Gradient Calculations}
- Previous work utilized gradient fields for analysis of the algorithm performance and gradient update~\cite{vahidi2023mesostructures}. Gradient fields are not the center of our analysis, but we include them in Appendix~\ref{appendix:gradient_fields}. During the experiments, the updates applied to the initial parameters are recorded for gradient field generation. For updating the weights, we use RMSProp, which operates similar to stochastic gradient descent (SGD)~\cite{goodfellow2016deep}, with the caveat that the gradients of each weight are scaled by the root-mean-square of past gradients of that weight. We used a fixed learning rate of 0.045 for all experiments. The maximum number of iterations is set to 200, where, based on our observations, the parameters have either irrecoverably diverged outside the acceptable ranges, or are stuck at a local minimum. At the maximum number of iterations the search is terminated and the P-Loss and MSS (as described in Section~\ref{sec:fourier_specs}) are calculated using the iteratively updated parameters, or the final sound output.
+% \subsubsection{Training Parameters and Gradient Calculations}
+%  Previous work utilized gradient fields for analysis of the algorithm performance and gradient update~\cite{vahidi2023mesostructures}. Gradient fields are not the center of our analysis, but we include them in Appendix~\ref{appendix:gradient_fields}. During the experiments, the updates applied to the initial parameters are recorded for gradient field generation. For updating the weights, we use RMSProp, which operates similar to stochastic gradient descent (SGD)~\cite{goodfellow2016deep}, with the caveat that the gradients of each weight are scaled by the root-mean-square of past gradients of that weight. We used a fixed learning rate of 0.045 for all experiments. The maximum number of iterations is set to 200, where, based on our observations, the parameters have either irrecoverably diverged outside the acceptable ranges, or are stuck at a local minimum. At the maximum number of iterations the search is terminated and the P-Loss and MSS (as described in Section~\ref{sec:fourier_specs}) are calculated using the iteratively updated parameters, or the final sound output.
 
-Additionally, the gradients are large, and calculated backwards sequentially through the signal processing chain. This backward calculation resembles the \textit{exploding gradients} problem in recurrent neural networks~\cite{gers2000learning}. For this reason, gradient clipping~\cite{goodfellow2016deep} is used as a preemptive measure to prevent large divergences in the parameter updates, but it is unclear if it facilitates learning in these experiments. The gradient clipping function~\cite{goodfellow2016deep} takes a set of gradients $\gamma_i$ and ensures that the $\ell_2$ norm of all gradients, or $||\gamma||_2:=\sqrt{\sum\limits_{i}(\gamma_{i}\cdot\gamma_{i})}$ does not exceed a clipping threshold of c (here set to 1). Clipped gradients $\gamma_i^{\text{clipped}}$ are calculated by multiplying them with a scale factor $\mathcal{S}$
-\[
-\mathbf{\gamma}_i^{\text{clipped}} = \mathbf{\gamma}_i \cdot \mathcal{S}
-\]
-Where $\mathcal{S}$ is a value less than or equal to 1, depending on whether the norm of the gradients exceeds the threshold $c$.  
-\[
-\mathcal{S} = \frac{c}{\max(\|\mathbf{\gamma}\|_2, c)}
-\]
+% Additionally, the gradients are large, and calculated backwards sequentially through the signal processing chain. This backward calculation resembles the \textit{exploding gradients} problem in recurrent neural networks~\cite{gers2000learning}. For this reason, gradient clipping~\cite{goodfellow2016deep} is used as a preemptive measure to prevent large divergences in the parameter updates, but it is unclear if it facilitates learning in these experiments. The gradient clipping function~\cite{goodfellow2016deep} takes a set of gradients $\gamma_i$ and ensures that the $\ell_2$ norm of all gradients, or $||\gamma||_2:=\sqrt{\sum\limits_{i}(\gamma_{i}\cdot\gamma_{i})}$ does not exceed a clipping threshold of c (here set to 1). Clipped gradients $\gamma_i^{\text{clipped}}$ are calculated by multiplying them with a scale factor $\mathcal{S}$
+% \[
+% \mathbf{\gamma}_i^{\text{clipped}} = \mathbf{\gamma}_i \cdot \mathcal{S}
+% \]
+% Where $\mathcal{S}$ is a value less than or equal to 1, depending on whether the norm of the gradients exceeds the threshold $c$.  
+% \[
+% \mathcal{S} = \frac{c}{\max(\|\mathbf{\gamma}\|_2, c)}
+% \]
 
 
 \subsection{Loss Function Implementation Details}
@@ -420,7 +427,7 @@ We use the soft-DTW function, which is differentiable and --- depending on its p
 \label{sec:programs}
 The synthesizer programs are meant to be simple examples that test the building blocks of digital sound synthesis. Subtractive, additive, and FM/AM synthesis are three of the most common techniques in sound design~\cite{smith1991viewpoints}. In subtractive synthesis, frequencies are removed from a sound via digital filters. In additive synthesis, complex sounds are created via the linear combination of simpler sounds~\cite{lyons1997understanding,smith2007introduction}. As discussed previously, FM/AM synthesis refers to the general technique of modulating the frequency or amplitude of a waveform (the carrier) by another waveform (the modulator).
 
-For each program, we provide the Faust code~\cite{orlarey2009faust}. Faust is a functional language for audio synthesis that can succinctly define signal processing chains. The publicly available Faust IDE\footnote{\url{https://faustide.grame.fr/}} is the simplest method for running the programs. A brief overview of each program is given in Table~\ref{tab:programs}. The programs are first defined in Faust, then converted (or \textit{transpiled}) to differentiable Jax functions~\cite{deepmind2020jax} using the DawDreamer library\footnote{\url{https://github.com/DBraun/DawDreamer}}. 
+For each program, we provide the Faust code~\cite{orlarey2009faust}, which can be run in the online IDE~\footnote{\url{https://faustide.grame.fr/}}. Faust is a functional language for audio synthesis that can succinctly define signal processing chains. The programs are first defined in Faust, then converted (or \textit{transpiled}) to differentiable Jax functions~\cite{deepmind2020jax} using the DawDreamer library\footnote{\url{https://github.com/DBraun/DawDreamer}}. 
 
  Once the programs are transpiled to differentiable synthesizers, the iterative sound-matching procedure is:
  \begin{enumerate}
@@ -431,28 +438,30 @@ For each program, we provide the Faust code~\cite{orlarey2009faust}. Faust is a 
     \item Repeating the second step with the updated parameters $\hat{\theta}$, until maximum number of iterations has been reached
  \end{enumerate}
 
-A general overview of the programs and the predefined parameter ranges is given in Table~\ref{tab:programs}. In the following subsections, we describe the programs and their parameters in more detail, followed by the methodology in Section~\ref{sec:methodology} and results in Section~\ref{sec:results_posthoc}.
+% A general overview of the programs and the predefined parameter ranges is given in Table~\ref{tab:programs}.
 
-\begin{table*}[htbp]
-\centering
-\begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{|c|c|c|c|l|}
-\hline
-\textbf{ID} & \textbf{Parameters} & \makecell{\textbf{Param. 1}\\\textbf{Range}} & \makecell{\textbf{Param. 2}\\\textbf{Range}} & \textbf{Description} \\
-\hline
-\BPNoise & hp\_cut, lp\_cut & 50-1000 & 1-120 & Band-pass of Noise signal \\
-\hline
-\AddSineSaw & saw\_freq, sine\_freq & 20-1000 & 20-1000 & Addition of sine and saw waves \\
-\hline
-\AmpMod & amp, carrier & 1-20 & 20-1000 & LFO on amplitude of noise osc \\
-\hline
-\FMMod & amp, carrier & 0-5 & 0-4 & LFO on amplitude of saw osc \\
-\hline
-\end{tabular}
-\end{adjustbox}
-\caption{Overview of Program Parameters and the range of values each parameter can take.}
-\label{tab:programs}
-\end{table*}
+In the following subsections, we describe the programs and their parameters in more detail, followed by the methodology in Section~\ref{sec:methodology} and results in Section~\ref{sec:results_posthoc}.
+
+% \begin{table*}[htbp]
+% \centering
+% \begin{adjustbox}{max width=\textwidth}
+% \begin{tabular}{|c|c|c|c|l|}
+% \hline
+% \textbf{ID} & \textbf{Parameters} & \makecell{\textbf{Param. 1}\\\textbf{Range}} & \makecell{\textbf{Param. 2}\\\textbf{Range}} & \textbf{Description} \\
+% \hline
+% \BPNoise & hp\_cut, lp\_cut & 50-1000 & 1-120 & Band-pass of Noise signal \\
+% \hline
+% \AddSineSaw & saw\_freq, sine\_freq & 20-1000 & 20-1000 & Addition of sine and saw waves \\
+% \hline
+% \AmpMod & amp, carrier & 1-20 & 20-1000 & LFO on amplitude of noise osc \\
+% \hline
+% \FMMod & amp, carrier & 0-5 & 0-4 & LFO on amplitude of saw osc \\
+% \hline
+% \end{tabular}
+% \end{adjustbox}
+% \caption{Overview of Program Parameters and the range of values each parameter can take.}
+% \label{tab:programs}
+% \end{table*}
 
 \subsubsection{\BPNoise}
 \label{sec:program0}
@@ -511,8 +520,7 @@ Relative to additive and subtractive synthesis, AM/FM synthesis are less common 
 \subsection{Post hoc Analysis of Loss Performance}
 \label{sec:results_posthoc}
 As summarized in Figure~\ref{fig:posthoc_evaluation}, for each program and scoring method, there are four sets of empirical results (a set of 1000 bootstrapped values for each loss function). A post-hoc test is conducted in two stages in order to determine whether there is a difference in performance between loss functions for each program, and if so, which are the best performers. The first stage determines whether there is a difference in group means, with the null hypothesis being that all groups have similar mean ranks. If the null hypothesis is rejected, the second stage ranks the loss functions from best to worst using the non-parametric Scott-Knott algorithm (\gls{SNPK})~\cite{tantithamthavorn2017mvt,tantithamthavorn2018optimization}.
-
-The Kruskal-Wallis test is used for the first stage~\cite{kruskal1952use}. This test works by pooling and ranking all performance evaluation measures for a program (either P-loss or MSS), then testing whether the differences in mean rank for all loss function groups is zero. The Kruskal-Wallis test calculates an H statistic that is compared to a chi-square distribution with k-1 degrees of freedom (k is the number of groups, or 4, and degrees of freedom is 3). Using the significance level of 0.05, if the H statistic is greater than the critical value of the chi-square distribution then the null hypothesis is rejected, meaning that at least one group has a mean rank significantly above others~\cite{kruskal1952use}. Table~\ref{tab:kruskal_auto} shows the Kruskal-Wallis results for every program and automatic evaluation method, and shows that significant differences exist in all cases except MSS for the \AmpMod{} program. The manual ranking results showed significant differences in all cases, as shown in table~\ref{tab:kruskal_manual}.
+The Kruskal-Wallis test is used for the first stage~\cite{kruskal1952use}. This test works by pooling and ranking all performance evaluation measures for a program, then testing whether the differences in mean rank for all loss function groups is zero. The Kruskal-Wallis test calculates an H statistic that is compared to a chi-square distribution with k-1 degrees of freedom (k is the number of groups, or 4, and degrees of freedom is 3). Using the significance level of 0.05, if the H statistic is greater than the critical value of the chi-square distribution then the null hypothesis is rejected, meaning that at least one group has a mean rank significantly above others~\cite{kruskal1952use}. Table~\ref{tab:kruskal_auto} shows the Kruskal-Wallis results for every program and evaluation method, and shows that significant differences exist in all cases except MSS for the \AmpMod{} program. 
 
 \begin{table}[ht]
 \centering
@@ -522,33 +530,37 @@ The Kruskal-Wallis test is used for the first stage~\cite{kruskal1952use}. This 
 \hline
 \BPNoise & MSS      & 81.19  & $1.70 \times 10^{-17}$ & Yes \\
 \BPNoise & P-Loss  & 163.60 & $3.07 \times 10^{-35}$ & Yes \\
+\BPNoise & Manual & 9.45  & $2.39 \times 10^{-2}$ & Yes \\
 \AddSineSaw & MSS      & 308.97 & $1.14 \times 10^{-66}$ & Yes \\
 \AddSineSaw & P-Loss  & 348.42 & $3.28 \times 10^{-75}$ & Yes \\
+\AddSineSaw & Manual & 9.45  & $2.39 \times 10^{-2}$ & Yes \\
 \AmpMod & MSS      & 1.35   & $0.7171$               & No \\
 \AmpMod & P-Loss  & 366.76 & $3.50 \times 10^{-79}$ & Yes \\
+\AmpMod & Manual & 32.71 & $3.70 \times 10^{-7}$ & Yes \\
 \FMMod & MSS      & 564.65 & $4.65 \times 10^{-122}$ & Yes \\
 \FMMod & P-Loss  & 229.19 & $2.07 \times 10^{-49}$ & Yes \\
+\FMMod & Manual &  207.58 & $9.69 \times 10^{-45}$ & Yes \\
 \hline
 \end{tabular}
-\caption{Kruskal-Wallis results by program and evaluation method. The null hypothesis is that no difference in performance is observed between loss functions; it is rejected for all programs and evaluation methods with the exception of MSS combined with \AmpMod.}
+\caption{Kruskal-Wallis results by program and evaluation method..}
 \label{tab:kruskal_auto}
 \end{table}
 
-\begin{table}[ht]
-\centering
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Program} & \textbf{H-Stat.} & \textbf{P-value} & \textbf{Reject} \\
-\hline
-\BPNoise & 9.45  & $2.39 \times 10^{-2}$ & Yes \\
-\AddSineSaw & 9.45  & $2.39 \times 10^{-2}$ & Yes \\
-\AmpMod & 32.71 & $3.70 \times 10^{-7}$ & Yes \\
-\FMMod & 207.58 & $9.69 \times 10^{-45}$ & Yes \\
-\hline
-\end{tabular}
-\caption{Manual ranking Kruskal-Wallis results. Significant differences are observed for all programs.}
-\label{tab:kruskal_manual}
-\end{table}
+% \begin{table}[ht]
+% \centering
+% \begin{tabular}{|c|c|c|c|}
+% \hline
+% \textbf{Program} & \textbf{H-Stat.} & \textbf{P-value} & \textbf{Reject} \\
+% \hline
+% \BPNoise & 9.45  & $2.39 \times 10^{-2}$ & Yes \\
+% \AddSineSaw & 9.45  & $2.39 \times 10^{-2}$ & Yes \\
+% \AmpMod & 32.71 & $3.70 \times 10^{-7}$ & Yes \\
+% \FMMod & 207.58 & $9.69 \times 10^{-45}$ & Yes \\
+% \hline
+% \end{tabular}
+% \caption{Manual ranking Kruskal-Wallis results. Significant differences are observed for all programs.}
+% \label{tab:kruskal_manual}
+% \end{table}
 
 
 
@@ -589,7 +601,7 @@ For this synthesizer program, the spectrogram-based models performed the best. T
         }
     \end{minipage}
     \vspace{-0.5em}
-    \caption{\BPNoise~bootstrapped distributions and ranks given by NPSK. Ranks and their corresponding colors from best to worst are \colorbox{rank1}{\textcolor{black}{\textbf{1}}}, \colorbox{rank2}{\textcolor{white}{\textbf{2}}}, \colorbox{rank3}{\textcolor{white}{\textbf{3}}}, \colorbox{rank4}{\textcolor{white}{\textbf{4}}}.}
+    \caption{\BPNoise~bootstrapped distributions and ranks given by NPSK.}
     \label{fig:npsk_p0}
 \end{figure*}
 \begin{figure*}[htbp]
@@ -700,10 +712,54 @@ As we've discussed, automatic sound evaluation methods are unreliable, as we do 
 
 To measure the agreement between the two listeners, Spearman's rank correlation is used. The Spearman test returns a p-value for the null hypothesis of no correlation, along with a $\rho$ value between -1 to 1; -1 for perfect negative correlation, 1 for perfect correlation, and 0 for no correlation~\cite{spearman1987proof,rebekic2015pearson}. For each program and loss function, the blind manual hearing test gives us 80 ranks, which are given by two of the authors to a set of 40 randomly selected experiment results. This gives 160 data points per program, and 640 data points for all four programs. We computed Spearman correlations between the two reviewers. Across all programs, the correlation was very strong ($\rho = 0.86$, $p < 10^{-180}$). Per-program correlations were similarly strong and statistically significant: $\rho = 0.71$ for \BPNoise{} ($p < 10^{-25}$), $\rho = 0.64$ for \AddSineSaw{} ($p < 10^{-19}$), $\rho = 0.84$ for \AmpMod{} ($p < 10^{-43}$), and $\rho = 0.85$ for \FMMod{} ($p < 10^{-44}$). 
 
-Tables~\ref{tab:p0},~\ref{tab:p1},~\ref{tab:p2}, and~\ref{tab:p3} show the rankings for each program, with ranks different from the corresponding hearing test results marked with an asterisk. Both MSS and P-Loss gave a different rank from the hearing results in 3 out of 16 cases, which---somewhat surprisingly---shows consistency between automatic and manual hearing tests, at least for the simple programs used in this work. We also observe that identical top ranks were consistent across performance evaluation methodologies, with the exception of P-Loss in \BPNoise, which narrowly picks a different spectrogram-based loss function.
-\input{extra_figures/ranking_tables}
+Table~\ref{tab:combined_ranks} shows the rankings for each program, with ranks different from the corresponding hearing test results marked with an asterisk. Both MSS and P-Loss gave a different rank from the hearing results in 3 out of 16 cases, which---somewhat surprisingly---shows consistency between automatic and manual hearing tests, at least for the simple programs used in this work. We also observe that identical top ranks were consistent across performance evaluation methodologies, with the exception of P-Loss in \BPNoise, which narrowly picks a different spectrogram-based loss function.
+% \input{extra_figures/ranking_tables}
+\begin{table*}[htbp]
+\centering
+\footnotesize
+\begin{tabular}{|c|ccc|ccc|ccc|ccc|}
+\hline
+\textbf{Function} 
+  & \multicolumn{3}{c|}{\BPNoise}
+  & \multicolumn{3}{c|}{\AddSineSaw}
+  & \multicolumn{3}{c|}{\AmpMod}
+  & \multicolumn{3}{c|}{\FMMod} \\
+\cline{2-13}
+  & MSS & P-LOSS & Hearing 
+  & MSS & P-LOSS & Hearing 
+  & MSS & P-LOSS & Hearing 
+  & MSS & P-LOSS & Hearing \\
+\hline
+\textbf{SIMSE} 
+  & 1    & 2*   & 1    
+  & 4    & 4    & 4    
+  & 3*   & 4    & 4    
+  & 2    & 2    & 2    \\
+\textbf{L1}    
+  & 2    & 1*   & 2    
+  & 2    & 2    & 2    
+  & 2    & 2    & 2    
+  & 3    & 3    & 3    \\
+\textbf{JTFS}  
+  & 3    & 4*   & 3    
+  & 1*   & 1    & 1    
+  & 4*   & 3    & 3    
+  & 4    & 4    & 4    \\
+\textbf{DTW}   
+  & 4*   & 3    & 3    
+  & 3    & 3    & 3    
+  & 1    & 1    & 1    
+  & 1    & 1    & 1    \\
+\hline
+\end{tabular}
+\vspace{0.25em}
+\caption{Ranks for each synthesis method (rows) under the three evaluation metrics (columns), across four targets (\BPNoise, \AddSineSaw, \AmpMod, \FMMod). Asterisks denote the best (lowest) rank in each column.}
+\label{tab:combined_ranks}
+\end{table*}
+
+
 \subsection{Takeaways}
-Perhaps the most important takeaway from our analysis is that the loss function that yields the best sound-matching outcomes varies depending on the synthesizer program. This is perhaps due to the interaction between how the parameters of the synthesizer influence the sound, and the core sonic features of the loss function.
+An important takeaway is that the loss function that yields the best sound-matching outcomes varies depending on the synthesizer program. This is perhaps due to the interaction between how the parameters of the synthesizer influence the sound, and the core sonic features of the loss function.
 
 We also see that the novel \SIMSESpec{} and \DTWEnv{} loss functions (to our knowledge, not previously used in iterative sound-matching), lead to the best results in three of the four programs. This shows room for further creative approaches to differentiable sound-similarity measures, particularly since we observed that SOTA loss functions can be ineffective depending on the design of a synthesizer. 
 
@@ -716,11 +772,11 @@ Finally, we surprisingly see somewhat consistent results between the rankings as
  
 We exposed several areas of weakness in the field, for which we presented methods for bridging the knowledge gaps. These issues included loss and synthesizer selection, periodic loss landscapes, and verification of performance measures with in-domain and out-of-domain sounds. The first two issues being the main target of the experiments in this work. 
 
-Using simple synthesizers, small sound domains, and a limited number of loss functions, previous works have been able to claim some loss functions or feature extractors for audio as ``better performing" for sound-matching (or other audio-related tasks)\cite{vahidi2023mesostructures,turian2020sorry,masuda2021soundmatch,engel2020ddsp,han2023perceptual}. Is the search for a universally best-performing loss function a worthy endeavor, or perhaps the choice of loss function is domain dependent?
+Using simple synthesizers, small sound domains, and a limited number of loss functions, previous works have been able to claim some loss functions or feature extractors for audio as ``better performing" for sound-matching (or other audio-related tasks)~\cite{vahidi2023mesostructures,turian2020sorry,masuda2021soundmatch,engel2020ddsp,han2023perceptual}. Is the search for a universally best-performing loss function a worthy endeavor, or perhaps the choice of loss function is domain dependent?
 
 The main hypothesis tested here is whether the performance of differentiable loss functions is influenced by the synthesis techniques used for sound-matching. We created iterative sound-matching experiments by combining four different loss functions with four different sound synthesis programs. We ranked the performance of the iterative sound-matching pipelines for every loss function and program, and observed that the success of the pipeline (that is, how closely the output sound matches the target sound) is program dependent. In other words, different synthesizer programs work best with different loss functions. 
 
- We considered P-Loss and MSS as performance measures, commonly used in other sound-matching works, and compared their rankings to those given by blind hearing tests. We observed that automatic performance measures and manual listening tests were often (though not always) in agreement. Manual verification of sound-matching results remains a necessity for future works.  
+ We considered P-Loss and MSS as performance measures, commonly used in other sound-matching works, and compared their rankings to those given by blind hearing tests. We observed that automatic performance measures and manual listening tests were often (though not always) in agreement, despite this, we believe that manual verification of sound-matching results remains a necessity for future works.  
 
 \section{Weaknesses}
 Compared to previous work, we presented a relatively more cohesive approach to iterative sound-matching which utilizes and compares four loss functions and four synthesis methods. However, there are many other untested methods of synthesis that can be combined in practically infinite ways. 
