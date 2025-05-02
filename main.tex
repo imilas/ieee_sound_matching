@@ -15,13 +15,11 @@
 % my added packages and commands =======================
 \usepackage[numbers]{natbib} %removed cite package
 \usepackage{tikz}
+\usetikzlibrary{positioning,shapes.geometric}
 \usepackage{adjustbox}
 \usepackage{listings}
 \usepackage{caption}         
-% re-enable caption functionality
 \captionsetup[lstlisting]{justification=centering, singlelinecheck=false}
-
-\usetikzlibrary{positioning,shapes.geometric}
 
 \providecommand{\gls}[1]{#1}
 \definecolor{highlight}{RGB}{00,150,00}
@@ -30,30 +28,14 @@
 \definecolor{rank2}{HTML}{858585}
 \definecolor{rank3}{HTML}{454545}
 \definecolor{rank4}{HTML}{000000}
-
-\newcommand{\staronsquare}{
-    \tikz[baseline=0ex]{
-        % Blue square with increased size
-        \fill[blue] (0,0) rectangle (2ex,2ex);
-        % Yellow star character centered on the square, larger font size
-        \node at (1ex,0.8ex) {\textcolor{yellow}{\large *}};
-    }
-}
-
-\newcommand{\vertdashred}[1][0.3cm]{% Default height is 2cm
-    \tikz[baseline]{\draw[red, dashed,line width=0.5mm] (0,0) -- (0,#1);}
-}
-
 \newcommand{\SIMSESpec}{\texttt{SIMSE\_Spec}}
 \newcommand{\LoneSpec}{\texttt{L1\_Spec}}
 \newcommand{\JTFS}{\texttt{JTFS}}
 \newcommand{\DTWEnv}{\texttt{DTW\_Envelope}}
-
 \newcommand{\LossSelect}{\textbf{Loss Selection}}
 \newcommand{\SynthSelect}{\textbf{Synthesis Selection}}
 \newcommand{\PeriodicLoss}{\textbf{Periodic Loss}}
 \newcommand{\OutDomain}{\textbf{Out-Domain Generation}}
-
 \newcommand{\BPNoise}{\textbf{BP-Noise}}  
 \newcommand{\AddSineSaw}{\textbf{Add-SineSaw}}  
 \newcommand{\AmpMod}{\textbf{Noise-AM}}  
@@ -63,7 +45,7 @@
 
 %  ================================
 \begin{document}
-\title{Sound Similarity, Sound Matching, and Differentiable Audio Synthesizer Control}
+\title{Measuring Sound Similarity for Iterative Sound-Matching}
 
 \author{Amir Salimi, Abram Hindle, Osmar R Zaiane}
 
@@ -74,7 +56,7 @@
 \maketitle
 
 \begin{abstract}
-Manual sound design with a synthesizer is inherently iterative: an artist compares the synthesized output to a mental target, adjusts parameters, and repeats until satisfied. There are practically an infinite number of parameter combinations, and their effect on the output sound is hard to predict. Iterative sound-matching automates this workflow by continually programming a synthesizer under the guidance of a loss function that quantifies similarity to the target sound. Prior comparisons of loss functions have typically favored one metric over another, but only within narrow settings: limited synthesis methods, few loss types, often without blind listening tests. This leaves open whether a universally optimal loss exists, or the choice of loss remains a creative decision conditioned on the synthesis method and the sound designer's preferences. We propose differentiable iterative sound-matching as the natural extension of the available literature, since it combines the manual approach to sound design with modern advances in machine learning. To analyze the variability of loss function performance across synthesizers, we implemented differentiable subtractive, additive, and AM synthesizers, paired with four novel or established differentiable loss functions. For each of the sixteen synthesizer–loss combinations, we ran 300 randomized sound-matching trials. We calculated parameter differences, spectrogram-distance metrics, and gathered blind listening scores. A post-hoc analysis shows that no single loss function dominates across all synthesis methods; instead, the optimal measure depends on the architecture at hand. These findings underscore the value of developing new similarity metrics tailored to specific synthesis techniques, rather than pursuing a one-size-fits-all solution.
+Manual sound design with a synthesizer is inherently iterative: an artist compares the synthesized output to a mental target, adjusts parameters, and repeats until satisfied. Iterative sound-matching automates this workflow by continually programming a synthesizer under the guidance of a loss function that quantifies similarity to the target sound. Prior comparisons of loss functions have typically favored one metric over another, but only within narrow settings: limited synthesis methods, few loss types, often without blind listening tests. This leaves open whether a universally optimal loss exists, or the choice of loss remains a creative decision conditioned on the synthesis method and the sound designer's preference. We propose differentiable iterative sound-matching as the natural extension of the available literature, since it combines the manual approach to sound design with modern advances in machine learning. To analyze the variability of loss function performance across synthesizers, we implemented differentiable subtractive, additive, and AM synthesizers, paired with four novel or established differentiable loss functions. For each of the sixteen synthesizer–loss combinations, we ran 300 randomized sound-matching trials. We calculated parameter differences, spectrogram-distance metrics, and gathered blind listening scores. A post-hoc analysis shows that no single loss function dominates across all synthesis methods; instead, the optimal measure depends on the architecture at hand. These findings underscore the value of developing new similarity metrics tailored to specific synthesis techniques, rather than pursuing a one-size-fits-all solution.
 \end{abstract}
 
 % the automatic performance measures have not been compared to human hearing
@@ -89,31 +71,28 @@ Since the 1970s, artists such as Suzanne Ciani~\cite{ciani_life_in_waves} have e
 
 A digital audio synthesizer is any software used for the creation and manipulation of audio. Since the advent of digital signal processing (\gls{DSP}) in the 1960s~\cite{stranneby2004digital}, a wide variety of parametric audio generation functions have been proposed~\cite{lyons1997understanding,russ1999sound,shier2020spiegelib}. Manual sound design with a synthesizer is an iterative process of trial and error; when the artist has a desired (or target) sound in mind, sound design involves listening to the output, determining whether the output is closer or farther from the target, and adjusting the parameters accordingly until the target is reached~\cite{russ1999sound}. This paper explores the automation of this process, which we call \textit{iterative sound-matching}.
 
-Automatic sound design has been a subject of research for decades, with reduction of tinkering time and creation of ``interesting" sounds as the main motivators \cite{krekovic2019insights,turian2020sorry,horner1993machine,salimi2020make,esling2019flow,engel2020ddsp,mitchell2007evolutionary,shier2020spiegelib}. \textbf{Sound-matching} is a common form of automatic sound design explored in literature, where the goal is to find parameters for a synthesizer that replicate \textit{all} or \textit{some} of the characteristics of a target sound as best as possible, given some kind of similarity metric (or loss function)~\cite{horner1993machine,mitchell2007evolutionary}. Our analysis of past works shows that this general goal of ``sound-matching'' can be broken down in to very different subtypes, many of them rarely or never explored. This leads us to a typology of sound-matching tasks, and the importance of \textit{differentiable, iterative sound-matching} as the extension of current work. 
+Automatic sound design has been a subject of research for decades, with reduction of tinkering time and creation of ``interesting" sounds as the main motivators \cite{krekovic2019insights,turian2020sorry,horner1993machine,salimi2020make,esling2019flow,engel2020ddsp,mitchell2007evolutionary,shier2020spiegelib}. \textit{Sound-matching} is a common form of automatic sound design explored in literature, where the goal is to find parameters for a synthesizer that replicate \textit{all} or \textit{some} of the characteristics of a target sound as best as possible, given some kind of similarity metric (or loss function)~\cite{horner1993machine,mitchell2007evolutionary}. Our analysis of past works shows that this general goal of ``sound-matching'' can be broken down in to very different subtypes, many of them rarely or never explored. This leads us to a typology of sound-matching tasks, and the importance of \textit{differentiable, iterative sound-matching} as the extension of current work. 
 
-What we call ``iterative sound-matching'' refers to works that mimic the back-and-forth process of listening to a synthesizer's output and updating the parameters until the termination conditions are met. The two necessary components are the \textit{loss function}, which determines how close two sounds are, and the \textit{parametric synthesizer} that outputs sounds based on input parameters. In the iterative workflow, a target sound is selected, the synthesizer outputs sounds based on its parameters, and the loss function determines the proximity of the output to the target. From there, the synthesizer parameters are updated, the output and target are compared, and so on. 
+``iterative sound-matching'' refers to works that mimic the back-and-forth process of listening to a synthesizer's output and updating the parameters until the termination conditions are met. The two necessary components are the \textit{loss function}, which determines how close two sounds are, and the \textit{parametric synthesizer} that outputs sounds based on input parameters. In the iterative workflow, a target sound is selected, the synthesizer outputs sounds based on its parameters, and the loss function determines the proximity of the output to the target. From there, the synthesizer parameters are updated, the output and target are compared, and so on. 
 
-Despite the early popularity of the iterative approach~\cite{justice1979analytic,horner1993machine,mitchell2007evolutionary}, recent works in sound-matching have favored the supervised approach using inference models, deep neural-networks (\gls{DNN}), and large datasets. Rather than continually interacting with the environment, these models learn from a dataset of inputs (synthesizer parameters) and outputs (corresponding sound), and predict the synthesizer parameters for new sounds~\cite{yee2018automatic,han2023perceptual,han2024learning}. 
+Despite the early popularity of the iterative approach~\cite{justice1979analytic,horner1993machine,mitchell2007evolutionary}, recent works in sound-matching have favored supervised learning using inference models, deep neural-networks (\gls{DNNs}), and large datasets. Rather than continually interacting with the environment, these models learn from a dataset of inputs (synthesizer parameters) and outputs (corresponding sound), and predict the synthesizer parameters for new sounds~\cite{yee2018automatic,han2023perceptual,han2024learning}. 
 
 Iterative sound-matching is interesting for multiple reasons. First, it better resembles the human approach to sound-design, which requires continually interacting with the environment and making decisions according to a feedback signal~\cite{sutton2018reinforcement}. Second, the trial-and-error approach leaves a trail of parameter sets from the starting point to the end goal, which could be of use to sound designers. Third, relative to the DNN-based inference models, it provides a more tractable environment with room for creative approaches to sound-similarity definitions. 
 
-With the goal of improving iterative sound-matching algorithms for sound designers, we identify a number of weaknesses in current literature (see Section~\ref{sec:lacking}). The experiments in this work pertain to two core issues, which we named \LossSelect~and \SynthSelect. The former refers to the search for an optimal loss function, lack of novel algorithms, and the---perhaps needless---focus on outperforming state of the art (\gls{SOTA}), while the latter refers to the lack of diversity in synthesis methods.
+We discuss the history of sound-matching, and provide a nomenclature for different subtypes of sound-matching tasks. A number of weaknesses in current literature (see Section~\ref{sec:lacking}) are identified. The experiments in this work focus on two of these core issues, referred to as  \LossSelect~and \SynthSelect. The former refers to the search for an optimal loss function, lack of novel algorithms, and the---perhaps needless---focus on outperforming state of the art (\gls{SOTA}), while the latter refers to the lack of diversity in synthesis methods.
 
 In the case of \LossSelect, there have been many works and experiments comparing the accuracy of loss functions and choosing the best performers~\cite{vahidi2023mesostructures,turian2020sorry,engel2020ddsp,uzrad2024diffmoog,han2023perceptual,masuda2021soundmatch,turian2020sorry,bruford2024synthesizer}.  We note that these claims regarding the effectiveness of one function versus another have consistently been made in limited contexts that may not generalize to other settings. One such limitation is the synthesizers used, and ties into the problem of \SynthSelect, as typically only a single (and often, simple) synthesizer has been used for testing the effectiveness of loss functions. Furthermore, there is a lack of diversity in the underlying functions used by the synthesizers, with simple Frequency Modulation (\gls{FM}) being the most common method of synthesis~\cite{horner1993machine,vahidi2023mesostructures,mitchell2007evolutionary,caspe2023envelope}. 
 
-Considering the interplay between the two problems, we design experiments that address them simultaneously. We hypothesize that the performance of a similarity measure is influenced by other factors in the environment, particularly the method of synthesis. We combine 4 loss functions with 4 differentiable synthesizers, and compare their performance (as measured by the similarity of the final output or parameters to the target or target parameters). Our experiments show that when accounting for different synthesizers, there is no consistent choice of sound similarity measure for optimal performance in sound-matching. In some experiments, \DTWEnv, a novel loss function that only looks at envelope similarity, matches or outperforms commonly used methods of audio comparison. These results imply that rather than aiming to outperform the SOTA and finding a universal best performer, more effort could be placed towards diversifying the existing similarity measures of sound as well as conducting experiments using a variety of synthesis methods. Sound design is an inherently creative endeavor, and would likely benefit from a diversified range of solutions for different approaches. 
+Considering the interplay between the two problems, we design experiments that address them simultaneously. Testing the hypothesis that the performance of a similarity measure is influenced by other factors in the environment, particularly the method of synthesis. We combine 4 loss functions with 4 differentiable synthesizers, and compare their performance (as measured by the similarity of the final output or parameters to the target or target parameters). Our experiments show that when accounting for different synthesizers, there is no consistent choice of sound similarity measure for optimal performance in sound-matching. In some experiments, \DTWEnv, a novel loss function that only looks at envelope similarity, matches or outperforms commonly used methods of audio comparison. These results imply that rather than aiming to outperform the SOTA and finding a universal best performer, more effort could be placed towards diversifying the existing similarity measures of sound as well as conducting experiments using a variety of synthesis methods. Sound design is an inherently creative endeavor, and would likely benefit from a diversified range of solutions for different approaches. 
 
 \subsection{Differentiable Sound-Matching}
-This work takes a \textit{differentiable} approach to iterative sound-matching, a natural extension of early iterative sound-matching combined with recent advances in Machine Learning (\gls{ML}) software~\cite{braun2024dac,paszke2019pytorch} and increase computational power~\cite{moore2012introduction,schaller1997moore}. A differentiable approach requires differentiable loss and synthesizer functions, allowing the synthesizer parameters to be updated using gradient descent~\cite{goodfellow2016deep,boyd2004convex}. Ideally, these updates are in a direction that improves audio similarity by reducing loss. 
+It is important to note that this work takes a \textit{differentiable} approach to iterative sound-matching, a natural extension of early iterative sound-matching combined with recent advances in Machine Learning (\gls{ML}) software~\cite{braun2024dac,paszke2019pytorch} and increase in computational power~\cite{moore2012introduction,schaller1997moore}. A differentiable approach requires differentiable loss and synthesizer functions, allowing the synthesizer parameters to be updated using gradient descent~\cite{goodfellow2016deep,boyd2004convex}. Ideally, these updates are in a direction that improves audio similarity by reducing loss. 
  
- As we discuss in Section~\ref{sec:related_works}, nearly all past works pertaining to iterative sound-matching have used genetic algorithms (\gls{GA})~\cite{holland1992genetic} where parameters are randomly changed with hopes of increasing similarity. Differentiable settings have the benefit of making more directed updates to the synthesizer parameters, but have major drawbacks. Other than requiring more computation power, differentiable functions require careful implementation of operations that are continuous and numerically stable; this makes the implementation of signal processing functions quite difficult, which explains the scarcity of works in this domain.
+ Genetic algorithms (\gls{GA})~\cite{holland1992genetic} have been the predominant approach to iterative sound-matching, where parameters are randomly changed with hopes of increasing similarity. Differentiable settings have the benefit of making goal-oriented updates to the synthesizer parameters (the goal being the minimization of loss). There are also drawbacks: other than requiring more computation power, differentiable functions require careful implementation of operations that are continuous and numerically stable; this makes the implementation of signal processing functions quite difficult, contributing to the scarcity of works in this domain.
  
 \section{Background}
-In this Section, we give a formal definition of sound-matching and the necessary components. The \textit{type} of sound-matching problem is dependent on the implementation of these components and the source of target sounds. We give a summary of different possible implementations and goals for sound-matching, and provide brief examples of previous works where applicable. We also give a typology of sound-matching types and major perennial issues that need to be addressed in future works. Finally, we introduce our formal definition of \textit{iterative sound-matching} in Section~\ref{sec:iterative_sound_matching}.
-
-% Due to their pivotal role in our experiments, a discussion of similarity measures, or \textit{loss functions} is provided in Section~\ref{sec:loss_funcs}. A formal definition of loss functions and specific implementations of four loss functions are given. 
-
 \label{sec:background}
+In this Section, we give a formal definition of sound-matching and the necessary components. The \textit{type} of sound-matching problem is dependent on the implementation of these components and the source of target sounds. We give a summary of different possible component implementations and goals for sound-matching, and provide brief examples of previous works where applicable. These discussions lead to a nomenclature for types of sound-matching, as well as major perennial issues that need to be addressed in future works. Finally, we introduce our formal definition of \textit{iterative sound-matching}.
 
 \subsection{Digital Audio Synthesis}
 \label{sec:diffSynth}
@@ -771,8 +750,7 @@ Finally, we surprisingly see somewhat consistent results between the rankings as
 \label{sec:summary_conclusion}
 \textbf{Conclusion:} Sound-matching is an umbrella term for the algorithmic programming of audio synthesizers, often with the goal of assisting sound designers. Here we provided a history of sound-matching, and discussed the importance of ``differentiable iterative sound-matching'' as a natural extension current literature.
 
-
-The main hypothesis tested here is whether the performance of differentiable loss functions is influenced by the synthesis techniques used for sound-matching. We created iterative sound-matching experiments by combining four different loss functions with four different sound synthesis programs. We ranked the performance of the iterative sound-matching pipelines for every loss function and program, and observed that the success of the pipeline (that is, how closely the output sound matches the target sound) is program dependent. In other words, different synthesizer programs work best with different loss functions. 
+The main hypothesis tested here is whether the performance of differentiable loss functions is influenced by the synthesis techniques used for sound-matching. We created iterative sound-matching experiments by combining four different loss functions with four different sound synthesis programs. We ranked the performance of the iterative sound-matching pipelines for every loss function and program, and observed that the success of the pipeline (that is, how closely the output sound matches the target sound) is program dependent. In other words, different synthesizer programs work best with different loss functions. Notably, we see that our DTW and SIMSE based differentiable loss functions (\DTWEnv{} and \SIMSESpec) can outperform what are regarded as the SOTA loss functions, although this is highly synthesizer dependent. 
 
 P-Loss and MSS have frequently been used as automatic performance measures, yet their ``preference'' has rarely been compared to human rankings. We observed that automatic performance measures and manual listening tests were often (though not always) in agreement, despite this, we believe that manual verification of sound-matching results remains a necessity for future works.  
 
