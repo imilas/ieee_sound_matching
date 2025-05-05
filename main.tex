@@ -47,7 +47,7 @@
 \begin{document}
 \title{Measuring Sound Similarity for Iterative Sound-Matching}
 
-\author{Amir Salimi, Abram Hindle, Osmar R Zaiane}
+\author{Amir Salimi, Abram Hindle, Osmar R. Za{\"i}ane}
 
 % The paper headers
 \markboth{IEEE TRANSACTIONS ON AUDIO, SPEECH AND LANGUAGE PROCESSING, VOL -, 2025}%
@@ -124,7 +124,7 @@ L(\theta, t) =  d\langle\phi(t),\phi(x)\rangle
 \noindent
 
 A proxy representation is the output of the function \( \phi \), which can be thought of as a feature extraction function that maps the sounds \( t \) and \( x \) to their respective representations. 
-The proportionality or distance metric $d$ has typically been the L1 distance~\cite{turian2020sorry}, calculated as the mean of the absolute difference between every point in the proxy representation~\cite{engel2020ddsp,vahidi2023mesostructures}:
+The proportionality or distance metric $d$ has typically been the L1 distance~\cite{turian2020sorry,richard2025model}, calculated as the mean of the absolute difference between every point in the proxy representation~\cite{engel2020ddsp,vahidi2023mesostructures}:
 \[
 L(\theta, t) = \left\| \phi(t) - \phi(x) \right\|_1
 \]
