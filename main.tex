@@ -20,8 +20,6 @@
 \usepackage{listings}
 \usepackage{caption}         
 \captionsetup[lstlisting]{justification=centering, singlelinecheck=false}
-
-
 \providecommand{\gls}[1]{#1}
 \definecolor{highlight}{RGB}{00,150,00}
 \definecolor{todo}{RGB}{200,50,00}
@@ -46,11 +44,10 @@
 
 %  ================================
 \begin{document}
-\title{Measuring Sound Similarity for Iterative Sound-Matching}
+\title{Evaluating Sound Similarity Metrics for Iterative Sound-Matching}
 
 \author{Amir Salimi, Abram Hindle, Osmar R. Za{\"i}ane}
 
-% The paper headers
 \markboth{IEEE TRANSACTIONS ON AUDIO, SPEECH AND LANGUAGE PROCESSING, VOL -, 2025}%
 {Shell \MakeLowercase{\textit{et al.}}: A Sample Article Using IEEEtran.cls for IEEE Journals}
 
@@ -74,7 +71,7 @@ A digital audio synthesizer is any software used for the creation and manipulati
 
 Automatic sound design has been a subject of research for decades, with reduction of tinkering time and creation of ``interesting" sounds as the main motivators \cite{krekovic2019insights,turian2020sorry,horner1993machine,salimi2020make,esling2019flow,engel2020ddsp,mitchell2007evolutionary,shier2020spiegelib}. \textit{Sound-matching} is a common form of automatic sound design explored in literature, where the goal is to find parameters for a synthesizer that replicate \textit{all} or \textit{some} of the characteristics of a target sound as best as possible, given some kind of similarity metric (or loss function)~\cite{horner1993machine,mitchell2007evolutionary}. Our analysis of past works shows that this general goal of ``sound-matching'' can be broken down in to very different subtypes, many of them rarely or never explored, despite their relevance to practical applications. This leads us to a typology of sound-matching tasks, and the importance of \textit{differentiable, iterative sound-matching} as the extension of current work. 
 
-``iterative sound-matching'' refers to works that mimic the back-and-forth process of listening to a synthesizer's output and updating the parameters until the termination conditions are met. The two necessary components are the \textit{loss function}, which determines how close two sounds are, and the \textit{parametric synthesizer} that outputs sounds based on input parameters. In the iterative workflow, a target sound is selected, the synthesizer outputs sounds based on its parameters, and the loss function determines the proximity of the output to the target. From there, the synthesizer parameters are updated, the output and target are compared, and so on. 
+``Iterative sound-matching'' refers to works that mimic the back-and-forth process of listening to a synthesizer's output and updating the parameters until the termination conditions are met. The two necessary components are the \textit{loss function}, which determines how close two sounds are, and the \textit{parametric synthesizer} that outputs sounds based on input parameters. In the iterative workflow, a target sound is selected, the synthesizer outputs sounds based on its parameters, and the loss function determines the proximity of the output to the target. From there, the synthesizer parameters are updated, the output and target are compared, and so on. 
 
 Despite the early popularity of the iterative approach~\cite{justice1979analytic,horner1993machine,mitchell2007evolutionary}, recent works in sound-matching have favored supervised learning using inference models, deep neural-networks (\gls{DNNs}), and large datasets. Rather than continually interacting with the environment, these models learn from a dataset of inputs (synthesizer parameters) and outputs (corresponding sound), and predict the synthesizer parameters for new sounds~\cite{yee2018automatic,han2023perceptual,han2024learning}. 
 
