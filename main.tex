@@ -353,21 +353,23 @@ Having looked at the current available literature, we note four major areas of w
 
 \section{Programs, Methodology, and Results}
 \label{sec:progs_methodology_results}
-Towards addressing the first two problems, we compare the performance iterative sound-matching experiments, where four differentiable loss functions are applied to four differentiable synthesizers. What we mean by performance is the similarity of the final output to the target, as measured by P-Loss, MSS, and manual listening.
+Towards addressing the problems of \LossSelect{} and \SynthSelect{}, we compare the performance of iterative sound-matching experiments, where four differentiable loss functions are applied to four differentiable synthesizers. What we mean by performance is the similarity of the final output to the target, as measured by P-Loss, MSS, and manual listening tests, which we treat as the ground truth.
 
-\textbf{The hypothesis here is that the best performing loss function for sound-matching is influenced by the method of synthesis}. The results of these experiments show that there is no universally optimal loss function, strengthening the idea that the selection of the loss function and synthesis method is not an optimization problem, but a subjective choice depending on the needs of the sound designer. 
+\textbf{The hypothesis is that the relative performance of loss functions for sound-matching is influenced by the method of synthesis}. The results of these experiments show that there is no universally optimal loss function, strengthening the idea that the selection of the loss function and synthesis method is not an optimization problem, but a subjective choice depending on the needs of the sound designer. 
 
-In Section~\ref{sec:methodology} we lay out the experiment methodology. Section~\ref{sec:loss_implementation} discusses the details of implementation for the loss functions. Section~\ref{sec:programs} covers the characteristics of the programs, and finally Section~\ref{sec:results_posthoc} shows that the effect of loss function choice on the success of iterative sound-matching is dependent on the signal process chain of interest. 
+% In Section~\ref{sec:methodology} we lay out the experiment methodology. Section~\ref{sec:loss_implementation} discusses the details of implementation for the loss functions. Section~\ref{sec:programs} covers the characteristics of the programs, and finally Section~\ref{sec:results_posthoc} shows that the effect of loss function choice on the success of iterative sound-matching is dependent on the signal process chain of interest. 
 
 \subsection{Experiment Methodology}
 \label{sec:methodology}
 % We have highlighted the lack of attention given to the selection of loss functions in sound-matching, and noted that the few existing works addressing this issue evaluate their proposed losses using only simplistic sound synthesis methods. \textcolor{highlight}{We hypothesize that the best performing loss function is influenced by the synthesis techniques utilized in the synthesizer}. This hypothesis targets the issues of \LossSelect~and \SynthSelect. 
 
-We test four different loss functions and compare their success in sound-matching using four different synthesizers. We verify the success of the sound-matching process using two automatic measures of sound similarity (MSS and P-Loss) and a manual blinded hearing test conducted by two of the authors where likert scores~\cite{jebb2021review} of 1-5 are assigned to a subset of targets and outputs. 
+We test four different loss functions and compare their success in sound-matching using four different synthesizers. We verify the success of the sound-matching process using two automatic measures of sound similarity (MSS and P-Loss) and a manual blinded hearing test conducted by two of the authors where likert scores~\cite{jebb2021review} of 1-5 are assigned to a subset of final outputs and the corresponding targets.
 
 An \textit{experiment} is one iteration of sound-matching given a loss function, target sound,
 and synthesizer program. When the final iteration is complete, a score is given (automatically with an algorithm or with manual listening) to an experiment that measures its success in replicating the target sound. Consider the following simplified scenario: we have two loss functions, $L_1$ and $L_2$, and a single synthesizer program $P$ with a target parameter set $\theta^*$ where the target sound is $t$, or $P(\theta^*) = t$. We run a large number (in this case, 300 for each loss function) of experiments where we randomly set the initial ($\theta_0$) and target parameters ($\theta^*$) of $P$ and run an iterative sound-matching loop for each loss function, with max number of iterations set to 200. When the loop is terminated, we measure the similarity of the final output sound $x$ (where $P(\theta_{199}) = x$) to $t$, or if using P-Loss we compare $\theta_{199}$ to $\theta^*$. Having 300 experiments gives us a distribution of losses to determine whether $L_1$ or $L_2$ led to better performance. This simplified example leads us to our methodology which has four loss functions, four synthesizer programs, and three different methods of scoring sound similarity.
 
+
+\subsubsection{Evaluation Methods}
 
 \subsubsection{Determining Best Performers}
  Figure~\ref{fig:posthoc_evaluation} is a visualized summary of how the loss functions are ranked. We have four loss functions and four synthesizer programs. The maximum number of iterations set to 200, and 300 experiments for each loss/synthesizer combination. Each synthesizer program  is paired with four loss functions and 300 experiments are conducted and evaluated automatically with P-Loss and MSS. Two of the authors assigned blinded Likert scores to 40 randomly selected sounds, where integers from 1 to 5 are assigned, with 1 meaning no similarity and 5 for near identical. 
@@ -501,12 +503,12 @@ Relative to additive and subtractive synthesis, AM/FM synthesis are less common 
 
 \subsection{Post hoc Analysis of Loss Performance}
 \label{sec:results_posthoc}
-As summarized in Figure~\ref{fig:posthoc_evaluation}, for each program and scoring method, there are four sets of empirical results (a set of 1000 bootstrapped values for each loss function). A post-hoc test is conducted in two stages in order to determine whether there is a difference in performance between loss functions for each program, and if so, which are the best performers. The first stage determines whether there is a difference in group means, with the null hypothesis being that all groups have similar mean ranks. If the null hypothesis is rejected, the second stage ranks the loss functions from best to worst using the non-parametric Scott-Knott algorithm (\gls{NPSK})~\cite{tantithamthavorn2017mvt,tantithamthavorn2018optimization}.
-The Kruskal-Wallis test is used for the first stage~\cite{kruskal1952use}. This test works by pooling and ranking all performance evaluation measures for a program, then testing whether the differences in mean rank for all loss function groups is zero. The Kruskal-Wallis test calculates an H statistic that is compared to a chi-square distribution with k-1 degrees of freedom (k is the number of groups, or 4, and degrees of freedom is 3). Using the significance level of 0.05, if the H statistic is greater than the critical value of the chi-square distribution then the null hypothesis is rejected, meaning that at least one group has a mean rank significantly above others~\cite{kruskal1952use}. Table~\ref{tab:kruskal_auto} shows the Kruskal-Wallis results for every program and evaluation method, and shows that significant differences exist in all cases except MSS for the \AmpMod{} program. 
+As summarized in Figure~\ref{fig:posthoc_evaluation}, for each program and scoring method, there are four sets of empirical results (a set of 1000 bootstrapped values for each loss function). A post-hoc test is conducted in two stages in order to determine whether there is a difference in performance between loss functions for each program, and if so, which are the best performers. The first stage determines whether there is a difference in group means, with the null hypothesis being that all groups have similar mean ranks. If the null hypothesis is rejected, the second stage ranks the loss functions from best to worst using the non-parametric Scott-Knott test(\gls{NPSK})~\cite{tantithamthavorn2017mvt,tantithamthavorn2018optimization}.
+The Kruskal-Wallis test is used for the first stage~\cite{kruskal1952use}. This test works by pooling and ranking all performance evaluation measures for a program, then testing whether the differences in mean rank for all loss function groups is zero. The Kruskal-Wallis test calculates an H statistic that is compared to a chi-square distribution with k-1 degrees of freedom (k is the number of groups, or 4, and degrees of freedom is 3). Using the significance level of 0.05, if the H statistic is greater than the critical value of the chi-square distribution then the null hypothesis is rejected, meaning that at least one group has a mean rank significantly above others~\cite{kruskal1952use}. Table~\ref{tab:kruskal_auto} shows the Kruskal-Wallis results for every program and evaluation method, and shows that significant differences between loss function performance measures exist in all cases except MSS for the \AmpMod{} program. 
 
 \begin{table}[ht]
 \centering
-\caption{Kruskal-Wallis results by program and evaluation method.}
+\caption{Kruskal-Wallis results by program and evaluation method. Bootstrapped distributions of performance measures (or ranks for manual listening tests) are compared.}
 \begin{tabular}{|c|c|c|c|c|}
 \hline
 \textbf{Program} & \textbf{Eval. Method} & \textbf{H-Stat.} & \textbf{P-value} & \textbf{Reject} \\
@@ -543,7 +545,6 @@ The Kruskal-Wallis test is used for the first stage~\cite{kruskal1952use}. This 
 % \caption{Manual ranking Kruskal-Wallis results. Significant differences are observed for all programs.}
 % \label{tab:kruskal_manual}
 % \end{table}
-
 
 
 
