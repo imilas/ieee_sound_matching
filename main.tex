@@ -79,7 +79,7 @@ Iterative sound-matching is interesting for multiple reasons. First, it better r
 
 This work takes a \textit{differentiable} approach to iterative sound-matching, a natural extension of early works in iterative sound-matching combined with recent advances in Machine Learning (\gls{ML}) software~\cite{braun2024dac,paszke2019pytorch} and increase in computational power~\cite{moore2012introduction,schaller1997moore}. A differentiable approach requires differentiable loss and synthesizer functions, allowing the synthesizer parameters to be updated using gradient descent~\cite{goodfellow2016deep,boyd2004convex}.
 
-We discuss the history of sound-matching, and provide a nomenclature for different subtypes of sound-matching tasks. A number of weaknesses in current literature (see Section~\ref{sec:lacking}) are identified. The experiments in this work focus on two of these core issues, referred to as  \LossSelect~and \SynthSelect. The former refers to the search for an optimal loss function, lack of novel algorithms, and the---perhaps needless---focus on outperforming state of the art (\gls{SOTA}), while the latter refers to the lack of diversity in synthesis methods.
+We discuss the history of sound-matching, and provide a nomenclature for different subtypes of sound-matching tasks. A number of weaknesses in current literature (see Section~\ref{sec:lacking}) are identified. The experiments in this work focus on two of these core issues, referred to as \LossSelect~and \SynthSelect. The former refers to the search for an optimal loss function, lack of novel algorithms, and the---perhaps needless---focus on outperforming state of the art (\gls{SOTA}), while the latter refers to the lack of diversity in synthesis methods.
 
 In the case of \LossSelect, there have been many works and experiments comparing the accuracy of loss functions and choosing the best performers~\cite{vahidi2023mesostructures,turian2020sorry,engel2020ddsp,uzrad2024diffmoog,han2023perceptual,masuda2021soundmatch,turian2020sorry,bruford2024synthesizer}. We note that these claims regarding the effectiveness of one function versus another have consistently been made in limited contexts that may not generalize to other settings. One such limitation is the synthesizers used, and ties into the problem of \SynthSelect, as typically only a single (and often, simple) synthesizer has been used for testing the effectiveness of loss functions. Furthermore, there is a lack of diversity in the underlying functions used by the synthesizers, with simple Frequency Modulation (\gls{FM}) being the most common method of synthesis~\cite{horner1993machine,vahidi2023mesostructures,mitchell2007evolutionary,caspe2023envelope}. 
 
@@ -106,7 +106,7 @@ where $T$ represents time in seconds, and $n$ is the frequency parameter. If $n$
 
 % If $n$ is in the range of 30 to 20,000 (the upper limit is often lower for some), $x(n)$ could be played as an audible tone~\cite{smith2007mathematics,jilek2014reference}.
 
-Since the advent of digital signal processing in the 1960s~\cite{stranneby2004digital}, a wide variety of parametric audio generation functions have been proposed~\cite{lyons1997understanding,russ1999sound,shier2020spiegelib}. This includes oscillators, filters, equalizers, and envelopes, which can be used sequentially or in parallel~\cite{lyons1997understanding,russ1999sound}.  Sound design with a synthesizer is done by modifying the parameters of the functions until reaching a desired output~\cite{roads1996computer,pinch2004analog}.  
+Since the advent of digital signal processing in the 1960s~\cite{stranneby2004digital}, a wide variety of parametric audio generation functions have been proposed~\cite{lyons1997understanding,russ1999sound,shier2020spiegelib}. This includes oscillators, filters, equalizers, and envelopes, which can be used sequentially or in parallel~\cite{lyons1997understanding,russ1999sound}. Sound design with a synthesizer is done by modifying the parameters of the functions until reaching a desired output~\cite{roads1996computer,pinch2004analog}.
 
 A relatively small subset of these synthesis methods have been used for automatic sound-matching, notably additive and/or subtractive synthesizers~\cite{esling2019flow,yee2018automatic,mitchell2007evolutionary,salimi2020make}, physical modeling~\cite{riionheimo2003parameter}, and frequency/amplitude modulation (\gls{FM}/\gls{AM})~\cite{horner1993machine,vahidi2023mesostructures}. 
 
@@ -119,7 +119,7 @@ A digital sound (or an audio signal) is a series of numbers~\cite{smith1991viewp
 In sound-matching, particularly in a Deep Learning (\gls{DL}) context~\cite{goodfellow2016deep}, the similarity function can also be called a \textit{loss} function, where the emphasis is on measurement and reduction of the distance between target and output. It is important to note that there is a close relationship between the loss function $L$ and the sound representation function $\phi$. $L$ is the result of a distance measure $d$ applied to the features extracted by $\phi$. 
 
 \[
-L(\theta, t) =  d\langle\phi(t),\phi(x)\rangle
+L(\theta, t) = d\langle\phi(t),\phi(x)\rangle
 \]
 
 \noindent
@@ -144,7 +144,7 @@ What we call \textit{Fourier-based Spectrograms} are variations on the STFT appr
 
 \subsubsection{Joint-Time Frequency Spectrum}
 Recent works have focused on the limitations of parameter and spectral loss functions in sound-matching~\cite{vahidi2023mesostructures,uzrad2024diffmoog}, seeking to create more effective general solutions for the comparison of audio. 
-Noting the aforementioned weaknesses of comparing STFT spectrograms, Vahidi \textit{et al.} proposed differentiable Joint-Time Frequency Scattering (\gls{JTFS})~\cite{anden2015joint} as an alternative to spectrogram loss in sound-matching, and showed improved performance in sound-matching with differentiable chirplet synthesizers~\cite{vahidi2023mesostructures}.  JTFS is the result of the application of a 2D wavelet transformation to the time-frequency representation of a signal~\cite{anden2015joint}. 
+Noting the aforementioned weaknesses of comparing STFT spectrograms, Vahidi \textit{et al.} proposed differentiable Joint-Time Frequency Scattering (\gls{JTFS})~\cite{anden2015joint} as an alternative to spectrogram loss in sound-matching, and showed improved performance in sound-matching with differentiable chirplet synthesizers~\cite{vahidi2023mesostructures}. JTFS is the result of the application of a 2D wavelet transformation to the time-frequency representation of a signal~\cite{anden2015joint}. 
 
 \subsubsection{Dynamic Envelope Warping}
 Dynamic Time Warping (DTW) is a method for measuring similarity between multi-dimensional time-series~\cite{rabiner1993fundamentals,muller2007dynamic,giorgino2009computing}. Given any two time-series $X = \{x_1,x_2,...,x_m\}$ and $Y = \{y_1,y_2,...,y_n\}$, we have indices $i\in\{1...m\}$ and $j\in\{1...n\}$ defining $X$ and $Y$. When the series are \textit{warped}, these indices change to expand or contract different portions of the series. To borrow the notation given by Muller~\cite{muller2007dynamic}, warped indices are a sequence $p=(p_1,...,p_L)$, where \(p_\ell = (m_\ell, n_\ell) \in [1 : m] \times [1 : n] \text{ for } \ell \in [1 : L]\), meaning that the indices for $X$ and $Y$ are reorganized under special conditions. In classical DTW, these conditions are \textit{monotonicity}, \textit{boundary matching}, and \textit{single step-size}.
@@ -159,7 +159,7 @@ In past works the sound-matching problem has been tackled from a variety of pers
     \item $g(\theta)$: Parametric audio synthesizer $g$ which takes on parameters $\theta$ 
     \item $x$: The output of $g$, given a set of parameters $\theta$ or $g(\theta) = x$ 
     \item $t$: The target sound which we want to replicate or imitate. 
-    \item $\phi$: Representation function or feature extractor. $\phi$ is applied to $x$ and $t$ to facilitate their comparison using the loss function.
+    \item $\phi$: Representation function or feature extractor. $\phi$ is applied to $x$ and $t$ to facilitate their comparison by the loss function.
     \item $L$: Loss or error function. $L(\theta,t)$ is a measure of distance between $x$ and $t$. Often proportional to the subtraction of their representations, or $ \phi(x) - \phi(t)$
 \end{itemize}
 
@@ -277,7 +277,7 @@ Uzrad \textit{\textit{et al.}}~\cite{uzrad2024diffmoog} & DDSP chains & Synth. C
 
 \section{Past Works}
 \label{sec:related_works}
-Table~\ref{tab:summary} contains an overview of relevant literature, covering important works in sound-matching.  Earlier works in this domain focused on FM synthesis and genetic algorithms (or direct optimization methods)\cite{justice1979analytic,horner1993machine,mitchell2007evolutionary}. Along with the exponential increase in computation power, later works utilized a wider range of approaches to parameter search, estimation, and audio synthesis; particularly with supervised learning and neural networks (\gls{NN})~\cite{yee2018automatic,engel2020ddsp,esling2019flow}. 
+Table~\ref{tab:summary} contains an overview of relevant literature, covering important works in sound-matching. Earlier works in this domain focused on FM synthesis and genetic algorithms (or direct optimization methods)\cite{justice1979analytic,horner1993machine,mitchell2007evolutionary}. Along with the exponential increase in computation power, later works utilized a wider range of approaches to parameter search, estimation, and audio synthesis; particularly with supervised learning and neural networks (\gls{NN})~\cite{yee2018automatic,engel2020ddsp,esling2019flow}. 
 
 \subsection{Earlier Works}
 FM synthesizers are simple to implement, yet very expressive~\cite{chowning1973synthesis}. Perhaps the earliest foundational work in sound-matching is the analytical approach by Justice~\cite{justice1979analytic} toward the decomposition and recreation of sounds with FM synthesis using one carrier, one modulator, and the corresponding envelopes:
@@ -329,11 +329,11 @@ Uzrad \textit{et al.}~\cite{uzrad2024diffmoog} took another unique approach to s
 
 % Based on the literature reviewed, we find several gaps in past research that makes the application of sound-matching for sound-designers difficult. Thus far, replication of in-domain sounds has been the main subject of research. With in-domain replication, we already have the target sound \textit{and} the program that makes it. This simplifies the problem of measuring performance and is the reason why this type of sound-matching research is by far the most common. However, practical application of sound-matching requires answers to much harder problems. Sound-matching would be an interesting creative tool if we could use it to either:
 % \begin{enumerate}
-%  \item \textbf{Replicate out-of-domain sounds}: this would give us the  the parameters that could closely approximate a target sound, and we can modify the sound further by modulating the synthesizer. 
+%  \item \textbf{Replicate out-of-domain sounds}: this would give us the parameters that could closely approximate a target sound, and we can modify the sound further by modulating the synthesizer. 
 % \item \textbf{Imitate in-domain or out-of-domain sounds}: This would allow for applying the characteristics of one sound to another. 
 % \end{enumerate}
 
-% We need to be aware of the ``open set recognition'' (\gls{OSR}) problem here \cite{mundt2019open,gers2000learning}.  OSR is a well documented issue in DL that manifests when the set or category that the network is supposed to reject or accept cannot be explained via examples. With imitation or replication of out-of-domain sounds, we can expect issues related to OSR to occur, since target and output sounds would be from different domains~\cite{salimi2021percussive}. 
+% We need to be aware of the ``open set recognition'' (\gls{OSR}) problem here \cite{mundt2019open,gers2000learning}. OSR is a well documented issue in DL that manifests when the set or category that the network is supposed to reject or accept cannot be explained via examples. With imitation or replication of out-of-domain sounds, we can expect issues related to OSR to occur, since target and output sounds would be from different domains~\cite{salimi2021percussive}. 
 
 % Perhaps one method of addressing the OSR problem is the use of representations (or feature extraction) methods that reduce sounds to a feature vector in the same domain. For example, a representation that only looks at the envelope of sounds is far less likely to be subject to the OSR problem. \textcolor{highlight}{We highlight the lack of non-generic loss functions as a major weakness in previous works and an interesting area to explore}. 
 
@@ -398,7 +398,7 @@ For each program, the loss functions are ranked using the non-parametric Scott-K
 \subsection{Loss Function Implementation Details}
 \label{sec:loss_implementation}
 \subsubsection{STFT Losses}
-Due to their ubiquity and lower cost of gradient calculation, we use STFT as the basis of two of the loss functions. As discussed in Section~\ref{sec:matching_types}, the L1 or L2 distances are the most common methods of comparing different spectrograms, however, there are situations where this might lead to shortcomings. An example given by Vahidi et  al.~\cite{vahidi2023mesostructures} is two chirplets (tones that increase in pitch) starting and ending at the same frequencies. If one of these tones is slightly shifted in time, then the spectrograms will no longer overlap at any point, despite their sonic similarity. In this example, we do not know if this is an issue of the spectrograms, or the L1 measure used for their comparison. In the computer vision field, Structural Similarity Index (SSIM)~\cite{wang2004imagesssim,wang2009mean} and Scale-Invariant Mean Squared Error (SIMSE)~\cite{barron2014shapessimse} have been used as alternatives that improved performance in various tasks relative to L1.
+Due to their ubiquity and lower cost of gradient calculation, we use STFT as the basis of two of the loss functions. As discussed in Section~\ref{sec:matching_types}, the L1 or L2 distances are the most common methods of comparing different spectrograms, however, there are situations where this might lead to shortcomings. An example given by Vahidi \textit{et al.}~\cite{vahidi2023mesostructures} is two chirplets (tones that increase in pitch) starting and ending at the same frequencies. If one of these tones is slightly shifted in time, then the spectrograms will no longer overlap at any point, despite their sonic similarity. In this example, we do not know if this is an issue of the spectrograms, or the L1 measure used for their comparison. In the computer vision field, Structural Similarity Index (SSIM)~\cite{wang2004imagesssim,wang2009mean} and Scale-Invariant Mean Squared Error (SIMSE)~\cite{barron2014shapessimse} have been used as alternatives that improved performance in various tasks relative to L1.
 
 We define the \LoneSpec~and \SIMSESpec~functions as the application of L1 and SIMSE to the STFT spectrograms. The STFT spectrogram function uses 512 FFT bins, window size of 600 samples, and hop length (how many samples the window shifts) of 100 samples. The L1 and SIMSE implementations are differentiable. 
 
@@ -613,7 +613,7 @@ For this synthesizer program, the spectrogram-based models performed the best. T
 As shown in Figure~\ref{fig:npsk_p1}, JTFS was the best performing loss function in all evaluation methods. Moreover, all evaluation methods produced identical results. 
 
 \subsubsection{\AmpMod}
-IP-Loss and manual hearing tests yield identical rankings, and MSS results vary for for ranks 2 to 4.  It is not surprising that MSS results differ from the hearing tests, as we saw in Table~\ref{tab:kruskal_auto}, MSS showed no significant differences between groups. As shown in Figure~\ref{fig:npsk_p2}, all models selected \DTWEnv~as the best performer. This may be due to \DTWEnv's focus on periodic changes in loudness.
+IP-Loss and manual hearing tests yield identical rankings, and MSS results vary for for ranks 2 to 4. It is not surprising that MSS results differ from the hearing tests, as we saw in Table~\ref{tab:kruskal_auto}, MSS showed no significant differences between groups. As shown in Figure~\ref{fig:npsk_p2}, all models selected \DTWEnv~as the best performer. This may be due to \DTWEnv's focus on periodic changes in loudness.
 
 \subsubsection{\FMMod}
 \DTWEnv~is again the best performer here. As shown in Figure~\ref{fig:npsk_p3}, all methods of analysis gave identical rankings to all programs.
