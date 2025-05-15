@@ -54,13 +54,13 @@
 \maketitle
 
 \begin{abstract}
-Manual sound design with a synthesizer is inherently iterative: an artist compares the synthesized output to a mental target, adjusts parameters, and repeats until satisfied. Iterative sound-matching automates this workflow by continually programming a synthesizer under the guidance of a loss function that quantifies similarity to the target sound. Prior comparisons of loss functions have typically favored one metric over another, but only within narrow settings: limited synthesis methods, few loss types, often without blind listening tests. This leaves open whether a universally optimal loss exists, or the choice of loss remains a creative decision conditioned on the synthesis method and the sound designer's preference. We propose differentiable iterative sound-matching as the natural extension of the available literature, since it combines the manual approach to sound design with modern advances in machine learning. To analyze the variability of loss function performance across synthesizers, we implemented differentiable subtractive, additive, and AM synthesizers, paired with four novel or established differentiable loss functions. For each of the sixteen synthesizer–loss combinations, we ran 300 randomized sound-matching trials. Performance is measured with parameter differences, spectrogram-distance metrics, and blind listening scores; a fair amount of consistency between the three performance measures is observed. A post-hoc analysis shows that each of these loss functions has the potential to be the most appropriate. These findings underscore the value of expanding the scope of sound-matching experiments, and developing new similarity metrics tailored to specific synthesis techniques, rather than pursuing one-size-fits-all solutions.
+Manual sound design with a synthesizer is inherently iterative: an artist compares the synthesized output to a mental target, adjusts parameters, and repeats until satisfied. Iterative sound-matching automates this workflow by continually programming a synthesizer under the guidance of a loss function (or similarity measure) towards a target sound. Prior comparisons of loss functions have typically favored one metric over another, but only within narrow settings: limited synthesis methods, few loss types, often without blind listening tests. This leaves open the question of whether a universally optimal loss exists, or the choice of loss remains a creative decision conditioned on the synthesis method and the sound designer's preference. We propose differentiable iterative sound-matching as the natural extension of the available literature, since it combines the manual approach to sound design with modern advances in machine learning. To analyze the variability of loss function performance across synthesizers, we implemented a mix of four novel and established differentiable loss functions, and paired them with differentiable subtractive, additive, and AM synthesizers. For each of the sixteen synthesizer–loss combinations, we ran 300 randomized sound-matching trials. Performance was measured using parameter differences, spectrogram-distance metrics, and manually assigned listening scores. We observed a moderate level of consistency among the three performance measures. Our post-hoc analysis shows that the loss function performance is highly dependent on the synthesizer. These findings underscore the value of expanding the scope of sound-matching experiments, and developing new similarity metrics tailored to specific synthesis techniques, rather than pursuing one-size-fits-all solutions.
 \end{abstract}
 
 % the automatic performance measures have not been compared to human hearing
 % lack of creativity in loss function definitions 
 \begin{IEEEkeywords}
-Machine Learning, Signal Processing, Sound-Matching
+Audio Synthesis, Differentiable Digital Signal Processing, Machine Learning, Sound-Matching
 \end{IEEEkeywords}
 
 \section{Introduction}
@@ -71,7 +71,7 @@ A digital audio synthesizer is any software used for the creation and manipulati
 
 Automatic sound design has been a subject of research for decades, with reduction of tinkering time and creation of ``interesting" sounds as the main motivators \cite{krekovic2019insights,turian2020sorry,horner1993machine,salimi2020make,esling2019flow,engel2020ddsp,mitchell2007evolutionary,shier2020spiegelib}. \textit{Sound-matching} is a common form of automatic sound design explored in literature, where a similarity metric (or loss function) is given, and the goal is to find parameters for a synthesizer that replicate \textit{all} or \textit{some} of the characteristics of a target sound as best as possible~\cite{horner1993machine,mitchell2007evolutionary}. Our analysis of past works shows that this general goal of ``sound-matching'' can be broken down in to very different subtypes, many of them rarely or never explored, despite their relevance to practical applications. This leads us to a typology of sound-matching tasks, and the importance of \textit{differentiable, iterative sound-matching}, rarely explored in previous literature~\cite{vahidi2023mesostructures}.
 
-``Iterative sound-matching'' refers to works that mimic the back-and-forth process of listening to a synthesizer's output and updating the parameters until the termination conditions are met. The two necessary components are the \textit{loss function}, which determines how close two sounds are, and the \textit{parametric synthesizer} that outputs sounds based on input parameters. In the iterative workflow, a target sound is selected, the synthesizer outputs sounds based on its parameters, and the loss function determines the proximity of the output to the target. From there, the synthesizer parameters are updated, the output and target are compared, and so on. 
+\textit{Iterative sound-matching} refers to works that mimic the back-and-forth process of listening to a synthesizer's output and updating the parameters until the termination conditions are met. The two necessary components are the \textit{loss function}, which determines how close two sounds are, and the \textit{parametric synthesizer} that outputs sounds based on input parameters. In the iterative workflow, a target sound is selected, the synthesizer outputs sounds based on its parameters, and the loss function determines the proximity of the output to the target. From there, the synthesizer parameters are updated, the output and target are compared, and so on. 
 
 Despite the early popularity of the iterative approach~\cite{justice1979analytic,horner1993machine,mitchell2007evolutionary}, recent works in sound-matching have favored supervised learning using inference models, deep neural-networks (\gls{DNNs}), and large datasets. Rather than continually interacting with the environment, these models learn from a dataset of inputs (synthesizer parameters) and outputs (corresponding sound), and predict the synthesizer parameters for new sounds~\cite{yee2018automatic,han2023perceptual,han2024learning}. 
 
@@ -309,8 +309,6 @@ Rather than focusing on a particular implementation, Shier \textit{et al.} prese
 
 
 Differentiable loss functions that use spectrogram differences can be computationally expensive. To mitigate this, Han \textit{et al.}~\cite{han2023perceptual} introduced ``perceptual-neural-physical loss'' (PNP). PNP is an approximation of loss functions; specifically, a loss function that uses the L2 norm of the difference between the features of two sounds, or $||\phi(t) - \phi(x)||^2_2$, where $\phi$ could be a spectrogram or JTFS function. PNP loss functions are fast and differentiable, but require training and parameter estimation. A Riemannian metric M needs to be calculated for the minimization of locally linear approximation of the ``true" spectral loss function~\cite{han2023perceptual}. 
-
-
 \[
 \|\phi(t) - \phi(x)\|_2^2 = \langle \tilde{\theta} - \theta | \mathbf{M}(\theta) | \tilde{\theta} - \theta \rangle + O(\|\tilde{\theta} - \theta\|_2^3). \tag{4}
 \]
@@ -353,9 +351,9 @@ Having looked at the current available literature, we note four major areas of w
 
 \section{Programs, Methodology, and Results}
 \label{sec:progs_methodology_results}
-Towards addressing the problems of \LossSelect{} and \SynthSelect{}, we compare the performance of iterative sound-matching experiments, where four differentiable loss functions are applied to four differentiable synthesizers. What we mean by ``performance'' is the similarity of the final output to the target, as measured by P-Loss, MSS, and--most importantly--manual listening tests.
+Towards addressing the problems of \LossSelect{} and \SynthSelect{}, we compare the performance of iterative sound-matching experiments, where four differentiable loss functions are applied to four differentiable synthesizers. What we mean by ``performance'' is the similarity of the final output to the target, as measured by P-Loss, MSS, and---most importantly---manual listening tests.
 
-\textbf{We hypothesize that the relative performance of loss functions for sound-matching is influenced by the method of synthesis}. The results of these experiments show that there is no universally optimal loss function, strengthening the idea that the selection of the loss function and synthesis method is not an optimization problem, but a subjective choice depending on the needs of the sound designer. 
+\textbf{We hypothesize that the relative performance of loss functions for sound-matching is influenced by the method of synthesis}. If true, this would strengthen the idea that the selection of the loss function and synthesis method is not an optimization problem, but a subjective choice depending on the needs of the sound designer. 
 
 % In Section~\ref{sec:methodology} we lay out the experiment methodology. Section~\ref{sec:loss_implementation} discusses the details of implementation for the loss functions. Section~\ref{sec:programs} covers the characteristics of the programs, and finally Section~\ref{sec:results_posthoc} shows that the effect of loss function choice on the success of iterative sound-matching is dependent on the signal process chain of interest. 
 
@@ -368,10 +366,14 @@ We test four different loss functions and compare their success in sound-matchin
 An \textit{experiment} is one iteration of sound-matching given a loss function, target sound,
 and synthesizer program. When the final iteration is complete, a score is given (automatically with an algorithm or with manual listening) to an experiment that measures its success in replicating the target sound. Consider the following simplified scenario: we have two loss functions, $L_1$ and $L_2$, and a single synthesizer program $P$ with a target parameter set $\theta^*$ where the target sound is $t$, or $P(\theta^*) = t$. We run a large number (in this case, 300 for each loss function) of experiments where we randomly set the initial ($\theta_0$) and target parameters ($\theta^*$) of $P$ and run an iterative sound-matching loop for each loss function, with max number of iterations set to 200. When the loop is terminated, we measure the similarity of the final output sound $x$ (where $P(\theta_{199}) = x$) to $t$, or if using P-Loss we compare $\theta_{199}$ to $\theta^*$. Having 300 experiments gives us a distribution of losses to determine whether $L_1$ or $L_2$ led to better performance. This simplified example leads us to our methodology which has four loss functions, four synthesizer programs, and three different evaluation methods of scoring sound similarity.
 
-\subsubsection{Evaluation Methods}
+\subsubsection{Automatic and Manual Evaluation}
+\label{sec:evaluation_manual_auto}
 The two automatic evaluation methods used here are P-Loss and MSS, as described in Section~\ref{sec:loss_funcs}. For P-Loss, the parameters are normalized between 0-1 based on the valid ranges defined in the Faust program, and the L1 distance between the normalized parameters is calculated. MSS is computed using a hop size of $100$ samples, and FFT window lengths of $(512, 1024, 2048, 4096)$. 
 
-Automatic sound evaluation methods are often unreliable, as their alignment with the subjective judgments of human listeners is uncertain. Therefore, listening tests are conducted by randomly sampling 40 experiment results for each program and loss function pair. Two of the authors then assign blinded similarity scores to the outputs and targets using a 5-point Likert scale (1 = no similarity, 5 = near identical)~\cite{jebb2021review}. Agreement between the assigned scores is measured using Spearman’s rank correlation, which provides both a correlation coefficient ($\rho$) ranging from –1 (perfect negative correlation) to 1 (perfect positive correlation), and a p-value testing the null hypothesis of no correlation~\cite{spearman1987proof,rebekic2015pearson}. Across all programs, the correlation was very strong ($\rho = 0.86$, $p < 10^{-180}$). Per-program correlations were also very strong: $\rho = 0.71$ for \BPNoise{} ($p < 10^{-25}$), $\rho = 0.64$ for \AddSineSaw{} ($p < 10^{-19}$), $\rho = 0.84$ for \AmpMod{} ($p < 10^{-43}$), and $\rho = 0.85$ for \FMMod{} ($p < 10^{-44}$). This high rate of agreement is a good indicator that the scores assigned by manual listeners can be treated as the ground truth. 
+Automatic sound evaluation methods are often unreliable, as their alignment with the subjective judgments of human listeners is uncertain. Therefore, listening tests are conducted by randomly sampling 40 experiment results for each program and loss function pair. Two of the authors then assign blinded similarity scores to the outputs and targets using a 5-point Likert scale (1 = no similarity, 5 = near identical)~\cite{jebb2021review}. Using Spearmna's rank correlation~\cite{spearman1987proof,rebekic2015pearson}, we found a very strong rate of agreement between the human listeners (see Section~\ref{sec:consistency_in_rankings}), a good indicator that the scores assigned by manual listeners can be treated as the ground truth. We then combine the ranks assigned by both authors, giving us 80 ranks per program and loss function pair. 
+
+
+% Agreement between the assigned scores is measured using Spearman’s rank correlation, which provides both a correlation coefficient ($\rho$) ranging from –1 (perfect negative correlation) to 1 (perfect positive correlation), and a p-value testing the null hypothesis of no correlation~\cite{spearman1987proof,rebekic2015pearson}. Across all programs, the correlation was very strong ($\rho = 0.86$, $p < 10^{-180}$). Per-program correlations were also very strong: $\rho = 0.71$ for \BPNoise{} ($p < 10^{-25}$), $\rho = 0.64$ for \AddSineSaw{} ($p < 10^{-19}$), $\rho = 0.84$ for \AmpMod{} ($p < 10^{-43}$), and $\rho = 0.85$ for \FMMod{} ($p < 10^{-44}$). This high rate of agreement is a good indicator that the scores assigned by manual listeners can be treated as the ground truth. 
 
 % For each program and loss function, the blind manual hearing test gives us 80 ranks, which are given by two of the authors to a set of 40 randomly selected experiment results. This gives 160 pairs of ranks per program, and 640 for all programs. We computed Spearman correlations between the two reviewers.
 
@@ -386,7 +388,7 @@ For each program, the loss functions are ranked using the non-parametric Scott-K
 
 \subsubsection{Training Parameters and Gradient Calculations}
  % Previous work utilized gradient fields for analysis of the algorithm performance~\cite{vahidi2023mesostructures}. Gradient fields are not the center of our analysis, but we include them in Appendix~\ref{appendix:gradient_fields}.
- For updating the synthesizer parameters (or weights), we use RMSProp, which operates similar to stochastic gradient descent (SGD)~\cite{goodfellow2016deep}, with the caveat that the gradients of each weight are scaled by the root-mean-square of past gradients of that weight. Based on some initial test runs, we used an arbitrary fixed learning rate of 0.045 for all experiments (learning rates used in Vahidi \textit{et al.}~\cite{vahidi2023mesostructures} is unknown). The maximum number of iterations is set to 200, where, based on our observations, the parameters have either irrecoverably diverged outside the acceptable ranges, or are stuck at a local minimum. Additionally, the gradients are large, and calculated backwards sequentially through the signal processing chain. This backward calculation resembles the \textit{exploding gradients} problem in recurrent neural networks~\cite{gers2000learning}. For this reason, gradient clipping~\cite{goodfellow2016deep} is preemptively used to ensure that the  $\ell_2$ norm of all gradientsdoes not exceed a clipping threshold 1. 
+ For updating the synthesizer parameters (or weights), we use RMSProp, which operates similar to stochastic gradient descent (SGD)~\cite{goodfellow2016deep}, with the caveat that the gradients of each weight are scaled by the root-mean-square of past gradients of that weight. Based on some initial test runs, we used an arbitrary fixed learning rate of 0.045 for all experiments (learning rates used in Vahidi \textit{et al.}~\cite{vahidi2023mesostructures} is unknown). The maximum number of iterations is set to 200, where, based on our observations, the parameters have either irrecoverably diverged outside the acceptable ranges, or are stuck at a local minimum. Additionally, the gradients are large, and calculated backwards sequentially through the signal processing chain. This backward calculation resembles the \textit{exploding gradients} problem in recurrent neural networks~\cite{gers2000learning}. Gradient clipping~\cite{goodfellow2016deep} is preemptively used to ensure that the  $\ell_2$ norm of all gradientsdoes not exceed the threshold of 1. 
 % \mathbf{\gamma}_i^{\text{clipped}} = \mathbf{\gamma}_i \cdot \mathcal{S}
 % \]
 % Where $\mathcal{S}$ is a value less than or equal to 1, depending on whether the norm of the gradients exceeds the threshold $c$.  
@@ -448,8 +450,7 @@ In the following subsections, we describe the programs and their parameters in m
 % \label{tab:programs}
 % \end{table*}
 
-\subsubsection{\BPNoise}
-\label{sec:program0}
+
 
 \begin{lstlisting}[caption={\BPNoise}, label={lst:program0}, language=Faust,
                   float, floatplacement=!H, xleftmargin=1em, xrightmargin=0.5em, firstnumber=0, aboveskip=0em, belowskip=-1em]
@@ -485,25 +486,21 @@ sawOsc(f) = +(f/ma.SR) ~ ma.frac;
 process = sineOsc(amp)*sawOsc(carrier);
 \end{lstlisting}
 
+\subsubsection{\BPNoise}
+\label{sec:program0}
 \BPNoise{} is a bare bones example of subtractive synthesis using digital filters~\cite{smith2007introduction}. Despite the ubiquity of subtractive synthesis in practical sound design, it has rarely been tested in differentiable sound-matching. In this program, a noise signal is fed through a band-pass (BP) filter. This removes the frequencies outside the low-pass (LP) and high-pass (HP) cutoffs. The noise generator produces all frequencies with random variation over time. The LP filter removes frequencies over its threshold frequency, and the HP removes frequencies lower than its threshold~\cite{smith2007introduction}. The search parameters are the cutoff thresholds for the LP and HP filters. Listing~\ref{lst:program0} shows the Faust code for \BPNoise.
+
 \subsubsection{\AddSineSaw}
 \label{sec:program1}
-
-
 \AddSineSaw{} is an additive program that combines a saw and a sine wave function. Like subtractive synthesis, additive synthesis is a common approach to sound design that has not been extensively tested as a benchmark in sound-matching. The search parameters here are the frequency of the sine and saw oscillators. Listing~\ref{lst:program1} is the Faust code for \AddSineSaw.
 
 \subsubsection{\AmpMod}
 \label{sec:program2}
-
 \AmpMod{} involves amplitude modulation of a noise generator by an LFO with \textit{modulator} as its frequency and a global \textit{amp} value that does not change over time and applies to the entire signal. The search parameters for this program are the LFO frequency and the amp value. The amp value acts as a global volume control, and since the sounds are normalized before analysis, it is likely inconsequential to the performance. This program is meant to be a stepping stone to \FMMod, which utilizes proper AM synthesis. Listing~\ref{lst:program2} is the Faust code for \AmpMod. 
 
 \subsubsection{\FMMod}
-
 \label{sec:program3}
-
 Relative to additive and subtractive synthesis, AM/FM synthesis are less common methods of sound design. Due to their frequent use in previous works, we also tested an AM synthesizer. The synthesizer program is the multiplication of a low frequency sine oscillator with frequency parameter \textit{amp}, and a saw oscillator with frequency parameter \textit{carrier}. Listing~\ref{lst:program3} is the Faust code for \FMMod. 
-
-
 
 \subsection{Post hoc Analysis of Loss Performance}
 \label{sec:results_posthoc}
@@ -512,7 +509,7 @@ The Kruskal-Wallis test is used for the first stage~\cite{kruskal1952use}; this 
 
 \begin{table}[ht]
 \centering
-\caption{Kruskal-Wallis results by program and evaluation method. Bootstrapped distributions of automatic evaluations (or ranks for manual listening tests) are compared.}
+\caption{Do loss functions have different median performance? Kruskal-Wallis results by program and bootstrapped evaluation results.}
 \begin{tabular}{|c|c|c|c|c|}
 \hline
 \textbf{Program} & \textbf{Eval. Method} & \textbf{H-Stat.} & \textbf{P-value} & \textbf{Reject} \\
@@ -558,55 +555,11 @@ Based on the bootstrapped distribution of scores, the NPSK algorithm ranks the l
 We use color-coded violin plots to visualize the best performers for each program. In the violin plots, the corresponding colors for each rank are
 \colorbox{rank1}{\textcolor{black}{\textbf{1}}} \colorbox{rank2}{\textcolor{white}{\textbf{2}}} \colorbox{rank3}{\textcolor{white}{\textbf{3}}} \colorbox{rank4}{\textcolor{black}{\textcolor{white}{\textbf{4}}}}
 
+\input{extra_figures/ranking_tables}
+\input{extra_figures/npsk_figures}
+
 \subsubsection{\BPNoise}
 For this synthesizer program, the spectrogram-based models performed the best. This makes intuitive sense, as the visual effects of a band-pass filter on white noise are readily apparent in a spectrogram. As shown in Figure~\ref{fig:npsk_p0}, manual hearing test and MSS selected \SIMSESpec~as the best performer and \LoneSpec~as the second-best performer, while P-loss gave the reverse order. 
-
-
-\begin{table*}[htbp]
-\centering
-\caption{Ranks for each synthesis method (rows) under the three evaluation metrics (columns), across four targets (\BPNoise, \AddSineSaw, \AmpMod, \FMMod). Asterisks denote difference from Likert score ranks.}
-\footnotesize
-\begin{tabular}{|c|ccc|ccc|ccc|ccc|}
-\hline
-\textbf{Function} 
-  & \multicolumn{3}{c|}{\BPNoise}
-  & \multicolumn{3}{c|}{\AddSineSaw}
-  & \multicolumn{3}{c|}{\AmpMod}
-  & \multicolumn{3}{c|}{\FMMod} \\
-\cline{2-13}
-  & MSS & P-LOSS & Hearing 
-  & MSS & P-LOSS & Hearing 
-  & MSS & P-LOSS & Hearing 
-  & MSS & P-LOSS & Hearing \\
-\hline
-\textbf{SIMSE} 
-  & 1    & 2*   & 1    
-  & 4    & 4    & 4    
-  & 3*   & 4    & 4    
-  & 2    & 2    & 2    \\
-\textbf{L1}    
-  & 2    & 1*   & 2    
-  & 2    & 2    & 2    
-  & 2    & 2    & 2    
-  & 3    & 3    & 3    \\
-\textbf{JTFS}  
-  & 3    & 4*   & 3    
-  & 1   & 1    & 1    
-  & 4*   & 3    & 3    
-  & 4    & 4    & 4    \\
-\textbf{DTW}   
-  & 4*   & 3    & 3    
-  & 3    & 3    & 3    
-  & 1    & 1    & 1    
-  & 1    & 1    & 1    \\
-\hline
-\end{tabular}
-% \vspace{0.25em}
-
-\label{tab:combined_ranks}
-\end{table*}
-
-\input{extra_figures/npsk_figures}
 
 
 \subsubsection{\AddSineSaw}
@@ -620,14 +573,16 @@ IP-Loss and manual hearing tests yield identical rankings, and MSS results vary 
 
 \subsection{Consistency In Rankings}
 \label{sec:consistency_in_rankings}
-Table~\ref{tab:combined_ranks} shows the rankings given by each evaluation method for each program, with ranks different from the corresponding hearing test results marked with an asterisk. Both MSS and P-Loss gave a different rank from the hearing results in 3 out of 16 cases, which---somewhat surprisingly---shows consistency between automatic and manual hearing tests, at least for the simple programs used in this work. We also observe that identical top ranks were consistent across performance evaluation methodologies, with the exception of P-Loss in \BPNoise, which narrowly picks a different spectrogram-based loss function.
+\subsubsection{Manual Ranks} Agreement between the manually assigned scores is measured using Spearman’s rank correlation, which provides both a correlation coefficient ($\rho$) ranging from –1 (perfect negative correlation) to 1 (perfect positive correlation), and a p-value testing the null hypothesis of no correlation~\cite{spearman1987proof,rebekic2015pearson}. Across all programs, the correlation was very strong ($\rho = 0.86$, $p < 10^{-180}$). Per-program correlations were also very strong: $\rho = 0.71$ for \BPNoise{} ($p < 10^{-25}$), $\rho = 0.64$ for \AddSineSaw{} ($p < 10^{-19}$), $\rho = 0.84$ for \AmpMod{} ($p < 10^{-43}$), and $\rho = 0.85$ for \FMMod{} ($p < 10^{-44}$). 
+
+Table~\ref{tab:combined_ranks} shows the SNPK rankings of bootstrapped evaluation results for each program. Both MSS and P-Loss gave a different rank from the hearing results in 3 out of 16 cases, which shows consistency between automatic and manual hearing tests, at least for the simple programs used in this work. We also observe that identical top ranks were consistent across performance evaluation methodologies, with the exception of P-Loss in \BPNoise, which narrowly picks a different spectrogram-based loss function.
 % \input{extra_figures/ranking_tables}
 
 
 \subsection{Takeaways}
 An important takeaway is that the loss function that yields the best sound-matching outcomes varies depending on the synthesizer program. This is perhaps due to the interaction between how the parameters of the synthesizer influence the sound, and the core sonic features of the loss function.
 
-We also see that the \DTWEnv{} and \SIMSESpec{} loss functions (to our knowledge, not previously used in iterative sound-matching), lead to the best results in three of the four programs. This shows room for further creative approaches to differentiable sound-similarity measures, particularly since we observed that SOTA loss functions can be ineffective depending on the design of a synthesizer. 
+We also see that the \DTWEnv{} and \SIMSESpec{} (to our knowledge, not previously used in iterative sound-matching), lead to the best results in three of the four programs. This shows room for further creative approaches to differentiable sound-similarity measures, particularly since we observed that SOTA loss functions can be ineffective depending on the design of a synthesizer. 
 
 Finally, we surprisingly see somewhat consistent results between the rankings assigned by manual hearing tests (which we take as the ground truth), and automatic measures of P-Loss and MSS. Due to the simplicity of our programs and the occasional deviations, we cannot conclude that these automatic measures are substitutes for actual hearing.
 
@@ -636,20 +591,20 @@ Finally, we surprisingly see somewhat consistent results between the rankings as
 \label{sec:summary_conclusion}
 \textbf{Summary:} Sound-matching is an umbrella term for the algorithmic programming of audio synthesizers, often with the goal of assisting sound designers. Here we provided a history of sound-matching, major issues in the field, and discussed the importance of ``differentiable iterative sound-matching'' as a natural extension current literature.
 
-The main hypothesis tested here is whether the performance of differentiable loss functions is influenced by the synthesis techniques used for sound-matching. We created iterative sound-matching experiments by combining four different loss functions with four different sound synthesis programs. We ranked the performance of the iterative sound-matching pipelines for every loss function and program, and observed that the success of the pipeline (that is, how closely the output sound matches the target sound) is program dependent. In other words, different synthesizer programs work best with different loss functions. Notably, we see that our novel use of DTW and SIMSE based differentiable loss functions (\DTWEnv{} and \SIMSESpec) can outperform what are regarded as the SOTA loss functions, although this is highly synthesizer dependent. 
+The main hypothesis tested here is whether the performance of differentiable loss functions is influenced by the synthesis techniques used for sound-matching. We created iterative sound-matching experiments by combining four different loss functions with four different sound synthesis programs. We ranked the performance of the iterative sound-matching pipelines for every loss function and program, and observed that the success of the pipeline (that is, how closely the output sound matches the target sound) is program dependent. In other words, different synthesizer programs work best with different loss functions. Notably, we see that our novel use of DTW and SIMSE based differentiable loss functions (\DTWEnv{} and \SIMSESpec) can outperform what are regarded as the SOTA loss functions in 3 of 4 cases, although this is highly synthesizer dependent. 
 
-P-Loss and MSS have frequently been used as automatic performance measures, yet their ``preference'' has rarely been compared to human rankings. We observed that automatic performance measures and manual listening tests were often (though not always) in agreement, despite this, we believe that manual verification of sound-matching results remains a necessity for future works.  
+P-Loss and MSS have frequently been used as automatic performance measures, yet their ``preference'' has rarely been compared to human rankings. We observed that automatic performance measures and manual listening tests were often in agreement, despite this, manual verification of sound-matching results remains a necessity for future works.  
 
-\textbf{Weaknesses:} Compared to previous work, we presented a more cohesive approach to iterative sound-matching which utilizes and compares four loss functions and four synthesis methods. However, there are many other methods of synthesis and sound-similarity that can be combined in practically infinite ways. 
+\textbf{Weaknesses:} Compared to previous work, we presented a more cohesive approach to iterative sound-matching which utilizes a variety of loss functions and synthesis methods. However, there are many other methods of synthesis and sound-similarity that can be combined in practically infinite ways. 
 
 To limit the scope of our experiments, we had no choice but to use arbitrary parameters for the various signal processing functions. We used bare-bones versions of STFT and JTFS with fixed parameters. We did not test complex synthesizers using parallel and sequential DSP functions. Arbitrary hyperparameters such as learning rate and max number of iterations were selected for the DL pipeline, and only the RMSProp optimizer was tested. 
 
  Like the majority of previous works, this work utilizes in-domain sounds. That is, the target sound is made by the synthesizer, and the parameters are already known. This simplifies the issues of measuring sound-similarity, but it is not a realistic scenario for practical sound-matching. This problem is left for future work, discussed in the next section.
 
 \label{sec:future}
-\textbf{Future Work: }The analysis of different loss functions in sound-matching shows that problem of periodic loss-landscapes is not limited to spectral representations using Fourier transforms~\cite{turian2020sorry,vahidi2023mesostructures,uzrad2024diffmoog,bruford2024synthesizer}. Perhaps this problem emerges due to the periodic nature of sound. With regard to navigation of loss function landscapes, an optimizer that is more aware of fluctuations in gradients would perhaps lead to better solutions than simple gradient descent. Viewing the sound-matching problem as ``the navigation of an agent from an arbitrary point in a gradient field to a target'' closely resembles many classical problems in the field of reinforcement learning (RL)~\cite{sutton2018reinforcement}. Naturally, the application of RL and other heuristic search techniques to the problem of iterative sound-matching would be an important contribution.
+\textbf{Future Work: } The problem of periodic loss-landscapes, noted by many previous works, remains unaddressed~\cite{turian2020sorry,vahidi2023mesostructures,uzrad2024diffmoog,bruford2024synthesizer}. Perhaps this problem emerges due to the periodic nature of sound, which requires better loss landscape navigation methods. An optimizer that is more aware of fluctuations in gradients would perhaps lead to better solutions than simple gradient descent. Viewing the sound-matching problem as ``the navigation of an agent from an arbitrary point in a gradient field to a target'' closely resembles many classical problems in the field of reinforcement learning (RL)~\cite{sutton2018reinforcement}. Naturally, the application of RL and other heuristic search techniques to the problem of iterative sound-matching would be an important contribution.
 
-The current trend in contemporary work appears to be the application of domain specific and computationally expensive loss functions~\cite{han2023perceptual,uzrad2024diffmoog}, use of large neural networks~\cite{hershey2017cnn,cramer2019look}, or complex ensemble methods~\cite{turian2022hear}. Such models are useful, but often intractable; furthermore, training such models still requires the definition of simpler loss functions, which emphasizes the need for further work on differentiable and expressive loss function implementations. 
+Contemporary works often involve the application of domain specific and computationally expensive loss functions~\cite{han2023perceptual,uzrad2024diffmoog}, use of large neural networks~\cite{hershey2017cnn,cramer2019look}, or complex ensemble methods~\cite{turian2022hear}. Such models are useful but intractable; furthermore, training them requires the definition of simpler loss functions, which emphasizes the need for further development of differentiable and expressive loss function implementations. 
 
 Like nearly all previous work in sound-matching, the main measure of success here was the accurate \textit{replication} of sounds (or synth parameters) rather than imitation of sounds outside of the synthesizer's domain. Replication of arbitrary features of sounds is an important component of sound-design, though it is much harder to define or measure. Future works could explore loss functions which only measure certain characteristics of sound (such as \DTWEnv), and whether they can pave the way for better imitation sound-matching.
 

@@ -1,72 +1,45 @@
-\noindent\textit{Ranks that differ from the hearing test are marked with an asterisk.}
+\newcommand{\markdiff}[1]{\textbf{\makebox[0pt][r]{\textbf{*}}#1}}
 
-\begin{table}[htbp]
+\begin{table*}[p]
 \centering
-\begin{minipage}{0.45\textwidth}
-    \centering
-    \begin{tabular}{|c|c|c|c|}
-    \hline
-    \textbf{Function} & \textbf{MSS} & \textbf{P-LOSS} & \textbf{Hearing} \\
-    \hline
-    \textbf{SIMSE} & 1\phantom{*} & 2* & 1\phantom{*} \\
-    \textbf{L1}    & 2\phantom{*} & 1* & 2\phantom{*} \\
-    \textbf{JTFS}  & 3\phantom{*} & 4* & 3\phantom{*} \\
-    \textbf{DTW}   & 4*           & 3\phantom{*} & 3\phantom{*} \\
-    \hline
-    \end{tabular}
-    \caption{\footnotesize \BPNoise~ranks}
-    \label{tab:p0}
-\end{minipage}%
-\hspace{1cm}
-\begin{minipage}{0.45\textwidth}
-    \centering
-    \begin{tabular}{|c|c|c|c|}
-    \hline
-    \textbf{Function}& \textbf{MSS} & \textbf{P-LOSS} & \textbf{Hearing} \\
-    \hline
-    \textbf{SIMSE} & 4\phantom{*} & 4\phantom{*} & 4\phantom{*} \\
-    \textbf{L1} & 2\phantom{*} & 2\phantom{*} & 2\phantom{*} \\
-    \textbf{JTFS} & 1\phantom{*} & 1\phantom{*} & 1\phantom{*} \\
-    \textbf{DTW} & 3\phantom{*} & 3\phantom{*} & 3\phantom{*} \\
-    \hline
-    \end{tabular}
-    \caption{\footnotesize \AddSineSaw~ranks}
-    \label{tab:p1}
-\end{minipage}
+\caption{Ranks for each synthesis method (rows) under the three evaluation metrics (columns), across four targets (\BPNoise, \AddSineSaw, \AmpMod, \FMMod). Values marked with an asterisk are different from the Likert score hearing ranks.}
+\small
+\begin{tabular}{|c|ccc|ccc|ccc|ccc|}
+\hline
+\textbf{Function} 
+  & \multicolumn{3}{c|}{\BPNoise}
+  & \multicolumn{3}{c|}{\AddSineSaw}
+  & \multicolumn{3}{c|}{\AmpMod}
+  & \multicolumn{3}{c|}{\FMMod} \\
+\cline{2-13}
+  & MSS & P-LOSS & Hearing 
+  & MSS & P-LOSS & Hearing 
+  & MSS & P-LOSS & Hearing 
+  & MSS & P-LOSS & Hearing \\
+\hline
 
-\vspace{0.5cm} % Adds vertical space between rows of tables
+\textbf{SIMSE} 
+  & 1    & \markdiff{2}   & 1    
+  & 4    & 4    & 4    
+  & \markdiff{3}   & 4    & 4    
+  & 2    & 2    & 2    \\
+\textbf{L1}    
+  & 2    & \markdiff{1}   & 2    
+  & 2    & 2    & 2    
+  & 2    & 2    & 2    
+  & 3    & 3    & 3    \\
+\textbf{JTFS}  
+  & 3    & \markdiff{4}   & 3    
+  & 1    & 1    & 1    
+  & \markdiff{4}   & 3    & 3    
+  & 4    & 4    & 4    \\
+\textbf{DTW}   
+  & \markdiff{4}   & 3    & 3    
+  & 3    & 3    & 3    
+  & 1    & 1    & 1    
+  & 1    & 1    & 1    \\
 
-\begin{minipage}{0.45\textwidth}
-    \centering
-    \begin{tabular}{|c|c|c|c|}
-    \hline
-    \textbf{Function} & \textbf{MSS} & \textbf{P-LOSS} & \textbf{Hearing} \\
-    \hline
-    \textbf{SIMSE} & 3* & 4\phantom{*} & 4\phantom{*} \\
-    \textbf{L1}    & 2\phantom{*} & 2\phantom{*} & 2\phantom{*} \\
-    \textbf{JTFS}  & 4* & 3\phantom{*} & 3\phantom{*} \\
-    \textbf{DTW}   & 1\phantom{*} & 1\phantom{*} & 1\phantom{*} \\
-    \hline
-    \end{tabular}
-    \caption{\footnotesize \AmpMod~ranks}
-    \label{tab:p2}
-\end{minipage}%
-\hspace{1cm}
-\begin{minipage}{0.45\textwidth}
-    \centering
-    \begin{tabular}{|c|c|c|c|}
-    \hline
-    \textbf{Function} & \textbf{MSS} & \textbf{P-LOSS} & \textbf{Hearing} \\
-    \hline
-   \textbf{SIMSE} & 2\phantom{*} & 2\phantom{*} & 2\phantom{*} \\
-    \textbf{L1} & 3\phantom{*} & 3\phantom{*} & 3\phantom{*} \\
-    \textbf{JTFS} & 4\phantom{*} & 4\phantom{*} & 4\phantom{*} \\
-    \textbf{DTW} & 1\phantom{*} & 1\phantom{*} & 1\phantom{*} \\
-    \hline
-    \end{tabular}
-    \caption{\footnotesize \FMMod~ranks}
-    \label{tab:p3}
-\end{minipage}
-\end{table}
-
-
+\hline
+\end{tabular}
+\label{tab:combined_ranks}
+\end{table*}
