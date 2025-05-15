@@ -87,10 +87,6 @@ Considering the interplay between the two problems, we design experiments that a
 
 We note that for some synthesizers, our novel use of ``dynamic time warping of envelopes'' as a loss function for differentiable sound-matching outperforms the standard methods of audio comparison. These results imply that rather than aiming to outperform the SOTA and finding a universal best performer, more effort could be placed towards diversifying the existing similarity measures of sound as well as conducting experiments using a variety of synthesis methods. Sound design is an inherently creative endeavor, and would likely benefit from a diversified range of solutions for different approaches. 
 
-% \subsection{Differentiable Sound-Matching}
-
- 
- 
 \section{Background}
 \label{sec:background}
 In this Section, we give a formal definition of sound-matching and the necessary components. These discussions lead to a nomenclature for types of sound-matching, as well as major perennial issues in the field. 
@@ -388,7 +384,7 @@ For each program, the loss functions are ranked using the non-parametric Scott-K
 
 \subsubsection{Training Parameters and Gradient Calculations}
  % Previous work utilized gradient fields for analysis of the algorithm performance~\cite{vahidi2023mesostructures}. Gradient fields are not the center of our analysis, but we include them in Appendix~\ref{appendix:gradient_fields}.
- For updating the synthesizer parameters (or weights), we use RMSProp, which operates similar to stochastic gradient descent (SGD)~\cite{goodfellow2016deep}, with the caveat that the gradients of each weight are scaled by the root-mean-square of past gradients of that weight. Based on some initial test runs, we used an arbitrary fixed learning rate of 0.045 for all experiments (learning rates used in Vahidi \textit{et al.}~\cite{vahidi2023mesostructures} is unknown). The maximum number of iterations is set to 200, where, based on our observations, the parameters have either irrecoverably diverged outside the acceptable ranges, or are stuck at a local minimum. Additionally, the gradients are large, and calculated backwards sequentially through the signal processing chain. This backward calculation resembles the \textit{exploding gradients} problem in recurrent neural networks~\cite{gers2000learning}. Gradient clipping~\cite{goodfellow2016deep} is preemptively used to ensure that the  $\ell_2$ norm of all gradientsdoes not exceed the threshold of 1. 
+ For updating the synthesizer parameters (or weights), we use RMSProp, which operates similar to stochastic gradient descent (SGD)~\cite{goodfellow2016deep}, with the caveat that the gradients of each weight are scaled by the root-mean-square of past gradients of that weight. Based on some initial test runs, we used an arbitrary fixed learning rate of 0.045 for all experiments (learning rates used in Vahidi \textit{et al.}~\cite{vahidi2023mesostructures} is unknown). The maximum number of iterations is set to 200, where, based on our observations, the parameters have either irrecoverably diverged outside the acceptable ranges, or are stuck at a local minimum. Additionally, the gradients are large, and calculated backwards sequentially through the signal processing chain. This backward calculation resembles the \textit{exploding gradients} problem in recurrent neural networks~\cite{gers2000learning}. Gradient clipping~\cite{goodfellow2016deep} is preemptively used to ensure that the  $\ell_2$ norm of all gradients does not exceed the threshold of 1. 
 % \mathbf{\gamma}_i^{\text{clipped}} = \mathbf{\gamma}_i \cdot \mathcal{S}
 % \]
 % Where $\mathcal{S}$ is a value less than or equal to 1, depending on whether the norm of the gradients exceeds the threshold $c$.  
@@ -550,9 +546,7 @@ The Kruskal-Wallis test is used for the first stage~\cite{kruskal1952use}; this 
 
 
 \subsubsection{Best Performers For Each Program}
-Based on the bootstrapped distribution of scores, the NPSK algorithm ranks the loss functions from 1 (best) to a maximum of 4 (worst). In cases where the distributions are similar, multiple loss functions can be clustered into the same rank. 
-
-We use color-coded violin plots to visualize the best performers for each program. In the violin plots, the corresponding colors for each rank are
+Based on the bootstrapped distribution of scores, the NPSK algorithm ranks the loss functions from 1 (best) to a maximum of 4 (worst). In cases where the distributions are similar, multiple loss functions can be clustered into the same rank. In Figure~\ref{fig:npsk_all}, we use color-coded violin plots to visualize the best performers for each program. The corresponding colors for each rank are
 \colorbox{rank1}{\textcolor{black}{\textbf{1}}} \colorbox{rank2}{\textcolor{white}{\textbf{2}}} \colorbox{rank3}{\textcolor{white}{\textbf{3}}} \colorbox{rank4}{\textcolor{black}{\textcolor{white}{\textbf{4}}}}
 
 \input{extra_figures/ranking_tables}
@@ -575,7 +569,7 @@ IP-Loss and manual hearing tests yield identical rankings, and MSS results vary 
 \label{sec:consistency_in_rankings}
 \subsubsection{Manual Ranks} Agreement between the manually assigned scores is measured using Spearman’s rank correlation, which provides both a correlation coefficient ($\rho$) ranging from –1 (perfect negative correlation) to 1 (perfect positive correlation), and a p-value testing the null hypothesis of no correlation~\cite{spearman1987proof,rebekic2015pearson}. Across all programs, the correlation was very strong ($\rho = 0.86$, $p < 10^{-180}$). Per-program correlations were also very strong: $\rho = 0.71$ for \BPNoise{} ($p < 10^{-25}$), $\rho = 0.64$ for \AddSineSaw{} ($p < 10^{-19}$), $\rho = 0.84$ for \AmpMod{} ($p < 10^{-43}$), and $\rho = 0.85$ for \FMMod{} ($p < 10^{-44}$). 
 
-Table~\ref{tab:combined_ranks} shows the SNPK rankings of bootstrapped evaluation results for each program. Both MSS and P-Loss gave a different rank from the hearing results in 3 out of 16 cases, which shows consistency between automatic and manual hearing tests, at least for the simple programs used in this work. We also observe that identical top ranks were consistent across performance evaluation methodologies, with the exception of P-Loss in \BPNoise, which narrowly picks a different spectrogram-based loss function.
+Table~\ref{tab:combined_ranks} shows the SNPK rankings of bootstrapped evaluation results for each program. Both MSS and P-Loss gave a different rank from the hearing results in 3 out of 16 cases, which shows consistency between automatic and manual hearing tests, at least for the simple programs used in this work. We also observe that top ranks were consistent across performance evaluation methodologies, with the exception of P-Loss in \BPNoise, which narrowly picks a different spectrogram-based loss function.
 % \input{extra_figures/ranking_tables}
 
 
