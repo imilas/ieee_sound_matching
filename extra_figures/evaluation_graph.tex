@@ -3,7 +3,7 @@
 \resizebox{\linewidth}{!}{ % Automatically scales diagram to fit page width
 \begin{tikzpicture}[
     function/.style={rectangle, draw, rounded corners, minimum width=2cm, minimum height=1cm, text centered, node distance=1cm},
-    distribution/.style={ellipse, draw, minimum width=1cm, minimum height=0cm, text centered, node distance=0.3cm},
+    distribution/.style={ellipse, draw, minimum width=1cm, minimum height=0cm, text centered, node distance=0.1cm},
     gaussian/.style={draw, smooth, samples=100, domain=-2.5:2.5},
     NPSK/.style={rectangle, draw, rounded corners, minimum width=2.5cm, minimum height=1cm, text centered, node distance=1.5cm, fill=blue!20},
     level 1/.style={sibling distance=6cm, level distance=1cm},
@@ -17,7 +17,7 @@
 \node[function] {Synthesizer Program}
     child { node[function] {DTW\_Onset}
         child { node[distribution, mss] {MSS}
-            child[grow=down, level distance=1.5cm] {
+            child[grow=down, level distance=1cm] {
                 node[draw=none] {
                     \begin{tikzpicture}[scale=0.7]
                         \draw[red] plot (\x/3, {exp(-\x*\x)});  % Red Gaussian
@@ -26,7 +26,7 @@
             }
         }
         child { node[distribution, ploss] {P-Loss}
-            child[grow=down, level distance=1.5cm] {
+            child[grow=down, level distance=1cm] {
                 node[draw=none] {
                     \begin{tikzpicture}[scale=0.7]
                         \draw[blue] plot (\x/3, {exp(-\x*\x)});  % Blue Gaussian
@@ -35,7 +35,7 @@
             }
         }
         child { node[distribution, likert] {Likert}
-            child[grow=down, level distance=1.5cm] {
+            child[grow=down, level distance=1cm] {
                 node[draw=none] {
                     \begin{tikzpicture}[scale=0.7]
                         \draw[green] plot (\x/3, {exp(-\x*\x)});  % Green Gaussian
@@ -56,7 +56,7 @@
     }
     child { node[function] {JTFS}
         child { node[distribution, mss] {MSS}
-            child[grow=down, level distance=1.5cm] {
+            child[grow=down, level distance=1cm] {
                 node[draw=none] {
                     \begin{tikzpicture}[scale=0.7]
                         \draw[red] plot (\x/3, {exp(-\x*\x)});  % Red Gaussian
@@ -65,7 +65,7 @@
             }
         }
         child { node[distribution, ploss] {P-Loss}
-            child[grow=down, level distance=1.5cm] {
+            child[grow=down, level distance=1cm] {
                 node[draw=none] {
                     \begin{tikzpicture}[scale=0.7]
                         \draw[blue] plot (\x/3, {exp(-\x*\x)});  % Blue Gaussian
@@ -74,7 +74,7 @@
             }
         }
         child { node[distribution, likert] {Likert}
-            child[grow=down, level distance=1.5cm] {
+            child[grow=down, level distance=1cm] {
                 node[draw=none] {
                     \begin{tikzpicture}[scale=0.7]
                         \draw[green] plot (\x/3, {exp(-\x*\x)});  % Green Gaussian
@@ -85,32 +85,38 @@
     };
 
 % Label for the second row (Distributions)
-\node at (0,-4) {\textbf{$\longleftarrow$\ \ \large Bootstrapped Distributions\ \ $\longrightarrow$}};
+\node at (0,-3.25) {\textbf{$\longleftarrow$\ \ \large Bootstrapped Distributions\ \ $\longrightarrow$}};
 % Left side: NPSK with MSS
 
-% Left side: NPSK with MSS
-\node[NPSK, text height=5ex, align=center, fill=red!30, draw=black] at (-6,-6) {NPSK with 4 \\ MSS distributions};
-\draw[->] (-6,-6.5) -- (-6,-7.5) node[below, below] {\textbf{Ranks 1-4}};
-\draw[red!40, thick] (-5, -5.4) -- (-2.95, -4.95);  % Line 1
-\draw[red!40, thick] (-5.5, -5.4) -- (-3.5, -4.75);  % Line 2
-\draw[red!40, thick] (-6, -5.4) -- (-5.5, -4.75);  % Line 3
-\draw[red!40, thick] (-6.5, -5.4) -- (-9, -4.75);    % Line 4
+\def\xoffsetL{-0.5}
+\def\xoffsetM{0}
+\def\xoffsetR{0.5}
+\def\yoffset{1}
+
+% Left: NPSK with MSS
+\node[NPSK, text height=5ex, align=center, fill=red!30, draw=black] at ({-6+\xoffsetL},{-6+\yoffset}) {NPSK with 4 \\ MSS distributions};
+\draw[->] ({-6+\xoffsetL},{-6.5+\yoffset}) -- ({-6+\xoffsetL},{-6.6+\yoffset}) node[below, below] {\textbf{Ranks 1-4}};
+\draw[red!40, thick] ({-5+\xoffsetL}, {-5.4+\yoffset}) -- ({-2.95+\xoffsetL}, {-5.15+\yoffset});  % Line 1
+\draw[red!40, thick] ({-5.5+\xoffsetL}, {-5.4+\yoffset}) -- ({-3.5+\xoffsetL}, {-4.75+\yoffset});  % Line 2
+\draw[red!40, thick] ({-6+\xoffsetL}, {-5.4+\yoffset}) -- ({-5.5+\xoffsetL}, {-4.75+\yoffset});  % Line 3
+\draw[red!40, thick] ({-6.5+\xoffsetL}, {-5.4+\yoffset}) -- ({-9+\xoffsetL}, {-4.75+\yoffset});  % Line 4
 
 % Middle: NPSK with P-Loss
-\node[NPSK, text height=5ex, align=center, fill=blue!40, draw=black] at (0,-6) {NPSK with 4 \\ P-Loss distributions};
-\draw[->] (0,-6.5) -- (0,-7.5) node[below, below] {\textbf{Ranks 1-4}};
-\draw[blue!40, thick] (1.5, -5.4) -- (3.25, -4.75);   % Line 1
-\draw[blue!40, thick] (0.75, -5.4) -- (1.5, -4.75);   % Line 2
-\draw[blue!40, thick] (-0.25, -5.4) -- (-1, -4.75);   % Line 3
-\draw[blue!40, thick] (-0.75, -5.4) -- (-3, -4.75);   % Line 4
+\node[NPSK, text height=5ex, align=center, fill=blue!40, draw=black] at ({0+\xoffsetM},{-6+\yoffset}) {NPSK with 4 \\ P-Loss distributions};
+\draw[->] ({0+\xoffsetM},{-6.5+\yoffset}) -- ({0+\xoffsetM},{-6.6+\yoffset}) node[below, below] {\textbf{Ranks 1-4}};
+\draw[blue!40, thick] ({1.5+\xoffsetM}, {-5.4+\yoffset}) -- ({3.25+\xoffsetM}, {-4.75+\yoffset});  % Line 1
+\draw[blue!40, thick] ({0.75+\xoffsetM}, {-5.4+\yoffset}) -- ({1.5+\xoffsetM}, {-4.75+\yoffset});  % Line 2
+\draw[blue!40, thick] ({-0.25+\xoffsetM}, {-5.4+\yoffset}) -- ({-1+\xoffsetM}, {-4.75+\yoffset});  % Line 3
+\draw[blue!40, thick] ({-0.75+\xoffsetM}, {-5.4+\yoffset}) -- ({-3+\xoffsetM}, {-4.75+\yoffset});  % Line 4
 
-% Right side: NPSK with Likert
-\node[NPSK, text height=5ex, align=center, fill=green!30, draw=black] at (6,-6) {NPSK with 4 \\ Likert distributions};
-\draw[->] (6,-6.5) -- (6,-7.5) node[below, below] {\textbf{Ranks 1-4}};
-\draw[green!50, thick] (7.5, -5.4) -- (8.75, -4.75);  % Line 1
-\draw[green!50, thick] (6.75, -5.4) -- (6, -4.75);    % Line 2
-\draw[green!50, thick] (5.75, -5.4) -- (4, -4.75);    % Line 3
-\draw[green!50, thick] (4.95, -5.4) -- (3.25, -4.95);    % Line 4
+% Right: NPSK with Likert
+\node[NPSK, text height=5ex, align=center, fill=green!30, draw=black] at ({6+\xoffsetR},{-6+\yoffset}) {NPSK with 4 \\ Likert distributions};
+\draw[->] ({6+\xoffsetR},{-6.5+\yoffset}) -- ({6+\xoffsetR},{-6.6+\yoffset}) node[below, below] {\textbf{Ranks 1-4}};
+\draw[green!50, thick] ({7.5+\xoffsetR}, {-5.4+\yoffset}) -- ({8.75+\xoffsetR}, {-5+\yoffset});  % Line 1
+\draw[green!50, thick] ({6.75+\xoffsetR}, {-5.4+\yoffset}) -- ({6+\xoffsetR}, {-4.75+\yoffset});    % Line 2
+\draw[green!50, thick] ({5.75+\xoffsetR}, {-5.4+\yoffset}) -- ({4+\xoffsetR}, {-4.85+\yoffset});    % Line 3
+\draw[green!50, thick] ({4.95+\xoffsetR}, {-5.4+\yoffset}) -- ({3.25+\xoffsetR}, {-5.1+\yoffset}); % Line 4
+
 
 
 \end{tikzpicture}
