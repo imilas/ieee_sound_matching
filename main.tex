@@ -464,7 +464,7 @@ sawOsc(f) = +(f/ma.SR) ~ ma.frac;
 process = sineOsc(sine_freq)+sawOsc(saw_freq);
 \end{lstlisting}
 
-\begin{lstlisting}[caption={\AmpMod}, label={lst:program2},language=Faust,float,floatplacement=!H,xleftmargin=1em,xrightmargin=0.5em,firstnumber=0,aboveskip=0em, belowskip=-1em]
+\begin{lstlisting}[caption={\AmpMod}, label={lst:program3},language=Faust,float,floatplacement=!H,xleftmargin=1em,xrightmargin=0.5em,firstnumber=0,aboveskip=0em, belowskip=-1em]
 import("stdfaust.lib");
 amp = hslider("amp",0.5,0,5,0.01);
 modulator = hslider("modulator",0.5,0,4,0.01);
