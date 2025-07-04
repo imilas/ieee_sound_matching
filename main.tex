@@ -48,8 +48,15 @@
 
 \author{Amir Salimi, Abram Hindle, Osmar R. Za{\"i}ane}
 
-\markboth{IEEE TRANSACTIONS ON AUDIO, SPEECH AND LANGUAGE PROCESSING, VOL -, 2025}%
-{Shell \MakeLowercase{\textit{et al.}}: A Sample Article Using IEEEtran.cls for IEEE Journals}
+% \markboth{IEEE TRANSACTIONS ON AUDIO, SPEECH AND LANGUAGE PROCESSING, VOL -, 2025}%
+% {Shell \MakeLowercase{\textit{et al.}}: A Sample Article Using IEEEtran.cls for IEEE Journals}
+
+\markboth{%
+  \parbox{\textwidth}{%
+    This work has been submitted to the IEEE for possible publication. \\
+    Copyright may be transferred without notice, after which this version may no longer be accessible.%
+  }%
+}{}
 
 \maketitle
 
@@ -296,7 +303,7 @@ Recent years have seen more works in sound-matching using machine learning techn
 
 Esling \textit{et al.} noted the issue of using P-Loss in sound-matching~\cite{esling2019flow}, considering the non-linear mapping between parameters of a synth and the audio output. In their approach, dubbed as ``flowsynth'', they used a large parameter-to-audio dataset for a commercial \gls{VST} synthesizer. In flowsynth, audio is encoded to an auditory space, using a NN autoencoding approach~\cite{hinton2006reducing}. The encodings in the auditory space can then be converted to the parameter space, but only for that particular synthesizer. Using P-Loss and Spectral Convergence (Frobenius norm of the spectrograms) as metrics, flowsynth outperformed other NN approaches that did not use an auditory to parameter space conversion, but formal hearing tests were not conducted.
 
-Masuda \textit{et al.} also applied supervised learning to synthesizer parameter estimation~\cite{masuda2021soundmatch}. Their work highlights the issue of non-linearity in parameter-to-synthesizer outputs and out-of-domain search. This work uses a differentiable subtractive synthesizer (two oscillators and an LP filter). A NN model was pre-trained using an in-domain dataset of randomly selected parameters and P-Loss. After training, the model was fine-tuned using 20,000 out-of-domain sounds from the NSynth dataset~\cite{engel2017neural} and multi-scale spectrogram loss~\cite{engel2020ddsp}. This approach proved more effective---that is, lower multi-level spectral difference in out-of-domain tests---than baseline models, which were either not exposed to out-of-domain sounds or trained exclusively with P-Loss. Subjective hearing tests were conducted, showing a preference for the fine-tuned model~\cite{masuda2021soundmatch}. Masuda \textit{et al.} later extended this work with semi-supervised learning, highlighting significant gaps in in-domain and out-of-domain performance~\cite{masuda2023improving}.
+Masuda \textit{et al.} also applied supervised learning to synthesizer parameter estimation~\cite{masuda2021soundmatch}. Their work highlights the issue of non-linearity in parameter-to-synthesizer outputs and out-of-domain search. This work uses a differentiable subtractive synthesizer (two oscillators and an LP filter). A NN model was pre-trained using an in-domain dataset of randomly selected parameters and P-Loss. After training, the model was fine-tuned using 20,000 out-of-domain sounds from the NSynth dataset~\cite{engel2017neural} and multi-scale spectrogram loss~\cite{engel2020ddsp}. This approach proved more effective---i.e, achieved lower multi-level spectral difference in out-of-domain tests---than baseline models, which were either not exposed to out-of-domain sounds or trained exclusively with P-Loss. Subjective hearing tests were conducted, showing a preference for the fine-tuned model~\cite{masuda2021soundmatch}. Masuda \textit{et al.} later extended this work with semi-supervised learning, highlighting significant gaps in in-domain and out-of-domain performance~\cite{masuda2023improving}.
 
 Rather than focusing on a particular implementation, Shier \textit{et al.} presented Spieglib, a library for implementation of sound-matching pipelines~\cite{shier2020spiegelib}. This library provides different choices for DNNs, GAs, synthesizers, and feature extractors. Shier \textit{et al.} presented an experiment with a similar setup to Yee-King \textit{et al.}~\cite{yee2018automatic}, however, they found a genetic algorithm to be the best performing.
 
@@ -464,7 +471,7 @@ sawOsc(f) = +(f/ma.SR) ~ ma.frac;
 process = sineOsc(sine_freq)+sawOsc(saw_freq);
 \end{lstlisting}
 
-\begin{lstlisting}[caption={\AmpMod}, label={lst:program3},language=Faust,float,floatplacement=!H,xleftmargin=1em,xrightmargin=0.5em,firstnumber=0,aboveskip=0em, belowskip=-1em]
+\begin{lstlisting}[caption={\AmpMod}, label={lst:program2},language=Faust,float,floatplacement=!H,xleftmargin=1em,xrightmargin=0.5em,firstnumber=0,aboveskip=0em, belowskip=-1em]
 import("stdfaust.lib");
 amp = hslider("amp",0.5,0,5,0.01);
 modulator = hslider("modulator",0.5,0,4,0.01);
@@ -598,7 +605,7 @@ While we cannot prove that a universally best similarity measure does not exist,
 
 Contemporary works often involve the application of domain specific and computationally expensive loss functions~\cite{han2023perceptual,uzrad2024diffmoog}, use of large neural networks~\cite{hershey2017cnn,cramer2019look}, or complex ensemble methods~\cite{turian2022hear}. Such models are useful but intractable; furthermore, training them requires the definition of simpler loss functions, which emphasizes the need for further development of differentiable and expressive loss function implementations. 
 
-Like nearly all previous work in sound-matching, the main measure of success here was the accurate \textit{replication} of sounds (or synth parameters) rather than imitation of sounds outside of the synthesizer's domain. Replication of arbitrary features of sounds is an important component of sound-design, though it is much harder to define or measure. Future works could explore loss functions which only measure certain characteristics of sound (such as \DTWEnv), and whether they can pave the way for better imitation sound-matching.
+Like nearly all previous work in sound-matching, the main measure of success here was the accurate \textit{replication} of sounds (or synth parameters) rather than imitation of sounds outside of the synthesizer's domain. Replication of arbitrary features of sounds is an important component of sound-design, though it is much harder to define or measure. Future works could explore loss functions which only measure certain characteristics of sound (such as \DTWEnv), and whether they can pave the way for better imitation in sound-matching.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
