@@ -19,10 +19,12 @@
 \usepackage{adjustbox}
 \usepackage{listings}
 \usepackage{caption}         
+
+\newcommand{\highlight}[1]{\textcolor[RGB]{00,100,100}{#1}}
+\newcommand{\todo}[1]{\textcolor{red}{#1}}
+
 \captionsetup[lstlisting]{justification=centering, singlelinecheck=false}
 \providecommand{\gls}[1]{#1}
-\definecolor{highlight}{RGB}{00,150,00}
-\definecolor{todo}{RGB}{200,50,00}
 \definecolor{rank1}{HTML}{70FF70}
 \definecolor{rank2}{HTML}{858585}
 \definecolor{rank3}{HTML}{454545}
@@ -71,7 +73,6 @@ Audio synthesis, differentiable digital signal processing, music information ret
 \end{IEEEkeywords}
 
 \section{Introduction}
-\subsection{Digital Synthesis With Sound-Matching}
 Since the 1970s, artists such as Suzanne Ciani~\cite{ciani_life_in_waves} have explored the use of audio synthesizers to replicate natural sounds—such as a bottle cap popping off—in ways that preserve the essential qualities of the original while showcasing the unique characteristics of the synthesizer. Rather than merely replicating sounds, this approach uses synthesizers for artistic reinterpretation. However, the automation of this interpretive approach to sound design using digital audio synthesizers has rarely been explored, and significant knowledge gaps remain even in the simpler problem of replicating sounds. One such gap is the lack of diversity and depth in the analysis of sound-similarity measures and their interaction with various synthesis methods. As a stepping stone toward automated interpretive sound design, we use automatic and manual sound-evaluations to investigate whether the optimal choice of a sound-similarity measure is dependent on the synthesis method.
 
 A digital audio synthesizer is any software used for the creation and manipulation of audio. Since the advent of digital signal processing (\gls{DSP}) in the 1960s~\cite{stranneby2004digital}, a wide variety of parametric audio generation functions have been proposed~\cite{lyons1997understanding,russ1999sound,shier2020spiegelib}. Manual sound design with a synthesizer is an iterative process of trial and error; when the artist has a desired (or target) sound in mind, sound design involves listening to the output, determining whether the output is closer or farther from the target, and adjusting the parameters of the synthesizer accordingly until the target is reached~\cite{russ1999sound}. This paper explores the automation of this process, which we call \textit{iterative sound-matching}. 
@@ -111,7 +112,7 @@ where $T$ represents time in seconds, and $n$ is the frequency parameter. If $n$
 
 Since the advent of digital signal processing in the 1960s~\cite{stranneby2004digital}, a wide variety of parametric audio generation functions have been proposed~\cite{lyons1997understanding,russ1999sound,shier2020spiegelib}. This includes oscillators, filters, equalizers, and envelopes, which can be used sequentially or in parallel~\cite{lyons1997understanding,russ1999sound}. Sound design with a synthesizer is done by modifying the parameters of the functions until reaching a desired output~\cite{roads1996computer,pinch2004analog}.
 
-A relatively small subset of these synthesis methods have been used for automatic sound-matching, notably additive and/or subtractive synthesizers~\cite{esling2019flow,yee2018automatic,mitchell2007evolutionary,salimi2020make}, physical modeling~\cite{riionheimo2003parameter}, and frequency/amplitude modulation (\gls{FM}/\gls{AM})~\cite{horner1993machine,vahidi2023mesostructures}. 
+\todo{A relatively small subset of these synthesis methods have been used for automatic sound-matching, notably additive and/or subtractive synthesizers~\cite{esling2019flow,yee2018automatic,mitchell2007evolutionary,salimi2020make}, physical modeling~\cite{riionheimo2003parameter}, and frequency/amplitude modulation (\gls{FM}/\gls{AM})~\cite{horner1993machine,vahidi2023mesostructures}. }
 
 Differential DSP (\gls{DDSP}) is a general term for applications that combine machine learning techniques such as gradient descent~\cite{goodfellow2016deep,boyd2004convex} with DSP~\cite{engel2020ddsp}. Implementing complex DSP functions in a differentiable manner can be challenging, and effective differentiable audio similarity measures require careful mathematical expression of the desired attributes of sound. These issues have likely contributed to the limited exploration of this domain. Perhaps to most relevant recent work is by Vahidi \textit{et al.}, featuring the comparison of two differentiable loss functions with a simple FM synthesizer~\cite{vahidi2023mesostructures}. 
 
@@ -157,7 +158,7 @@ DTW measures the distance between the time-series \textit{after} alignments, typ
 
 \subsection{Automatic Sound Matching}
 \label{sec:sound_matching_definition}
-In past works the sound-matching problem has been tackled from a variety of perspectives as it involves a number of modular parts: the choice of synthesizer $g$, the target sounds of interest, the representation function $\phi$, and the heuristic for finding the optimal $\theta$. To give a formal definition of sound-matching, we expand the definition given by recent works~\cite{vahidi2023mesostructures,han2023perceptual}. The major components are as follows: 
+The problem of sound-matching has been tackled from a variety of perspectives as it involves a number of modular parts: the choice of synthesizer $g$, the target sounds of interest, the representation function $\phi$, and the heuristic for finding the optimal $\theta$. To give a formal definition of sound-matching, we expand the definition given by recent works~\cite{vahidi2023mesostructures,han2023perceptual}. The major components are as follows: 
 \begin{itemize}
     \item $g(\theta)$: Parametric audio synthesizer $g$ which takes on parameters $\theta$ 
     \item $x$: The output of $g$, given a set of parameters $\theta$ or $g(\theta) = x$ 
@@ -166,7 +167,7 @@ In past works the sound-matching problem has been tackled from a variety of pers
     \item $L$: Loss or error function. $L(\theta,t)$ is a measure of distance between $x$ and $t$. Often proportional to the subtraction of their representations, or $ \phi(x) - \phi(t)$
 \end{itemize}
 
-It could be argued that the implementation of these components is not an optimization problem with a correct answer, but a \textit{creative} endeavor depending on the artist's needs. Consider the hypothetical case where the goal might be to create an 8-bit~\cite{collins2007loop} version of a high quality, organic snare drum: in such a case, there is no optimal or ``correct" version of an 8-bit snare sound. 
+\highlight{It could be argued that the implementation of these components is not an optimization problem with a correct answer, but a \textit{creative} endeavor depending on the artist's needs}. Consider the hypothetical case where the goal might be to create an 8-bit~\cite{collins2007loop} version of a high quality, organic snare drum: in such a case, there is no optimal or ``correct" version of an 8-bit snare sound. 
 
 \subsection{Sound Matching Types}
 \label{sec:matching_types}
@@ -380,7 +381,7 @@ Automatic sound evaluation methods are often unreliable, as their alignment with
 % For each program and loss function, the blind manual hearing test gives us 80 ranks, which are given by two of the authors to a set of 40 randomly selected experiment results. This gives 160 pairs of ranks per program, and 640 for all programs. We computed Spearman correlations between the two reviewers.
 
 \subsubsection{Determining Best Performers}
- Figure~\ref{fig:posthoc_evaluation} is a visualized summary of how the loss functions are ranked. We have four loss functions and four synthesizer programs. The maximum number of iterations set to 200, and 300 experiments for each loss/synthesizer combination. Each synthesizer program is paired with four loss functions and 300 experiments are conducted and evaluated automatically with P-Loss and MSS. Two of the authors assigned blinded Likert scores to 40 randomly selected sounds, where integers from 1 to 5 are assigned, with 1 meaning no similarity and 5 for near identical. 
+ Figure~\ref{fig:posthoc_evaluation} is a visualized summary of how the loss functions are ranked. We have four loss functions and four synthesizer programs. The maximum number of iterations set to 200, and 300 experiments for each loss/synthesizer combination. Each synthesizer program is paired with four loss functions and 300 experiments are conducted and evaluated automatically with P-Loss and MSS, and manually with Likert scores.
 
 For each program and loss function pair, we have three distributions that can be used to rank the loss functions. Two with 300 automatically assigned similarities (P-Loss and MSS) and one with 80 Likert scores (combining the 40 ranks assigned by each author). For consistency and statistical robustness, the distributions are upsampled to 1000 values using bootstrapping~\cite{tibshirani1993introduction}. Bootstrapping gives an estimation of the distribution for the mean performance of each experiment. $k$ (set to 1000) samples of $n$ values (set to 100\% of the values) are taken with replacement from the empirical distribution (list of 300 performance values for MSS and P-Loss or 80 for manual rankings). The mean performance is calculated for each of the $k$ samples. The $k$ estimates of the mean performance give us a bootstrapped distribution for each loss function. 
 
@@ -402,7 +403,7 @@ For each program, the loss functions are ranked using the non-parametric Scott-K
 \subsection{Loss Function Implementation Details}
 \label{sec:loss_implementation}
 \subsubsection{STFT Losses}
-Due to their ubiquity and lower cost of gradient calculation, we use STFT as the basis of two of the loss functions. As discussed in Section~\ref{sec:matching_types}, the L1 or L2 distances are the most common methods of comparing different spectrograms, however, there are situations where this might lead to shortcomings. An example given by Vahidi \textit{et al.}~\cite{vahidi2023mesostructures} is two chirplets (tones that increase in pitch) starting and ending at the same frequencies. If one of these tones is slightly shifted in time, then the spectrograms will no longer overlap at any point, despite their sonic similarity. In this example, we do not know if this is an issue of the spectrograms, or the L1 measure used for their comparison. In the computer vision field, Structural Similarity Index (SSIM)~\cite{wang2004imagesssim,wang2009mean} and Scale-Invariant Mean Squared Error (SIMSE)~\cite{barron2014shapessimse} have been used as alternatives that improved performance in various tasks relative to L1.
+Due to their ubiquity and lower cost of gradient calculation, we use STFT as the basis of two loss functions. As discussed in Section~\ref{sec:matching_types}, the L1 or L2 distances are the most common methods of comparing different spectrograms, however, there are situations where this might lead to shortcomings. An example given by Vahidi \textit{et al.}~\cite{vahidi2023mesostructures} is two chirplets (tones that increase in pitch) starting and ending at the same frequencies. If one of these tones is slightly shifted in time, then the spectrograms will no longer overlap at any point, despite their sonic similarity (similar to the idea that a linear equation $f(x) = ax$ can never overlap with a slightly shifted version of itself, or $f(x) = ax +\epsilon$). In this example, we do not know if this is an issue of the spectrograms, or the L1 measure used for their comparison. In fields such as computer vision, Structural Similarity Index (SSIM)~\cite{wang2004imagesssim,wang2009mean} and Scale-Invariant Mean Squared Error (SIMSE)~\cite{barron2014shapessimse} have been used as alternatives that improved performance in various tasks relative to L1.
 
 We define the \LoneSpec~and \SIMSESpec~functions as the application of L1 and SIMSE to the STFT spectrograms. The STFT spectrogram function uses 512 FFT bins, window size of 600 samples, and hop length (how many samples the window shifts) of 100 samples. The L1 and SIMSE implementations are differentiable. 
 
