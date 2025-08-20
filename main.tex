@@ -114,7 +114,7 @@ Since the advent of digital signal processing in the 1960s~\cite{stranneby2004di
 
 \todo{A relatively small subset of these synthesis methods have been used for automatic sound-matching, notably additive and/or subtractive synthesizers~\cite{esling2019flow,yee2018automatic,mitchell2007evolutionary,salimi2020make}, physical modeling~\cite{riionheimo2003parameter}, and frequency/amplitude modulation (\gls{FM}/\gls{AM})~\cite{horner1993machine,vahidi2023mesostructures}. }
 
-Differential DSP (\gls{DDSP}) is a general term for applications that combine machine learning techniques such as gradient descent~\cite{goodfellow2016deep,boyd2004convex} with DSP~\cite{engel2020ddsp}. Implementing complex DSP functions in a differentiable manner can be challenging, and effective differentiable audio similarity measures require careful mathematical expression of the desired attributes of sound. These issues have likely contributed to the limited exploration of this domain. Perhaps to most relevant recent work is by Vahidi \textit{et al.}, featuring the comparison of two differentiable loss functions with a simple FM synthesizer~\cite{vahidi2023mesostructures}. 
+Differential DSP (\gls{DDSP}) is a general term for applications that combine machine learning techniques such as gradient descent~\cite{goodfellow2016deep,boyd2004convex} with DSP~\cite{engel2020ddsp}. Implementing complex DSP functions in a differentiable manner can be challenging, and effective differentiable audio similarity measures require careful mathematical expression of the desired attributes of sound. These issues have likely contributed to the limited exploration of this domain. Perhaps the most relevant recent work is by Vahidi \textit{et al.}, featuring the comparison of two differentiable loss functions with a simple FM synthesizer~\cite{vahidi2023mesostructures}. 
 
 \subsection{Sound Representation and Loss Functions}
 \label{sec:loss_funcs}
@@ -202,7 +202,8 @@ The heuristics in past works can be broadly split into two categories:
     \item Unsupervised or \textit{direct sound optimization} methods~\cite{horner1993machine,mitchell2007evolutionary,yee2018automatic,vahidi2023mesostructures}. Usually require at most one target example, and a loss function that measures the difference between the target and synthesizer outputs. 
 \end{enumerate}
 
-Genetic algorithms (\gls{GA})~\cite{holland1992genetic} can be used for direct sound optimization, and have been the earliest and most common heuristic in sound-matching~\cite{horner1993machine,mitchell2007evolutionary,yee2018automatic}. These algorithms start with arbitrary parameter sets that can be treated as an evolving population where the genomes are the parameter values. The most fit members of the group are the parameters which perform the best in the loss function, and create a new generation of parameters via mutation (random change in subset of parameters) and crossovers (combination of parameter sets); this process repeats until the goal or a maximum number of generations is reached. 
+\todo{
+Genetic algorithms (\gls{GA})~\cite{holland1992genetic} can be used for direct sound optimization, and have been the earliest and most common heuristic in sound-matching~\cite{horner1993machine,mitchell2007evolutionary,yee2018automatic}. These algorithms start with arbitrary parameter sets that can be treated as an evolving population where the genomes are the parameter values. The most fit members of the group are the parameters which perform the best in the loss function, and create a new generation of parameters via mutation (random change in subset of parameters) and crossovers (combination of parameter sets); this process repeats until the goal or a maximum number of generations is reached.}
 
  Differentiable settings have the benefit of making goal-oriented updates to the synthesizer parameters (the goal being the minimization of loss). There are also drawbacks: other than requiring more computation power, differentiable functions require careful implementation of operations that are continuous and numerically stable; this makes the implementation of signal processing functions quite difficult, contributing to the scarcity of works in this domain.
 
@@ -210,8 +211,8 @@ Genetic algorithms (\gls{GA})~\cite{holland1992genetic} can be used for direct s
 
 \subsection{Iterative Sound Matching}
 \label{sec:iterative_sound_matching}
- Figure~\ref{fig:sound_design_loop_iterative} shows a general model for iterative sound-matching. To begin the process, the parameters are arbitrarily initialized (usually random generation), the similarity of the target and output is measured, and the parameter is \textit{optimized} with the goal of increasing the similarity, or alternatively, reducing the loss. This process repeats until termination. 
-
+ \todo{Figure~\ref{fig:sound_design_loop_iterative} shows a general model for iterative sound-matching. To begin the process, the parameters are arbitrarily initialized (usually random generation), the similarity of the target and output is measured, and the parameter is \textit{optimized} with the goal of increasing the similarity, or alternatively, reducing the loss. This process repeats until termination. 
+}
 \begin{figure}[ht]
     \centering
 \begin{tikzpicture}[node distance=2cm, auto]
