@@ -260,7 +260,7 @@ Mitchel \textit{\textit{et al.}}~\cite{mitchell2007evolutionary} & Non-diff FM &
 \hline
 Yee-King \textit{\textit{et al.}}~\cite{yee2018automatic} & Non-diff VST & P-Loss (for Supervised), Spectral (MFCC) & Supervised \& Evolutionary & Replicate & In & 2018 & Both \\
 \hline
-Esling \textit{\textit{et al.}}~\cite{esling2019flow} & Non-diff VST & Spec MSS/SC P-loss & Supervised \& Modeling & Replicate & In* \& Out & 2019 & 1-shot \\
+Esling \textit{\textit{et al.}}~\cite{esling2019flow} & Non-diff VST & Spec MSS/SC P-Loss & Supervised \& Modeling & Replicate & In* \& Out & 2019 & 1-shot \\
 \hline
 Shier \textit{\textit{et al.}}~\cite{shier2020spiegelib} & Custom, non-diff & FFT \& Spectral & Supervised \& Direct & Replicate & In & 2020 & Both \\
 \hline
@@ -272,7 +272,7 @@ Han \textit{\textit{et al.}}~\cite{han2023perceptual} & NN-encoder $\rightarrow$
 \hline
 Vahidi \textit{\textit{et al.}}~\cite{vahidi2023mesostructures} & Differentiable FM & JTFS/MSS & Direct (grad desc.) & Replicate & In & 2023 & Iter \\
 \hline
-Uzrad \textit{\textit{et al.}}~\cite{uzrad2024diffmoog} & DDSP chains & Synth. Chain and P-loss & Supervised & Replicate & In \& Out & 2024 & 1-shot \\
+Uzrad \textit{\textit{et al.}}~\cite{uzrad2024diffmoog} & DDSP chains & Synth. Chain and P-Loss & Supervised & Replicate & In \& Out & 2024 & 1-shot \\
 \hline
 \end{tabular}
 }
@@ -282,7 +282,7 @@ Uzrad \textit{\textit{et al.}}~\cite{uzrad2024diffmoog} & DDSP chains & Synth. C
 
 \section{Past Works}
 \label{sec:related_works}
-Table~\ref{tab:summary} contains an overview of relevant literature, covering important works in sound-matching. Earlier works in this domain focused on FM synthesis and genetic algorithms (or direct optimization methods)\cite{justice1979analytic,horner1993machine,mitchell2007evolutionary}. Along with the exponential increase in computation power, later works utilized a wider range of approaches to parameter search, estimation, and audio synthesis; particularly with supervised learning and neural networks (\gls{NN})~\cite{yee2018automatic,engel2020ddsp,esling2019flow}. 
+Table~\ref{tab:summary} contains an overview of relevant literature, covering important works in sound-matching. adsfEarlier works in this domain focused on FM synthesis and genetic algorithms (or direct optimization methods)\cite{justice1979analytic,horner1993machine,mitchell2007evolutionary}. Along with the exponential increase in computation power, later works utilized a wider range of approaches to parameter search, estimation, and audio synthesis; particularly with supervised learning and neural networks (\gls{NN})~\cite{yee2018automatic,engel2020ddsp,esling2019flow}. 
 
 \subsection{Earlier Works}
 FM synthesizers are simple to implement, yet very expressive~\cite{chowning1973synthesis}. Perhaps the earliest foundational work in sound-matching is the analytical approach by Justice~\cite{justice1979analytic} toward the decomposition and recreation of sounds with FM synthesis using one carrier, one modulator, and the corresponding envelopes:
@@ -298,7 +298,7 @@ Introduction of more complex models of synthesis such as wavetables~\cite{horner
 
 % Testing sound-matching experiments can be difficult, in part due to the large number of parametric components and navigation of complex non-linear systems. The issue with finding the best approaches to sound-matching is exacerbated when slight changes to the pipeline render previous results moot. Perhaps due to these reasons, the contrived methodology was not extensively tested by Mitchell and Creasy, who only provided a single experiment where the best evolutionary strategy found by in-domain search would also perform well in out-of-domain synthesis.
 \subsection{Introduction of Deep-Learning}
-Recent years have seen more works in sound-matching using machine learning techniques. In 2018, Yee-King \textit{et al.} rendered 60,000 audio-parameter pairs from the \textit{Dexed} \gls{VST} synthesizer~\footnote{https://asb2m10.github.io/dexed/}, and showed that NNs trained on this dataset can outperform GA and hill-climber (\gls{HC})~\cite{hoffmann2000heuristic} methods in rendering speed, with slight improvements in MFCC error (used as an objective performance test). The speed improvement appears trivial, considering the iterative nature of GAs when compared to offline training of supervised models. For GAs and HC optimizer, MFCCs were used as a measure of performance as well as a loss function. For training the networks, P-loss was used, since differentiable MFCCs were not possible in their pipeline. Importantly, informal hearing tests revealed that the performance of even the best NN model was unsatisfactory, possibly due to the complex nature of the synthesizer, which features 155 parameters.
+Recent years have seen more works in sound-matching using machine learning techniques. In 2018, Yee-King \textit{et al.} rendered 60,000 audio-parameter pairs from the \textit{Dexed} \gls{VST} synthesizer~\footnote{https://asb2m10.github.io/dexed/}, and showed that NNs trained on this dataset can outperform GA and hill-climber (\gls{HC})~\cite{hoffmann2000heuristic} methods in rendering speed, with slight improvements in MFCC error (used as an objective performance test). The speed improvement appears trivial, considering the iterative nature of GAs when compared to offline training of supervised models. For GAs and HC optimizer, MFCCs were used as a measure of performance as well as a loss function. For training the networks, P-Loss was used, since differentiable MFCCs were not possible in their pipeline. Importantly, informal hearing tests revealed that the performance of even the best NN model was unsatisfactory, possibly due to the complex nature of the synthesizer, which features 155 parameters.
 
 
 % Programming synthesizers and querying sounds by imitating human vocals has also been a subject of interest~\cite{Cartwright2014SynthAssistQA,siamesevocalimitation2018}. For example, Cartwright and Pardo created a framework for searching pre-made patches for a synthesizer to best imitate vocals using audio features such as pitch, spectral centroid, and loudness~\cite{Cartwright2014SynthAssistQA}. 
@@ -561,7 +561,7 @@ Based on the bootstrapped distribution of scores, the NPSK algorithm ranks the l
 \input{extra_figures/npsk_figures}
 
 \subsubsection{\BPNoise}
-For this synthesizer program, the spectrogram-based models performed the best. This makes intuitive sense, as the visual effects of a band-pass filter on white noise are readily apparent in a spectrogram. As shown in Figure~\ref{fig:npsk_p0}, manual hearing test and MSS selected \SIMSESpec~as the best performer and \LoneSpec~as the second-best performer, while P-loss gave the reverse order. 
+For this synthesizer program, the spectrogram-based models performed the best. This makes intuitive sense, as the visual effects of a band-pass filter on white noise are readily apparent in a spectrogram. As shown in Figure~\ref{fig:npsk_p0}, manual hearing test and MSS selected \SIMSESpec~as the best performer and \LoneSpec~as the second-best performer, while P-Loss gave the reverse order. 
 
 
 \subsubsection{\AddSineSaw}
