@@ -77,7 +77,7 @@ where $T$ represents time in seconds, and $n$ is the frequency parameter. If $n$
 
 Since the advent of digital signal processing in the 1960s~\cite{stranneby2004digital}, a wide variety of parametric audio generation functions have been proposed~\cite{lyons1997understanding,russ1999sound,shier2020spiegelib}. This includes oscillators, filters, equalizers, and envelopes, which can be used sequentially or in parallel~\cite{lyons1997understanding,russ1999sound}. Sound design with a synthesizer is done by modifying the parameters of the functions until reaching a desired output~\cite{roads1996computer,pinch2004analog}.
 
-Particularly in earlier works, frequency/amplitude modulators (\gls{FM}/\gls{AM}) has been the synthesizer of choice in sound-matching~\cite{horner1993machine,mitchell2007evolutionary,vahidi2023mesostructures}. This synthesis method is simple to implement, yet very expressive~\cite{chowning1973synthesis}. One of the earliest foundational sound-matching works is the analytical approach by Justice~\cite{justice1979analytic} toward the decomposition and recreation of sounds with FM synthesis using one carrier, one modulator, and the corresponding envelopes:
+Particularly in earlier works, frequency/amplitude modulators (\gls{FM}/\gls{AM}) has been the synthesizer of choice in sound-matching~\cite{horner1993machine,mitchell2007evolutionary,vahidi2023mesostructures}. This synthesis method is simple to implement, yet very expressive~\cite{chowning1973synthesis}. A common implementation is the use of one carrier, one modulator, and the corresponding envelopes:
 \[ f(t) = I_c(t) \cos(\omega_c t + I_m(t) \cos(\omega_m t))
 \]
 Where $f(t)$ is the output signal, $I_c(t)$ is the carrier amplitude, $\omega_c$ is the carrier frequency, and $I_m(t)$ and $\omega_m$ are the envelope and frequency for the modulator~\cite{justice1979analytic}. 
@@ -216,10 +216,7 @@ The choice of \textit{heuristics} is yet another important attribute sound-match
 
 The heuristics (i.e., how $\theta^*$ is approximated) used in past works can be broadly split into the two categories of \textit{direct optimization} and \textit{supervised}  (or inference) methods. Direct optimization refers to the iterative generation of a sound output, measurement of similarity between target and output, and application of updates to the parameters to maximize similarity (or minimize loss)~\cite{horner1993machine,mitchell2007evolutionary,yee2018automatic,vahidi2023mesostructures}; while supervised methods use large datasets of synthesizer sounds and corresponding parameters to learn the generation objective, commonly with the use of DNNs~\cite{engel2020ddsp,salimi2020make,yee2018automatic,esling2019flow}. These models often make their parameter predictions in a single step (or 1-shot). 
 
-Given the different attributes discussed thus far, Table~\ref{tab:summary} contains an overview of relevant literature, covering important works in sound-matching. A more detailed historical analysis of past and current trends in sound-matching can be discussed.
-
-
-
+Given the different attributes discussed thus far, Table~\ref{tab:summary} contains an overview of important relevant literature. This leads us to a more detailed historical analysis of past works in sound-matching.
 
 
 
