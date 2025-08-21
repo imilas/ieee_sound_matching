@@ -206,21 +206,20 @@ The choice of domain depends on whether we want to use the same synthesizer for 
 
 Regardless of the domain, the generation goal can be \textit{replication} or \textit{imitation} of the target sound. In replication, the goal is to make an identical copy of the target sound. Imitation is an artistic pursuit and harder to define, since the goal is to make new sounds that only retain a subset of the target's sonic features. While closely related to the in-domain versus out-of-domain problem, the choice of replication versus imitation is more dependent on how the loss and representation functions are defined. 
 
-\subsection{Supervised vs Iterative}
+\subsection{Heuristics and Historical Framing}
 \label{sec:optimization}
-% The goal of sound-matching is to find the optimal parameters $\theta^*$ that minimize the loss between the synthesizer output and the target sound. 
-% \[
-% \theta^* = \arg\min_{\theta} L(\theta,t)
-% \]
 
-% The \textit{heuristics} (i.e., how the parameters are approximated) used in past works can be broadly split into two categories:
-% \begin{enumerate}
-%     \item Direct optimization methods~\cite{horner1993machine,mitchell2007evolutionary,yee2018automatic,vahidi2023mesostructures}. This requires a target example, and a loss function that measures the difference between the target and synthesizer outputs. Given these two necessary pieces, direct optimization refers to the iterative generation of a sound output, measurement the distance between target and output, and applying updates to the parameters. 
-    
-%     \item Supervised (or inference) methods which use datasets of sound corresponding parameters to learn the generation objective. Often with a large number of input and output examples and use of DNNs~\cite{engel2020ddsp,salimi2020make,yee2018automatic,esling2019flow}. Often, these models output their parameter predictions in a single step (or 1-shot).  
-    
+The choice of \textit{heuristics} is yet another important attribute sound-matching. The goal of sound-matching is to find the optimal parameters $\theta^*$ that minimize the loss between the synthesizer output and the target sound. 
+\[
+\theta^* = \arg\min_{\theta} L(\theta,t)
+\]
 
-% \end{enumerate}
+The heuristics (i.e., how $\theta^*$ is approximated) used in past works can be broadly split into the two categories of \textit{direct optimization} and \textit{supervised}  (or inference) methods. Direct optimization refers to the iterative generation of a sound output, measurement of similarity between target and output, and application of updates to the parameters to maximize similarity (or minimize loss)~\cite{horner1993machine,mitchell2007evolutionary,yee2018automatic,vahidi2023mesostructures}; while supervised methods use large datasets of synthesizer sounds and corresponding parameters to learn the generation objective, commonly with the use of DNNs~\cite{engel2020ddsp,salimi2020make,yee2018automatic,esling2019flow}. These models often make their parameter predictions in a single step (or 1-shot). 
+
+Given the different attributes discussed thus far, Table~\ref{tab:summary} contains an overview of relevant literature, covering important works in sound-matching. A more detailed historical analysis of past and current trends in sound-matching can be discussed.
+
+
+
 
 
 
