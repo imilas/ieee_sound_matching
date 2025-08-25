@@ -74,7 +74,7 @@ Audio synthesis, differentiable digital signal processing, music information ret
 
 % need to simplify the intro, and expand the hypothesis
 \section{Introduction}
-Since the 1970s, artists such as Suzanne Ciani~\cite{ciani_life_in_waves} have explored the use of audio synthesizers to replicate natural sounds—such as a bottle cap popping off—in ways that preserve the essential qualities of the original while showcasing the unique characteristics of the synthesizer. Rather than merely replicating sounds, this approach uses synthesizers for artistic reinterpretation. However, the automation of this interpretive approach to sound design using digital audio synthesizers has rarely been explored, and significant knowledge gaps remain even in the simpler problem of replicating sounds. One such gap is the lack of diversity and depth in the analysis of sound-similarity measures and their interaction with various synthesis methods. As a stepping stone toward automated interpretive sound design, we use automatic and manual sound-evaluations to investigate whether the optimal choice of a sound-similarity measure is dependent on the synthesis method.
+Since the 1970s, artists such as Suzanne Ciani~\cite{ciani_life_in_waves} have explored the use of audio synthesizers to replicate natural sounds—such as a bottle cap popping off—in ways that preserve the essential qualities of the original while showcasing the unique characteristics of the synthesizer~\cite{creativecherep2024}. Rather than merely replicating sounds, this approach uses synthesizers for artistic reinterpretation. However, the automation of this interpretive approach to sound design using digital audio synthesizers has rarely been explored, and significant knowledge gaps remain even in the simpler problem of replicating sounds. One such gap is the lack of diversity and depth in the analysis of sound-similarity measures and their interaction with various synthesis methods. As a stepping stone toward automated interpretive sound design, we use automatic and manual sound-evaluations to investigate whether the optimal choice of a sound-similarity measure is dependent on the synthesis method.
 
 A digital audio synthesizer is any software used for the creation and manipulation of audio. Since the advent of digital signal processing (\gls{DSP}) in the 1960s~\cite{stranneby2004digital}, a wide variety of parametric audio generation functions have been proposed~\cite{lyons1997understanding,russ1999sound,shier2020spiegelib}. Manual sound design with a synthesizer is an iterative process of trial and error; when the artist has a desired (or target) sound in mind, sound design involves listening to the output, determining whether the output is closer or farther from the target, and adjusting the parameters of the synthesizer accordingly until the target is reached~\cite{russ1999sound}. This paper explores the automation of this process, which we call \textit{iterative sound-matching}. 
 
@@ -255,7 +255,7 @@ In the upcoming ``Past Works'' section, we will discuss the evolution of prior s
 \hline
 \textbf{Work} & \textbf{Synthesis} & \textbf{Loss} & \textbf{Heuristics} & \textbf{Goal} & \textbf{Domain} & \textbf{Year} & \textbf{Gen. } \\
 \hline
-Horner \textit{\textit{et al.}}~\cite{horner1993machine} & Non-diff FM & STFT (McAulay-Quatieri) & Direct & Replicate & In & 1991 & Iter \\
+Horner \textit{\textit{et al.}}~\cite{horner1993machine} & Non-diff FM & STFT (McAulay-Quatieri) & GA & Replicate & In & 1991 & Iter \\
 \hline
 Mitchel \textit{\textit{et al.}}~\cite{mitchell2007evolutionary} & Non-diff FM & Spectral Relative & Evolutionary & Replicate & In (Contrived) & 2007 & Iter \\
 \hline
@@ -271,9 +271,14 @@ Masuda \textit{\textit{et al.}}~\cite{masuda2021soundmatch} & DDSP & P-Loss init
 \hline
 Han \textit{\textit{et al.}}~\cite{han2023perceptual} & NN-encoder $\rightarrow$ physical model & PNP (approx. of STFT) & Supervised & Replicate & In & 2023 & 1-shot \\
 \hline
-Vahidi \textit{\textit{et al.}}~\cite{vahidi2023mesostructures} & Differentiable FM & JTFS/MSS & Direct (grad desc.) & Replicate & In & 2023 & Iter \\
+Vahidi \textit{\textit{et al.}}~\cite{vahidi2023mesostructures} & Differentiable FM & JTFS/MSS & Gradient desc. & Replicate & In & 2023 & Iter \\
+\hline
+Barkan \textit{et al.}~\cite{barkan2023inversynth}& Diff. VST Proxy& P-Loss + L1 Spec (weighted) &  Supervised (init.), Semi-Supervised & Replicate& In & 2023 & Both
+\\
 \hline
 Uzrad \textit{\textit{et al.}}~\cite{uzrad2024diffmoog} & DDSP chains & Synth. Chain and P-Loss & Supervised & Replicate & In \& Out & 2024 & 1-shot \\
+\hline
+Cherep \textit{et al.}~\cite{creativecherep2024} & DDSP & CLAP & Evolutionary & Imitate & Out & 2024 & Iter \\
 \hline
 \end{tabular}
 }
