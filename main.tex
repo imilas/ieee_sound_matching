@@ -256,17 +256,17 @@ In the upcoming ``Past Works'' section, we will discuss the evolution of prior s
 \hline
 \textbf{Work} & \textbf{Synthesis} & \textbf{Loss} & \textbf{Heuristics} & \textbf{Goal} & \textbf{Domain} & \textbf{Year} & \textbf{Gen. } \\
 \hline
-Horner \textit{\textit{et al.}}~\cite{horner1993machine} & Non-diff FM & STFT (McAulay-Quatieri) & GA & Replicate & In & 1991 & Iter \\
+Horner \textit{\textit{et al.}}~\cite{horner1993machine} & Non-differentiable FM & STFT (McAulay-Quatieri) & GA & Replicate & In & 1991 & Iter \\
 \hline
-Mitchel \textit{\textit{et al.}}~\cite{mitchell2007evolutionary} & Non-diff FM & Spectral Relative & Evolutionary & Replicate & In (Contrived) & 2007 & Iter \\
+Mitchel \textit{\textit{et al.}}~\cite{mitchell2007evolutionary} & Non-differentiable FM & Spectral Relative & Evolutionary & Replicate & In (Contrived) & 2007 & Iter \\
 \hline
-Yee-King \textit{\textit{et al.}}~\cite{yee2018automatic} & Non-diff VST & P-Loss (for Supervised), Spectral (MFCC) & Supervised \& Evolutionary & Replicate & In & 2018 & Both \\
+Yee-King \textit{\textit{et al.}}~\cite{yee2018automatic} & Non-differentiable VST & P-Loss (for Supervised), Spectral (MFCC) & Supervised \& Evolutionary & Replicate & In & 2018 & Both \\
 \hline
-Esling \textit{\textit{et al.}}~\cite{esling2019flow} & Non-diff VST & Spec MSS/SC P-Loss & Supervised \& Modeling & Replicate & In* \& Out & 2019 & 1-shot \\
+Esling \textit{\textit{et al.}}~\cite{esling2019flow} & Non-differentiable VST & Spec MSS/SC P-Loss & Supervised \& Modeling & Replicate & In* \& Out & 2019 & 1-shot \\
 \hline
 Shier \textit{\textit{et al.}}~\cite{shier2020spiegelib} & Custom, non-diff & FFT \& Spectral & Supervised \& Direct & Replicate & In & 2020 & Both \\
 \hline
-Salimi \textit{\textit{et al.}}~\cite{salimi2020make} & Non-diff & STFT and Envelope & Supervised & Imitate & Out & 2020 & 1-shot \\
+Salimi \textit{\textit{et al.}}~\cite{salimi2020make} & DSP & STFT and Envelope & Supervised & Imitate & Out & 2020 & 1-shot \\
 \hline
 Masuda \textit{\textit{et al.}}~\cite{masuda2021soundmatch} & DDSP & P-Loss initially, fine-tune with Spec. & Supervised & Both & In \& Out & 2021 & 1-shot \\
 \hline
@@ -274,10 +274,10 @@ Han \textit{\textit{et al.}}~\cite{han2023perceptual} & NN-encoder $\rightarrow$
 \hline
 Vahidi \textit{\textit{et al.}}~\cite{vahidi2023mesostructures} & Differentiable FM & JTFS/MSS & Gradient desc. & Replicate & In & 2023 & Iter \\
 \hline
-Barkan \textit{et al.}~\cite{barkan2023inversynthII}& Diff. VST Proxy& P-Loss + L1 Spec (weighted) &  Supervised (init.), Semi-Supervised & Replicate& In & 2023 & Both
+Barkan \textit{et al.}~\cite{barkan2023inversynthII}& Diff. Synthesizer Proxy& P-Loss + L1 Spec (weighted) &  Supervised (init.), Semi-Supervised & Replicate& In & 2023 & Both
 \\
 \hline
-Uzrad \textit{\textit{et al.}}~\cite{uzrad2024diffmoog} & DDSP chains & Synth. Chain and P-Loss & Supervised & Replicate & In \& Out & 2024 & 1-shot \\
+Uzrad \textit{\textit{et al.}}~\cite{uzrad2024diffmoog} & DDSP & Synth. Chain and P-Loss & Supervised & Replicate & In \& Out & 2024 & 1-shot \\
 \hline
 Cherep \textit{et al.}~\cite{creativecherep2024} & DDSP & CLAP & Evolutionary & Imitate & Out & 2024 & Iter \\
 \hline
@@ -327,6 +327,7 @@ Differentiable loss functions that use spectrogram differences can be computatio
 During the training phase, this metric is calculated alongside the neural parameter estimator. After training, PNP can be used as a fast approximation of computationally demanding loss functions such as JTFS~\cite{han2023perceptual,han2024learning}, paired with FM synthesizers and a differentiable physical model of a drum head~\cite{smith2010physical}.
 
 Uzrad \textit{et al.}~\cite{uzrad2024diffmoog} took another unique approach to sound-matching: using a differentiable \textit{synthesis chain} of DSP generators and effects and a loss function that combines P-Loss with a \textit{signal-chain loss}. The synthesizer is a customizable chain of effects, which feed one output as input to the next step of the chain; signal-chain loss compares the parameter and output difference at every output step in the chain~\cite{uzrad2024diffmoog}. Possible chain functionalities are FM/AM, Low-Frequency Oscillators (\gls{LFO}), filters, and envelopes. Like the results shown by Masuda \textit{et al.}~\cite{masuda2021soundmatch}, better out-of-domain results were achieved when pre-trained on in-domain data and fine-tuned using out-of-domain NSynth data~\cite{engel2017neural}. 
+
 
 % Uzrad \textit{et al.}\cite{uzrad2024diffmoog} used log-spectral distance (LSD) as their loss function, where   
 % $\text{LSD} = \| \log(S(t)) - \log(S(x)) \|_F$, S is the mel-spectrogram of the sounds and F is the Frobenius norm~\cite{golub2013matrix}. The Frobenius norm of a matrix $A$ is defined as

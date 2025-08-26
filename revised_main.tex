@@ -62,9 +62,9 @@ Audio synthesis, differentiable digital signal processing, music information ret
 \hphantom{\vphantom{\begin{minipage}{\textwidth}\bibliography{references}\end{minipage}}}
 
 
-\section{Background and Past Works}
-\label{sec:background}
-This section provides an introduction to digital audio synthesis, audio similarity measures, and a formal definition of sound-matching. We then provide a typology of sound-matching tasks using previous works as well as conceptual approaches that may be promising but though underexplored. Finally, a discussion on the current gaps of knowledge in the field is provided.
+% need to simplify the intro, and expand the hypothesis
+\section{Introduction}
+Since the 1970s, artists such as Suzanne Ciani~\cite{ciani_life_in_waves} have explored the use of audio synthesizers to replicate natural sounds—such as a bottle cap popping off—in ways that preserve the essential qualities of the original while showcasing the unique characteristics of the synthesizer~\cite{creativecherep2024}. Rather than merely replicating sounds, this approach uses synthesizers for artistic reinterpretation. However, the automation of this interpretive approach to sound design using digital audio synthesizers has rarely been explored, and significant knowledge gaps remain even in the simpler problem of replicating sounds. One such gap is the lack of diversity and depth in the analysis of sound-similarity measures and their interaction with various synthesis methods. As a stepping stone toward automated interpretive sound design, we use automatic and manual sound-evaluations to investigate whether the optimal choice of a sound-similarity measure is dependent on the synthesis method.
 
 
 \subsection{Digital Audio Synthesis}
@@ -187,16 +187,20 @@ During the training phase, this metric is calculated alongside the neural parame
 
 A neural approximation for another part of the supervised sound-matching chain---this time the synthesizer---was proposed by Barkan \textit{et al.}~\cite{barkan2023inversynthII}. As they noted, without a differentiable synthesizer, ``model-based'' (or what we call supervised) approaches cannot directly compare $x_o$ to $x_t$, often opting for P-Loss, which may not correctly map the parameters of sound to the output audio~\cite{esling2019flow,han2023perceptual,masuda2023improving}. Given a synthesizer and a large dataset of sounds and corresponding parameters, a model which maps sounds to parameters, and another model which approximates the synthesizer can be trained, allowing the implementation of a loss function which combines P-Loss with STFT differences. This ``Inversynth II'' (IS2) approach yielded significant improvements to previous works which did not use the STFT approximations for loss~\cite{esling2019flow,barkan2019inversynth}.
 
-In addition, Barkan \textit{et al.} attemped to  improve the IS2 model with Inference-Time
-Finetuning (ITF). For ITF, the synthesizer approximation is frozen and the encoder is iteratively finetuned for the sample sample using gradient descent in order to minimize P-Loss, stopping at convergence or when maximum number of iterations has reached~\cite{barkan2023inversynthII}. Barkan \textit{et al.} report that perhaps due to the discrepancy between the true and approximated synthesizer or overfitting, the application of ITF does not improve IS2 in spectral and manual performance metrics.
+Barkan \textit{et al.} attemped to  improve the IS2 model with Inference-Time
+Finetuning (ITF). For ITF, the synthesizer approximation is frozen and the encoder is iteratively finetuned for the sample sample using gradient descent in order to minimize P-Loss, stopping at convergence or when maximum number of iterations has reached~\cite{barkan2023inversynthII}. Barkan \textit{et al.} report that perhaps due to the discrepancy between the true and approximated synthesizer or overfitting, the application of ITF to IS2 generally worsened the spectral and manual performance metrics.
 
 
 Uzrad \textit{et al.}~\cite{uzrad2024diffmoog} took another unique approach to sound-matching: using a differentiable \textit{synthesis chain} of DSP generators and effects and a loss function that combines P-Loss with a \textit{signal-chain loss}. The synthesizer is a customizable chain of effects, which feed one output as input to the next step of the chain; signal-chain loss compares the parameter and output difference at every output step in the chain~\cite{uzrad2024diffmoog}. Possible chain functionalities are FM/AM, Low-Frequency Oscillators (\gls{LFO}), filters, and envelopes. Like the results shown by Masuda \textit{et al.}~\cite{masuda2021soundmatch}, better out-of-domain results were achieved when pre-trained on in-domain data and fine-tuned using out-of-domain NSynth data~\cite{engel2017neural}.
 
 
+Some recent works have opted for the use of audio embeddings as a similarity metric. In a recent work, Cherep \textit{et al.} used latent representations from the CLAP model~\cite{wu2023large} along with a differentiable synthesizer~\cite{synthhaxcherep2023} to create creative interpretations of sound effects. In their approach, a desired sound-effect is described in text and embedded using clap, and gradient free optimizer~\cite{evosax2022github} iteratively updates the synthesizer's parameters to minimize difference in the text and output sound embeddings. Based on manual hearing tests, this approach did not produce the ``correct'' sounds more frequently than previous works~\cite{kreuk2022audiogen}, however, it did yield better scores for ``artistic-interpretation'' (or what we refer to as imitation). 
+
+
 % masuda and esling both noted out-of-domain drop in performance
 % yee king noted performance drop in manual surveys 
 %p-loss bad : masuda-improving, han2023, esling-flowsynth
+% manual performance measure: barkan, masuda2021soundmatch, yee-king 
 
 \end{document}
 
