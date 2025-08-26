@@ -1,5 +1,6 @@
 \documentclass[lettersize,journal]{IEEEtran}
 \usepackage{amsmath,amsfonts}
+\DeclareMathOperator*{\argmin}{arg\,min}
 \usepackage{algorithmic}
 \usepackage{algorithm}
 \usepackage{array}
@@ -273,7 +274,7 @@ Han \textit{\textit{et al.}}~\cite{han2023perceptual} & NN-encoder $\rightarrow$
 \hline
 Vahidi \textit{\textit{et al.}}~\cite{vahidi2023mesostructures} & Differentiable FM & JTFS/MSS & Gradient desc. & Replicate & In & 2023 & Iter \\
 \hline
-Barkan \textit{et al.}~\cite{barkan2023inversynth}& Diff. VST Proxy& P-Loss + L1 Spec (weighted) &  Supervised (init.), Semi-Supervised & Replicate& In & 2023 & Both
+Barkan \textit{et al.}~\cite{barkan2023inversynthII}& Diff. VST Proxy& P-Loss + L1 Spec (weighted) &  Supervised (init.), Semi-Supervised & Replicate& In & 2023 & Both
 \\
 \hline
 Uzrad \textit{\textit{et al.}}~\cite{uzrad2024diffmoog} & DDSP chains & Synth. Chain and P-Loss & Supervised & Replicate & In \& Out & 2024 & 1-shot \\
