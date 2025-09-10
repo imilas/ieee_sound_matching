@@ -56,7 +56,7 @@ Fourier-based transformations such as short-time Fourier transforms (\gls{STFT})
 
 What we call \textit{Fourier-based Spectrograms} are variations on the STFT approach. For example, Mel-Spectrograms \textit{bin} frequencies on a near-logarithmic scale to better match human perception of frequencies~\cite{muller2007dynamic}. Multi-scale spectrograms (\gls{MSS}) used in recent works are a simple weighted average of multiple spectrograms with different parameters such as window size, number of frequency bins, and hop size~\cite{engel2020ddsp,vahidi2023mesostructures}; this may provide some improvements at a higher computational cost~\cite{turian2020sorry,engel2020ddsp}.
 
-\subsubsection{Novelty of Scale-Invariant Spectrogram Error}
+\textbf{Why use Scale-Invariant Spectrogram for audio loss}
 A limitation of L1/L2 distances on spectrograms is their sensitivity to global gain: 
 two sounds with identical spectral shape but different amplitude can yield large losses. 
 Scale-Invariant Mean Squared Error (SIMSE) addresses this by normalizing the energy of the compared signals, thereby focusing on proportional differences in spectral envelopes. 
@@ -75,7 +75,7 @@ Dynamic Time Warping (DTW) is a method for measuring similarity between multi-di
 
 
 
-\paragraph*{Justification and Novelty}
+\textbf{Why use DTW for audio loss?}
 DTW measures the distance between the time-series \textit{after} alignments, typically using Euclidean distance. The distance between a time-series and shifted versions of itself would be 0, regardless of shift amount~\cite{tavenard.blog.dtw}. Additional rules can be imposed to keep alignments locally constrained~\cite{itakura1975minimum,sakoe1978dynamic}. DTW provides robustness to local temporal shifts, making it well suited for comparing modulated signals where the perceptual similarity lies in envelope dynamics rather than precise onset alignment. 
 For example, two tremolo signals with slightly different phase are perceptually similar but would appear distant under spectrogram L1. 
 By applying DTW specifically to amplitude envelopes, we align with perceptual cues of loudness modulation while maintaining differentiability. 
@@ -152,7 +152,32 @@ Some recent works have opted for the use of audio embeddings as a similarity met
 %p-loss bad : masuda-improving, han2023, esling-flowsynth
 % manual performance measure: barkan, masuda2021soundmatch, yee-king 
 
+\subsection{What is Lacking In the Field}
+\label{sec:lacking}
+%   % First, we need to clearly define the characteristics we are looking for with non-generic loss functions, otherwise the chances of finding the sound(s) of interest is slim. Second, we need to move beyond direct replication, and focus on imitating target sounds that are outside the synthesizers capabilities. Third, more complex methods of synthesis need to be explored for iterative sound-matching. Fourth, we need to find optimization methods that can effectively navigate the the sinusoidal nature of loss function landscapes. 
 
-% Section IV titled "Programs, Methodology, and Results" is overloaded and blends experimental setup with results and interpretation. For clear clarity and alignment with structural norms, we recommend splitting this into three sections: (1) Experimental Setup (including synthesizer programs, loss definitions, optimization procedure); (2) Experimental Results (performance metrics, statistical tests, and rankings); and (3) Discussion (qualitative interpretation, synthesis-specific observations, and practical implications).
+% Based on the literature reviewed, we find several gaps in past research that makes the application of sound-matching for sound-designers difficult. Thus far, replication of in-domain sounds has been the main subject of research. With in-domain replication, we already have the target sound \textit{and} the program that makes it. This simplifies the problem of measuring performance and is the reason why this type of sound-matching research is by far the most common. However, practical application of sound-matching requires answers to much harder problems. Sound-matching would be an interesting creative tool if we could use it to either:
+% \begin{enumerate}
+%  \item \textbf{Replicate out-of-domain sounds}: this would give us the parameters that could closely approximate a target sound, and we can modify the sound further by modulating the synthesizer. 
+% \item \textbf{Imitate in-domain or out-of-domain sounds}: This would allow for applying the characteristics of one sound to another. 
+% \end{enumerate}
+
+% We need to be aware of the ``open set recognition'' (\gls{OSR}) problem here \cite{mundt2019open,gers2000learning}. OSR is a well documented issue in DL that manifests when the set or category that the network is supposed to reject or accept cannot be explained via examples. With imitation or replication of out-of-domain sounds, we can expect issues related to OSR to occur, since target and output sounds would be from different domains~\cite{salimi2021percussive}. 
+
+% Perhaps one method of addressing the OSR problem is the use of representations (or feature extraction) methods that reduce sounds to a feature vector in the same domain. For example, a representation that only looks at the envelope of sounds is far less likely to be subject to the OSR problem. \textcolor{highlight}{We highlight the lack of non-generic loss functions as a major weakness in previous works and an interesting area to explore}. 
+
+% Another weakness \textcolor{highlight}{is that the synthesis methods in past works are not representative of the common methods used by sound designers and modern synthesizers}. Simple FM/AM synthesizers have generally been the go-to methods of sound-matching. We believe that general statements regarding the effectiveness of an approach to iterative sound-matching (particularly in regards to a loss function) can only be reasonably made in the context of the subset of the tested methods of synthesis.
+% \textcolor{highlight}{The simplicity of parameter optimization approaches} is another area of weakness in past works. Classic genetic algorithms update the parameters randomly, while in recent differentiable settings, simple gradient descent methods are used. Past works have provided issues which arise in differentiable parameter estimation due to periodic loss functions. Perhaps the use of reinforcement learning (\gls{RL}), or other algorithms that continually learn from their environment, could help with this problem.
+
+% \subsection{Defining The Major Issues}
+% \label{sec:addressing_problems}
+
+Having looked at the current available literature, we note four major areas of weakness in sound-matching. We target the first two issues in this work, while the latter two issues are left for future work. 
+\begin{enumerate}
+    \item \LossSelect: Is there a \textit{best performing} loss function, or is the selection of the loss function dependent on factors such as the sound domain, synthesizer capability and the desired characteristics of the output? 
+    \item \SynthSelect: There is a lack of diversity in the synthesis methods used in sound-matching. The use of different DSP functions for iterative sound-matching and their effects on the outcome or the interactions with the loss function have not been tested.
+    \item \PeriodicLoss: The sinusoidal nature of loss function landscapes is a problem that appears frequently. In differentiable settings, this problem causes gradient descent updates to local minima. 
+    \item \OutDomain: Sound-matching with out-of-domain sounds is an unexplored area, yet a necessary one for practical applications for sound designers.
+\end{enumerate}
 
 

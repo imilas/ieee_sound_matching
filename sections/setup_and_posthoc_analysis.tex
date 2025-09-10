@@ -228,18 +228,18 @@ The approach of designing DSP functions in Faust and transpiling to differentiab
 Based on our findings, several actionable guidelines emerge. These heuristics can guide practitioners in selecting appropriate similarity measures and synthesis methods for future sound-matching experiments.
 \begin{itemize}
     \item In leu of listening tests, MSS or P-Loss are generally useful for large-scale benchmarking, but confirm conclusions with manual listening when accuracy in isolated cases is important. 
-    \item For amplitude-modulated synthesis, DTW-based losses (e.g., \DTWEnv{}) are most effective.
-    \item For subtractive/noise-filtered synthesis, spectrogram based losses are most effective. We can recommend the use of SIMSE over L1, particularly when relative amplitudes are less important. 
-    \item Iterative differentiable optimization via Faust-to-JAX is a viable strategy for defining various differentiable DSP functions, requiring only modest hardware resources.
+    \item For amplitude-modulated synthesis, DTW-based losses (e.g., \DTWEnv{}) are recommended over spectrogram based and JTFS. 
+    \item For subtractive/noise-filtered synthesis, spectrogram based losses are most effective. Based on our results, SIMSE appears to be the better method of spectrogram comparisons relative to L1, but the amplitude agnosticism of SIMSE likely plays a role in its poor performance in additive synthesis.  
+    \item In our amplitude modulation experiments, \JTFS{} did not outperform other measures, contradicting prior claims of its superiority for mesostructures~\cite{vahidi2023mesostructures}. Thus, our results call into question its effectiveness as a general mesostructure measure
+    \item Iterative differentiable optimization via Faust-to-JAX is a viable strategy for defining various differentiable DSP functions, requiring only modest hardware resource and providing a more natural approach to synthesizer definition.
 \end{itemize}
 
 \subsection{Applicability to More Complex Synthesizers}
-The experiments in this study were conducted with differentiable synthesizers of modest complexity (2 parameters each), chosen to isolate fundamental synthesis principles. 
-While this level of simplicity facilitates controlled comparisons, it does not fully capture the parameter richness of real-world synthesizers, which can have hundreds of parameters routed in various ways. The generalizability of our findings does require further research.
+The experiments in this study were conducted with differentiable synthesizers chosen to isolate fundamental synthesis principle with 2 parameters each. While this level of simplicity facilitates controlled comparisons, it does not fully capture the richness of real-world synthesizers, which can have hundreds of parameters with various routes. As a result, the extent of the generalizability of our findings does require further research. 
 
-Nonetheless, we believe that the insights here can extend naturally to more complex domains. First, the observed dependence of loss performance on synthesis method is will likely remain stable even with added complexities such as layers of modulation, filtering, or nonlinearity. \DTWEnv{} and \SIMSESpec{} measure very specific features of audio, and their use in the recommended settings would likely yield the desired results regardless of synthesizer complexity. 
+Nonetheless, we believe that the insights here can extend naturally to more complex domains. Depending on the feature of interest, the observed dependence of loss performance on synthesis method is will likely remain stable even with added complexities such as layers of modulation, filtering, or nonlinearity. 
 
-(same as previous sentence) Second, the heuristics identified here (e.g., DTW\_Envelope excelling in amplitude-modulated contexts, SIMSE\_Spec in subtractive filtering) map directly onto common building blocks found in commercial and modular synthesizers, suggesting that these recommendations can guide loss selection in practical scenarios.
+\DTWEnv{} measures very specific features of audio, and its use in the recommended settings---where low frequency amplitude modulation matching is required---would likely yield the desired results regardless of synthesizer complexity. Likewise, the use of \SIMSESpec{} or \LoneSpec{} for matching filter cut-offs is likely to be successful regardless of the underlying sound. 
 
 % Third, the iterative differentiable optimization framework proved viable even on limited hardware, which indicates that similar pipelines could be applied to larger differentiable synthesizers if computational resources allow.
 
