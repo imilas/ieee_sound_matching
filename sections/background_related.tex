@@ -144,8 +144,7 @@ Finetuning (ITF). For ITF, the synthesizer approximation is frozen and the encod
 Uzrad \textit{et al.}~\cite{uzrad2024diffmoog} took another unique approach to sound-matching: using a differentiable \textit{synthesis chain} of DSP generators and effects and a loss function that combines P-Loss with a \textit{signal-chain loss}. The synthesizer is a customizable chain of effects, which feed one output as input to the next step of the chain; signal-chain loss compares the parameter and output difference at every output step in the chain~\cite{uzrad2024diffmoog}. Possible chain functionalities are FM/AM, Low-Frequency Oscillators (\gls{LFO}), filters, and envelopes. Like the results shown by Masuda \textit{et al.}~\cite{masuda2021soundmatch}, better out-of-domain results were achieved when pre-trained on in-domain data and fine-tuned using out-of-domain NSynth data~\cite{engel2017neural}.
 
 
-Some recent works have opted for the use of audio embeddings as a similarity metric. In a recent work, Cherep \textit{et al.} used latent representations from the CLAP model~\cite{wu2023large} along with a differentiable synthesizer~\cite{synthhaxcherep2023} to create creative interpretations of sound effects. In their approach, a desired sound-effect is described in text and embedded using clap, and gradient free optimizer~\cite{evosax2022github} iteratively updates the synthesizer's parameters to minimize difference in the text and output sound embeddings. Based on manual hearing tests, this approach did not produce the ``correct'' sounds more frequently than previous works~\cite{kreuk2022audiogen}, however, it did yield better scores for ``artistic-interpretation'' (or what we refer to as imitation). 
-
+Some recent works have opted for the use of audio embeddings as a similarity metric. In a recent work, Cherep \textit{et al.} used latent representations from the CLAP model~\cite{wu2023large} along with a differentiable synthesizer~\cite{synthhaxcherep2023} to create creative interpretations of sound effects. In their approach, a desired sound-effect is described in text and embedded using CLAP before a gradient free optimizer~\cite{evosax2022github} iteratively updates the synthesizer's parameters to minimize the difference between the text and output sound embeddings. Based on manual hearing tests, this approach did not produce the ``correct'' sounds more frequently than previous works~\cite{kreuk2022audiogen}. However, it did yield better scores for ``artistic-interpretation'' (or what this works refers to as ``imitation'').
 
 % masuda and esling both noted out-of-domain drop in performance
 % yee king noted performance drop in manual surveys 
@@ -180,4 +179,4 @@ Having looked at the current available literature, we note four major areas of w
     \item \OutDomain: Sound-matching with out-of-domain sounds is an unexplored area, yet a necessary one for practical applications for sound designers.
 \end{enumerate}
 
-
+\subsection{What needs to be done?Moving the field forward}
