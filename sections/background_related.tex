@@ -138,7 +138,7 @@ During the training phase, this metric is calculated alongside the neural parame
 A neural approximation for another part of the supervised sound-matching chain---this time the synthesizer---was proposed by Barkan \textit{et al.}~\cite{barkan2023inversynthII}. As they noted, without a differentiable synthesizer, ``model-based'' (or what we call supervised) approaches cannot directly compare $x_o$ to $x_t$, often opting for P-Loss, which may not correctly map the parameters of sound to the output audio~\cite{esling2019flow,han2023perceptual,masuda2023improving}. Given a synthesizer and a large dataset of sounds and corresponding parameters, a model which maps sounds to parameters, and another model which approximates the synthesizer can be trained, allowing the implementation of a loss function which combines P-Loss with STFT differences. This ``Inversynth II'' (IS2) approach yielded significant improvements to previous works which did not use the STFT approximations for loss~\cite{esling2019flow,barkan2019inversynth}.
 
 Barkan \textit{et al.} attemped to  improve the IS2 model with Inference-Time
-Finetuning (ITF). For ITF, the synthesizer approximation is frozen and the encoder is iteratively finetuned for the sample sample using gradient descent in order to minimize P-Loss, stopping at convergence or when maximum number of iterations has reached~\cite{barkan2023inversynthII}. Barkan \textit{et al.} report that perhaps due to the discrepancy between the true and approximated synthesizer or overfitting, the application of ITF to IS2 generally worsened the spectral and manual performance metrics.
+Finetuning (ITF). For ITF, the synthesizer approximation is frozen and the encoder is iteratively finetuned for the sample sample using gradient descent in order to minimize P-Loss, stopping at convergence or when maximum number of iterations has reached~\cite{barkan2023inversynthII}. Barkan \textit{et al.} report that the application of ITF generally worsened the spectral and manual performance metrics, perhaps due to the discrepancy between the true and approximated synthesizer or overfitting.
 
 
 Uzrad \textit{et al.}~\cite{uzrad2024diffmoog} took another unique approach to sound-matching: using a differentiable \textit{synthesis chain} of DSP generators and effects and a loss function that combines P-Loss with a \textit{signal-chain loss}. The synthesizer is a customizable chain of effects, which feed one output as input to the next step of the chain; signal-chain loss compares the parameter and output difference at every output step in the chain~\cite{uzrad2024diffmoog}. Possible chain functionalities are FM/AM, Low-Frequency Oscillators (\gls{LFO}), filters, and envelopes. Like the results shown by Masuda \textit{et al.}~\cite{masuda2021soundmatch}, better out-of-domain results were achieved when pre-trained on in-domain data and fine-tuned using out-of-domain NSynth data~\cite{engel2017neural}.
@@ -153,25 +153,9 @@ Some recent works have opted for the use of audio embeddings as a similarity met
 
 \subsection{What is Lacking In the Field}
 \label{sec:lacking}
-%   % First, we need to clearly define the characteristics we are looking for with non-generic loss functions, otherwise the chances of finding the sound(s) of interest is slim. Second, we need to move beyond direct replication, and focus on imitating target sounds that are outside the synthesizers capabilities. Third, more complex methods of synthesis need to be explored for iterative sound-matching. Fourth, we need to find optimization methods that can effectively navigate the the sinusoidal nature of loss function landscapes. 
+%-----> much of the original text (available in older version) is removed for brevity)
 
-% Based on the literature reviewed, we find several gaps in past research that makes the application of sound-matching for sound-designers difficult. Thus far, replication of in-domain sounds has been the main subject of research. With in-domain replication, we already have the target sound \textit{and} the program that makes it. This simplifies the problem of measuring performance and is the reason why this type of sound-matching research is by far the most common. However, practical application of sound-matching requires answers to much harder problems. Sound-matching would be an interesting creative tool if we could use it to either:
-% \begin{enumerate}
-%  \item \textbf{Replicate out-of-domain sounds}: this would give us the parameters that could closely approximate a target sound, and we can modify the sound further by modulating the synthesizer. 
-% \item \textbf{Imitate in-domain or out-of-domain sounds}: This would allow for applying the characteristics of one sound to another. 
-% \end{enumerate}
-
-% We need to be aware of the ``open set recognition'' (\gls{OSR}) problem here \cite{mundt2019open,gers2000learning}. OSR is a well documented issue in DL that manifests when the set or category that the network is supposed to reject or accept cannot be explained via examples. With imitation or replication of out-of-domain sounds, we can expect issues related to OSR to occur, since target and output sounds would be from different domains~\cite{salimi2021percussive}. 
-
-% Perhaps one method of addressing the OSR problem is the use of representations (or feature extraction) methods that reduce sounds to a feature vector in the same domain. For example, a representation that only looks at the envelope of sounds is far less likely to be subject to the OSR problem. \textcolor{highlight}{We highlight the lack of non-generic loss functions as a major weakness in previous works and an interesting area to explore}. 
-
-% Another weakness \textcolor{highlight}{is that the synthesis methods in past works are not representative of the common methods used by sound designers and modern synthesizers}. Simple FM/AM synthesizers have generally been the go-to methods of sound-matching. We believe that general statements regarding the effectiveness of an approach to iterative sound-matching (particularly in regards to a loss function) can only be reasonably made in the context of the subset of the tested methods of synthesis.
-% \textcolor{highlight}{The simplicity of parameter optimization approaches} is another area of weakness in past works. Classic genetic algorithms update the parameters randomly, while in recent differentiable settings, simple gradient descent methods are used. Past works have provided issues which arise in differentiable parameter estimation due to periodic loss functions. Perhaps the use of reinforcement learning (\gls{RL}), or other algorithms that continually learn from their environment, could help with this problem.
-
-% \subsection{Defining The Major Issues}
-% \label{sec:addressing_problems}
-
-Having looked at the current available literature, we note four major areas of weakness in sound-matching. We target the first two issues in this work, while the latter two issues are left for future work. 
+Having looked at the current available literature, we note four major areas of weakness in sound-matching. We target the first two issues in this work, while the latter two issues are left for future work.
 \begin{enumerate}
     \item \LossSelect: Is there a \textit{best performing} loss function, or is the selection of the loss function dependent on factors such as the sound domain, synthesizer capability and the desired characteristics of the output? 
     \item \SynthSelect: There is a lack of diversity in the synthesis methods used in sound-matching. The use of different DSP functions for iterative sound-matching and their effects on the outcome or the interactions with the loss function have not been tested.
@@ -179,4 +163,9 @@ Having looked at the current available literature, we note four major areas of w
     \item \OutDomain: Sound-matching with out-of-domain sounds is an unexplored area, yet a necessary one for practical applications for sound designers.
 \end{enumerate}
 
-\subsection{What needs to be done?Moving the field forward}
+
+
+
+ % We have highlighted the lack of attention given to the selection of loss functions in sound-matching, and noted that the few existing works addressing this issue evaluate their proposed losses using only simplistic sound synthesis methods. We hypothesize that the best performing loss function is influenced by the synthesis techniques utilized in the synthesizer. This hypothesis targets the issues of \LossSelect~and \SynthSelect.
+
+  % Towards addressing the problems of \LossSelect{} and \SynthSelect{}, we compare the performance of iterative sound-matching experiments, where four differentiable loss functions are applied to four differentiable synthesizers. What we mean by ``performance'' is the similarity of the final output to the target, as measured by P-Loss, MSS, and---most importantly---manual listening tests. \textbf{We hypothesize that the relative performance of loss functions for sound-matching is influenced by the method of synthesis}. If true, this would strengthen the idea that the selection of the loss function and synthesis method is not an optimization problem, but a subjective choice depending on the needs of the sound designer. 
