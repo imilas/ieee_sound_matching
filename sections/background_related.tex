@@ -157,12 +157,32 @@ Some recent works have opted for the use of audio embeddings as a similarity met
 
 Having looked at the current available literature, we note four major areas of weakness in sound-matching. We target the first two issues in this work, while the latter two issues are left for future work.
 \begin{enumerate}
-    \item \LossSelect: Is there a \textit{best performing} loss function, or is the selection of the loss function dependent on factors such as the sound domain, synthesizer capability and the desired characteristics of the output? 
+    \item \LossSelect: Is there a \textit{best performing} loss function, or is the selection of the loss function dependent on factors such as the sound domain, synthesizer capability and the desired characteristics of the output? The few existing works addressing this issue evaluate their proposed losses using only simplistic sound synthesis methods\todo{cite?}.
     \item \SynthSelect: There is a lack of diversity in the synthesis methods used in sound-matching. The use of different DSP functions for iterative sound-matching and their effects on the outcome or the interactions with the loss function have not been tested.
-    \item \PeriodicLoss: The sinusoidal nature of loss function landscapes is a problem that appears frequently. In differentiable settings, this problem causes gradient descent updates to local minima. 
+    \item \PeriodicLoss: The sinusoidal nature of loss function landscapes is a problem that appears frequently\todo{cite?}. In differentiable settings, this problem causes gradient descent updates to local minima. 
     \item \OutDomain: Sound-matching with out-of-domain sounds is an unexplored area, yet a necessary one for practical applications for sound designers.
 \end{enumerate}
 
+\subsection{Why This Methodology?}
+\label{sec:why_method}
+Our study takes a deliberately controlled approach: simple differentiable DSP synthesizers, optimized directly with gradient descent, and evaluated under multiple loss functions. 
+
+We adopt this design for three reasons.
+
+First, isolating small-scale, low-parameter synthesizers avoids the confounding effects of large neural proxies or embedding models, making it possible to directly analyze the interaction between synthesis structure and loss function. 
+This fills a gap in prior work where there is little insight into the comparison of loss functions under different synthesis conditions. 
+
+2. by comparing multiple synthesis methods side by side (subtractive, additive, amplitude modulation, etc.), we explicitly address the lack of diversity in \SynthSelect, and show that loss effectiveness is not universal but context-dependent. 
+This comparative methodology highlights scenarios where specific losses (e.g., DTW\_Envelope for modulated signals, SIMSE\_Spec for subtractive filtering) are most appropriate.
+
+3. Our methodology emphasizes reproducibility and scalability. 
+By using differentiable Faust-to-JAX synthesizers and modest computational resources, we create a lightweight experimental platform that can be extended to more complex synthesis techniques in future work, while still being transparent and interpretable in its current form.
+
+4. Past synths are either simple differentiable functions (commonly FM), or complex VSTs where we can't isolate the interactions between loss and functions, here we use isolated building blocks of DSP functions in a differentiable environment. 
+
+
+In this way, our approach complements prior neural and proxy-based methods by providing the missing “low-level experiments” that clarify fundamental interactions between DSP functions and similarity measures. 
+We argue that such isolated benchmarking is a necessary precursor to building robust, generalizable sound-matching systems.
 
 
 
