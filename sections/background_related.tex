@@ -163,26 +163,26 @@ Having looked at the current available literature, we note four major areas of w
     \item \OutDomain: Sound-matching with out-of-domain sounds is an unexplored area, yet a necessary one for practical applications for sound designers.
 \end{enumerate}
 
-\subsection{Why This Methodology?}
-\label{sec:why_method}
-Our study takes a deliberately controlled approach: simple differentiable DSP synthesizers, optimized directly with gradient descent, and evaluated under multiple loss functions. 
+We argue that isolated benchmarking is a necessary precursor to building robust, generalizable sound-matching systems. This fills a gap in prior work where there is little insight into the comparison of loss functions under different synthesis conditions, and how the two interact. To address the problems of \LossSelect{} and \SynthSelect{}, we pursue a methodology with 3 key characteristics that do not appear together in other works.
 
-We adopt this design for three reasons.
+1. Simple differentiable synthesizers using common DSP functions, filters, and oscillators would be beneficial in addressing the \SynthSelect{} problem. Isolating small-scale, low-parameter synthesizers avoids the confounding effects of large neural proxies or embedding models, making it possible to directly analyze the interaction between synthesis structure and loss function. 
 
-First, isolating small-scale, low-parameter synthesizers avoids the confounding effects of large neural proxies or embedding models, making it possible to directly analyze the interaction between synthesis structure and loss function. 
-This fills a gap in prior work where there is little insight into the comparison of loss functions under different synthesis conditions. 
+2. Evaluation of experiments under multiple loss functions: Addressing the \LossSelect{} problem requires that multiple loss functions are tested. A comparison of performance of different loss functions is rare in previous works~\todo{cite}.  
 
-2. by comparing multiple synthesis methods side by side (subtractive, additive, amplitude modulation, etc.), we explicitly address the lack of diversity in \SynthSelect, and show that loss effectiveness is not universal but context-dependent. 
-This comparative methodology highlights scenarios where specific losses (e.g., DTW\_Envelope for modulated signals, SIMSE\_Spec for subtractive filtering) are most appropriate.
-
-3. Our methodology emphasizes reproducibility and scalability. 
-By using differentiable Faust-to-JAX synthesizers and modest computational resources, we create a lightweight experimental platform that can be extended to more complex synthesis techniques in future work, while still being transparent and interpretable in its current form.
-
-4. Past synths are either simple differentiable functions (commonly FM), or complex VSTs where we can't isolate the interactions between loss and functions, here we use isolated building blocks of DSP functions in a differentiable environment. 
+3. Parameters optimized directly with gradient descent without additional neural network approximations. This would complement prior neural and proxy-based methods by providing the missing “low-level experiments” that clarify fundamental interactions between DSP functions and similarity measures. 
 
 
-In this way, our approach complements prior neural and proxy-based methods by providing the missing “low-level experiments” that clarify fundamental interactions between DSP functions and similarity measures. 
-We argue that such isolated benchmarking is a necessary precursor to building robust, generalizable sound-matching systems.
+
+ 
+
+% 2. by comparing multiple synthesis methods side by side (subtractive, additive, amplitude modulation, etc.), we explicitly address the lack of diversity in \SynthSelect, and show that loss effectiveness is not universal but context-dependent. 
+% This comparative methodology highlights scenarios where specific losses (e.g., DTW\_Envelope for modulated signals, SIMSE\_Spec for subtractive filtering) are most appropriate.
+
+% 3. Our methodology emphasizes reproducibility and scalability. 
+% By using differentiable Faust-to-JAX synthesizers and modest computational resources, we create a lightweight experimental platform that can be extended to more complex synthesis techniques in future work, while still being transparent and interpretable in its current form.
+
+% 4. Past synths are either simple differentiable functions (commonly FM), or complex VSTs where we can't isolate the interactions between loss and functions, here we use isolated building blocks of DSP functions in a differentiable environment. 
+
 
 
 
