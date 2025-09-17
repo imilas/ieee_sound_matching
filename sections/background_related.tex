@@ -157,31 +157,34 @@ Uzrad \textit{et al.}~\cite{uzrad2024diffmoog} took another unique approach to s
 \label{sec:lacking}
 %-----> much of the original text (available in older version) is removed for brevity)
 
-Having looked at the current available literature, we note four major areas of weakness in sound-matching. We target the first two issues in this work, while the latter two issues are left for future work.
+Having looked at the current literature, we identify four major areas of weakness in sound-matching. We target the first two issues in this work, while the latter two issues are left for future work.
 \begin{enumerate}
-    \item \LossSelect: Is there a \textit{best performing} loss function, or is the selection of the loss function dependent on factors such as the sound domain, synthesizer capability and the desired characteristics of the output? The few existing works addressing this issue evaluate their proposed losses using only simplistic sound synthesis methods\todo{cite?}.
-    \item \SynthSelect: There is a lack of diversity in the synthesis methods used in sound-matching. The use of different DSP functions for iterative sound-matching and their effects on the outcome or the interactions with the loss function have not been tested.
-    \item \PeriodicLoss: The sinusoidal nature of loss function landscapes is a problem that appears frequently\todo{cite?}. In differentiable settings, this problem causes gradient descent updates to local minima. 
-    \item \OutDomain: Sound-matching with out-of-domain sounds is an unexplored area, yet a necessary one for practical applications for sound designers.
+    \item \LossSelect: It remains unclear whether there exists a universally best-performing loss function, 
+    or whether performance depends on factors such as the sound domain, synthesizer architecture, 
+    and desired output characteristics. Existing studies typically evaluate losses only with simple synthesis 
+    setups~\cite{vahidi2023mesostructures}, leaving open questions about their generality. 
+    \item \SynthSelect: There is a lack of diversity in the synthesis methods used in sound-matching. The effects of using different isolated DSP functions in iterative sound-matching and how these interact with loss functions remains largely untested.
+    \item \PeriodicLoss: The sinusoidal nature of loss function landscapes is a problem that appears frequently\todo{cite and make clearer}. In differentiable settings, this problem causes gradient descent updates to local minima. 
+    \item \OutDomain: Sound-matching with out-of-domain sounds is a largely unexplored area, yet a necessary one for practical applications for sound designers.
 \end{enumerate}
 
 \subsection{What Approach Should We Take?}
-We argue that isolated benchmarking is a necessary precursor to building robust, generalizable sound-matching systems. To address the problems of \LossSelect{} and \SynthSelect{}, we pursue a methodology with 3 key characteristics that do not appear together in other works.
+We argue that isolated benchmarking is a necessary precursor to building robust, generalizable sound-matching systems. To address the problems of \LossSelect{} and \SynthSelect{}, we adopt a methodology with three key characteristics that have not previously appeared together.
 
-1. Simple differentiable synthesizers using common DSP functions, filters, and oscillators would be beneficial in addressing the \SynthSelect{} problem. Isolating small-scale, low-parameter synthesizers avoids the confounding effects of large neural proxies or embedding models, making it possible to directly analyze the interaction between synthesis structure and loss function. 
+\begin{enumerate}
+    \item Use simple differentiable synthesizers built from common DSP functions (oscillators, filters, envelopes) to address the \SynthSelect{} problem. Restricting to small-scale, low-parameter models avoids the confounding effects of neural proxies or embedding models, enabling direct analysis of how synthesis method interacts with loss functions. 
+    \item Evaluate experiments under multiple loss functions to address the \LossSelect{} problem. Prior work has typically tested losses in isolation, making direct comparisons rare~\todo{cite}.  
+    \item Optimize synthesizer parameters directly with gradient descent, without neural approximations. This complements prior proxy-based methods by providing the missing “low-level experiments” that clarify fundamental interactions between DSP functions and similarity measures. 
+\end{enumerate}
 
-2. Evaluation of experiments under multiple loss functions: Addressing the \LossSelect{} problem requires that multiple loss functions are tested. A comparison of performance of different loss functions is rare in previous works~\todo{cite}.  
+Together, these design choices supply the controlled experimental evidence missing from the literature, 
+clarifying how losses and synthesis methods interact in differentiable, iterative settings, 
+and offering insights likely to generalize to more complex domains.
 
-3. Parameters optimized directly with gradient descent without additional neural network approximations. This would complement prior neural and proxy-based methods by providing the missing “low-level experiments” that clarify fundamental interactions between DSP functions and similarity measures. 
-
-These characteristics would fill a gap in prior work where there is little insight into the comparison of loss functions under different synthesis conditions, and how the two interact. 
- 
 
 
 
 % 4. Past synths are either simple differentiable functions (commonly FM), or complex VSTs where we can't isolate the interactions between loss and functions, here we use isolated building blocks of DSP functions in a differentiable environment. 
-
-
 
 
 %  % We have highlighted the lack of attention given to the selection of loss functions in sound-matching, and noted that the few existing works addressing this issue evaluate their proposed losses using only simplistic sound synthesis methods. We hypothesize that the best performing loss function is influenced by the synthesis techniques utilized in the synthesizer. This hypothesis targets the issues of \LossSelect~and \SynthSelect.
