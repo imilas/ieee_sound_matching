@@ -2,39 +2,48 @@
 
 \section{Experimental Setup}
 \label{sec:experiment_setup}
-  We want to compare the performance of iterative sound-matching experiments, where different differentiable loss functions are applied to different differentiable synthesizers. What we mean by ``performance'' is the similarity of the final output to the target, as measured by P-Loss, MSS, and---most importantly---manual listening tests. The results here can provide answers for our stated hypothesis and secondary questions\todo{reference}. \todo{Do I remove?}If our hypothesis is true, this would strengthen the idea that the selection of the loss function and synthesis method is not an optimization problem, but a subjective choice depending on the needs of the sound designer. 
-  
-We test four different loss functions (described in Section~\ref{sec:loss_implementation}) and compare their success in sound-matching using four different synthesizers (Section~\ref{sec:programs}). We verify the success of the sound-matching process using two automatic measures of sound similarity (MSS and P-Loss) and a manual blinded hearing test conducted by two of the authors where Likert scores~\cite{jebb2021review} of 1-5 are assigned to a subset of final outputs and the corresponding targets. Details regarding the evaluation methods are described in Section~\ref{sec:evaluation_manual_auto}.
+We systematically evaluate iterative sound-matching pipelines that combine
+different differentiable loss functions with differentiable synthesizers.
+By ``performance'' we mean the similarity of the synthesized output to a
+target, assessed via P-Loss, MSS, and---most importantly---manual listening
+tests. This setup allows us to test our central hypothesis: that the relative
+performance of a loss function is contingent on the synthesis method, and
+thus no universal ``best'' similarity measure exists.
 
-What we call an \textit{experiment} is one iteration of sound-matching given a loss function, target sound,
-and synthesizer program. When the final iteration is complete, a score is given (automatically with an algorithm or with manual listening) to an experiment that measures its success in replicating the target sound. Consider the following simplified scenario: we have two loss functions, $L_1$ and $L_2$, and a single synthesizer program $P$ with a target parameter set $\theta^*$ where the target sound is $t$, or $P(\theta^*) = t$. We run a large number (in this case, 300 for each loss function) of experiments where we randomly set the initial ($\theta_0$) and target parameters ($\theta^*$) of $P$ and run an iterative sound-matching loop for each loss function, with maximum number of iterations set to 200. When the loop is terminated, we measure the similarity of the final output sound $x$ (where $P(\theta_{199}) = x$) to $t$, or if using P-Loss we compare $\theta_{199}$ to $\theta^*$. Having 300 experiments gives us a distribution of losses to determine whether $L_1$ or $L_2$ led to better performance. This simplified example leads us to our methodology which has four loss functions, four synthesizer programs, and three different evaluation methods of scoring sound similarity.
+We evaluate four loss functions (Section~\ref{sec:loss_implementation})
+across four differentiable synthesizers (Section~\ref{sec:programs}). For
+each loss–synthesizer pair, we run a large number of trials and evaluate
+their outcomes automatically and manually
+(Section~\ref{sec:evaluation_manual_auto}). ``Experiments'' in this context
+refer to one complete iterative sound-matching run, from random parameter
+initialization through gradient-based optimization until termination. Scores
+from these experiments are then aggregated and statistically compared to
+determine best-performing losses and synth–loss pairings.
+
+
 
 \subsection{Loss Function Implementation Details}
 \label{sec:loss_implementation}
 \subsubsection{STFT Losses}
-Due to their ubiquity and lower cost of gradient calculation, we use STFT as the basis of two loss functions.  L1 or L2 distances are the most common methods of comparing different spectrograms~\cite{turian2020sorry,richard2025model}, however, there are situations where this might lead to shortcomings. \todo{(this is not addressed by SIMSE so why is it here?) An example given by Vahidi \textit{et al.}~\cite{vahidi2023mesostructures} is two chirplets (tones that increase in pitch) starting and ending at the same frequencies. If one of these tones is slightly shifted in time, then the spectrograms will no longer overlap at any point, despite their sonic similarity (similar to the idea that a 2D plot of say, $f(x) = ax$, can never overlap with a slightly vertically shifted version of itself, or $f(x) = ax +\epsilon$). In this example, we do not know if this is an issue of the spectrograms, or the L1 measure used for their comparison. In fields such as computer vision, Structural Similarity Index (SSIM)~\cite{wang2004imagesssim,wang2009mean} and Scale-Invariant Mean Squared Error (SIMSE)~\cite{barron2014shapessimse} have been used as alternatives that improved performance in various tasks relative to L1.}
+Due to their ubiquity and lower cost of gradient calculation, we use STFT as the basis of two loss functions. 
+L1 or L2 distances are the most common methods of comparing spectrograms~\cite{turian2020sorry,richard2025model}. 
+However, these measures can be overly sensitive to global gain or minor misalignments, potentially overstating perceptual differences. 
+To address this, we also test Scale-Invariant Mean Squared Error (SIMSE) as an alternative to L1 for comparing STFT spectrograms.
+
 
 We define the \LoneSpec~and \SIMSESpec~functions as the application of L1 and SIMSE to the STFT spectrograms. The STFT spectrogram function uses 512 FFT bins, window size of 600 samples, and hop length (how many samples the window shifts) of 100 samples. The L1 and SIMSE implementations are differentiable. 
 
 \subsubsection{JTFS Loss}
-The \JTFS~loss function is the application of L1 difference to the JTFS representations of two sounds~\cite{vahidi2023mesostructures}. The code used for the JTFS transformation is the differentiable implementation of a 1-dimensional JTFS function provided by Andreux \textit{et al.}~\cite{kymatio}.
+The \JTFS~loss function is the application of L1 difference to the JTFS representations of two sounds~\cite{vahidi2023mesostructures}. The code used for the JTFS transformation is the differentiable implementation of a 1-dimensional JTFS function provided by Andreux \textit{et al.}~\cite{kymatio}. 
 
 \subsubsection{Soft-DTW Loss}
-We use the soft-DTW function, which is differentiable and --- depending on its parameters --- not shift-invariant~\cite{cuturi2017soft,janati2020spatio,tavenard.blog.softdtw}. The loss function \DTWEnv~is the application of the soft-DTW function to the envelope of the two sounds being compared~\cite{lyons1997understanding}. The envelope is calculated by creating the STFT spectrogram of a sound (the same process used in Section~\ref{sec:fourier_specs}) and summing the values at each timestep. 
+We use the soft-DTW function, which is differentiable and---depending on its parameters---not shift-invariant~\cite{cuturi2017soft,janati2020spatio,tavenard.blog.softdtw}. The loss function \DTWEnv~is the application of the soft-DTW function to the envelope of the two sounds being compared~\cite{lyons1997understanding}. This loss uses the similarity of amplitude modulation patterns, which are perceptually important in many sound-design scenarios. The envelope is calculated by creating the STFT spectrogram of a sound (the same process used in Section~\ref{sec:fourier_specs}) and summing the values at each timestep. 
 
 \subsection{The Synthesizers}
 \label{sec:programs}
 The synthesizer programs are meant to be simple examples that test the building blocks of digital sound synthesis. Subtractive, additive, and FM/AM synthesis are three of the most common techniques in sound design~\cite{smith1991viewpoints}. In subtractive synthesis, frequencies are removed from a sound via digital filters. In additive synthesis, complex sounds are created via the linear combination of simpler sounds~\cite{lyons1997understanding,smith2007introduction}. As discussed previously, FM/AM synthesis refers to the general technique of modulating the frequency or amplitude of a waveform (the carrier) by another waveform (the modulator).
 
 For each program, we provide the Faust code~\cite{orlarey2009faust}, which can be run in the online IDE~\footnote{\url{https://faustide.grame.fr/}}. Faust is a functional language for audio synthesis that can succinctly define signal processing chains. Following Braun's methodology~\cite{braun2024dac}, programs are first defined in Faust, then converted (or \textit{transpiled}) to differentiable Jax functions using the DawDreamer library\footnote{\url{https://github.com/DBraun/DawDreamer}}. 
-
-
-% A general overview of the programs and the predefined parameter ranges is given in Table~\ref{tab:programs}.
-
-In the following subsections, we describe the programs and their parameters in more detail, followed by the methodology in Section~\ref{sec:methodology} and results in Section~\ref{sec:results_posthoc}.
-
-
-
 \begin{lstlisting}[caption={\BPNoise}, label={lst:program0}, language=Faust,
                   float, floatplacement=!H, xleftmargin=1em, xrightmargin=0.5em, firstnumber=0, aboveskip=0em, belowskip=-1em]
 import("stdfaust.lib");
@@ -119,6 +128,8 @@ Automatic sound evaluation methods are often unreliable, as their alignment with
     \item Applying gradient updates to the synthesizer parameters
     \item Repeating the second step with the updated parameters $\hat{\theta}$, until maximum number of iterations has been reached
  \end{enumerate}
+
+ As an example, consider the following simplified scenario: we have two loss functions, $L_1$ and $L_2$, and a single synthesizer program $P$ with a target parameter set $\theta^*$ where the target sound is $t$, or $P(\theta^*) = t$. We run a large number (in this case, 300 for each loss function) of experiments where we randomly set the initial ($\theta_0$) and target parameters ($\theta^*$) of $P$ and run an iterative sound-matching loop for each loss function, with maximum number of iterations set to 200. When the loop is terminated, we measure the similarity of the final output sound $x$ (where $P(\theta_{199}) = x$) to $t$, or if using P-Loss we compare $\theta_{199}$ to $\theta^*$. Having 300 experiments gives us a distribution of losses to determine whether $L_1$ or $L_2$ led to better performance. This simplified example leads us to our methodology which has four loss functions, four synthesizer programs, and three different evaluation methods of scoring sound similarity.
  
  Figure~\ref{fig:posthoc_evaluation} is a visualized summary of how the loss functions are ranked. We have four loss functions and four synthesizer programs. The maximum number of iterations set to 200, and 300 experiments for each loss/synthesizer combination. Each synthesizer program is paired with four loss functions and 300 experiments are conducted and evaluated automatically with P-Loss and MSS, and manually with Likert scores.
 
