@@ -108,19 +108,8 @@ Automatic sound evaluation methods are often unreliable, as their alignment with
 
 % For each program and loss function, the blind manual hearing test gives us 80 ranks, which are given by two of the authors to a set of 40 randomly selected experiment results. This gives 160 pairs of ranks per program, and 640 for all programs. We computed Spearman correlations between the two reviewers.
 
-\subsection{Training Parameters and Gradient Calculations}
- % Previous work utilized gradient fields for analysis of the algorithm performance~\cite{vahidi2023mesostructures}. Gradient fields are not the center of our analysis, but we include them in Appendix~\ref{appendix:gradient_fields}.
- For updating the synthesizer parameters (or weights), we use RMSProp, which operates similar to stochastic gradient descent (SGD)~\cite{goodfellow2016deep}, with the caveat that the gradients of each weight are scaled by the root-mean-square of past gradients of that weight. Based on some initial test runs, we used an arbitrary fixed learning rate of 0.045 for all experiments (learning rates used in Vahidi \textit{et al.}~\cite{vahidi2023mesostructures} is unknown). The maximum number of iterations is set to 200, where, based on our observations, the parameters have either irrecoverably diverged outside the acceptable ranges, or are stuck at a local minimum. Additionally, the gradients are large, and calculated backwards sequentially through the signal processing chain. This backward calculation resembles the \textit{exploding gradients} problem in recurrent neural networks~\cite{gers2000learning}. Gradient clipping~\cite{goodfellow2016deep} is preemptively used to ensure that the  $\ell_2$ norm of all gradients does not exceed the threshold of 1. 
-% \mathbf{\gamma}_i^{\text{clipped}} = \mathbf{\gamma}_i \cdot \mathcal{S}
-% \]
-% Where $\mathcal{S}$ is a value less than or equal to 1, depending on whether the norm of the gradients exceeds the threshold $c$.  
-% \[
-% \mathcal{S} = \frac{c}{\max(\|\mathbf{\gamma}\|_2, c)}
-% \]
-
-
-\subsection{Determining Best Performers}
- Once the programs are transpiled to differentiable synthesizers, the iterative sound-matching procedure is:
+\subsection{Training Loop and Gradient Calculations}
+Given a differentiable loss and synthesizer, the iterative sound-matching procedure is as follows:
  \begin{enumerate}
     \item Initialize $\theta^*$ and $\hat{\theta}$, i.e., random generation of target and initial parameters uniformly over a predefined range
     \item Generating the output of the synthesizer with $\hat{\theta}$ (the length of the output is set to 1 second with sample-rate of 44100 Hz) 
@@ -129,21 +118,20 @@ Automatic sound evaluation methods are often unreliable, as their alignment with
     \item Repeating the second step with the updated parameters $\hat{\theta}$, until maximum number of iterations has been reached
  \end{enumerate}
 
- As an example, consider the following simplified scenario: we have two loss functions, $L_1$ and $L_2$, and a single synthesizer program $P$ with a target parameter set $\theta^*$ where the target sound is $t$, or $P(\theta^*) = t$. We run a large number (in this case, 300 for each loss function) of experiments where we randomly set the initial ($\theta_0$) and target parameters ($\theta^*$) of $P$ and run an iterative sound-matching loop for each loss function, with maximum number of iterations set to 200. When the loop is terminated, we measure the similarity of the final output sound $x$ (where $P(\theta_{199}) = x$) to $t$, or if using P-Loss we compare $\theta_{199}$ to $\theta^*$. Having 300 experiments gives us a distribution of losses to determine whether $L_1$ or $L_2$ led to better performance. This simplified example leads us to our methodology which has four loss functions, four synthesizer programs, and three different evaluation methods of scoring sound similarity.
+ For updating the synthesizer parameters (or weights), we use RMSProp, which operates similar to stochastic gradient descent (SGD)~\cite{goodfellow2016deep}, with the caveat that the gradients of each weight are scaled by the root-mean-square of past gradients of that weight. Based on some initial test runs, we used an arbitrary fixed learning rate of 0.045 for all experiments (learning rates used in Vahidi \textit{et al.}~\cite{vahidi2023mesostructures} is unknown). The maximum number of iterations is set to 200, where, based on our observations, the parameters have either irrecoverably diverged outside the acceptable ranges, or are stuck at a local minimum. Additionally, the gradients are large, and calculated backwards sequentially through the signal processing chain. This backward calculation resembles the \textit{exploding gradients} problem in recurrent neural networks~\cite{gers2000learning}. Gradient clipping~\cite{goodfellow2016deep} is preemptively used to ensure that the  $\ell_2$ norm of all gradients does not exceed the threshold of 1. 
+%
+\subsection{Ranking Loss Functions}
+
+ % As an example, consider the following simplified scenario: we have two loss functions, $L_1$ and $L_2$, and a single synthesizer program $P$ with a target parameter set $\theta^*$ where the target sound is $t$, or $P(\theta^*) = t$. We run a large number (in this case, 300 for each loss function) of experiments where we randomly set the initial ($\theta_0$) and target parameters ($\theta^*$) of $P$ and run an iterative sound-matching loop for each loss function, with maximum number of iterations set to 200. When the loop is terminated, we measure the similarity of the final output sound $x$ (where $P(\theta_{199}) = x$) to $t$, or if using P-Loss we compare $\theta_{199}$ to $\theta^*$. Having 300 experiments gives us a distribution of losses to determine whether $L_1$ or $L_2$ led to better performance. This simplified example leads us to our methodology which has four loss functions, four synthesizer programs, and three different evaluation methods of scoring sound similarity.
  
- Figure~\ref{fig:posthoc_evaluation} is a visualized summary of how the loss functions are ranked. We have four loss functions and four synthesizer programs. The maximum number of iterations set to 200, and 300 experiments for each loss/synthesizer combination. Each synthesizer program is paired with four loss functions and 300 experiments are conducted and evaluated automatically with P-Loss and MSS, and manually with Likert scores.
+ Figure~\ref{fig:posthoc_evaluation} is a visualized summary of how the loss functions are ranked. We have four loss functions and four synthesizer programs. The maximum number of iterations set to 200, and 300 experiments for each loss/synthesizer combination. Each synthesizer program is paired with four loss functions and 300 experiments are conducted and evaluated automatically with P-Loss and MSS, and manually with Likert scores. With this approach, for each program and loss function pair, there are three distributions that can be used to rank the loss functions. Two distributions with 300 automatically assigned similarities (P-Loss and MSS) and one distribution with 80 Likert scores (combining the 40 ranks assigned by each author).
 
-For each program and loss function pair, we have three distributions that can be used to rank the loss functions. Two with 300 automatically assigned similarities (P-Loss and MSS) and one with 80 Likert scores (combining the 40 ranks assigned by each author). For consistency and statistical robustness, the distributions are upsampled to 1000 values using bootstrapping~\cite{tibshirani1993introduction}. Bootstrapping gives an estimation of the distribution for the mean performance of each experiment. $k$ (set to 1000) samples of $n$ values (set to 100\% of the values) are taken with replacement from the empirical distribution (list of 300 performance values for MSS and P-Loss or 80 for manual rankings). The mean performance is calculated for each of the $k$ samples. The $k$ estimates of the mean performance give us a bootstrapped distribution for each loss function. 
+For consistency and statistical robustness, the distributions are upsampled to 1000 values using bootstrapping~\cite{tibshirani1993introduction}. Bootstrapping gives an estimation of the distribution for the mean performance of each experiment. $k$ (set to 1000) samples of $n$ values (set to 100\% of the values) are taken with replacement from the empirical distribution (list of 300 performance values for MSS and P-Loss or 80 for manual rankings). The mean performance is calculated for each of the $k$ samples. The $k$ estimates of the mean performance give us a bootstrapped distribution for each loss function. 
 
-% For each program, the loss functions are ranked using the non-parametric Scott-Knott (\gls{NPSK}) test~\cite{tantithamthavorn2017mvt,tantithamthavorn2018optimization}, which ranks the loss functions from rank 1 (best, or highest distribution values) to maximum rank of 4 (worst, with lowest distribution values). NPSK may determine that multiple functions belong to the same rank, in which case the maximum rank would be less than 4. As mentioned before, lower P-Loss and MSS values indicate higher similarity, therefore (for consistency with manually assigned ranks) the reciprocal of their output is used ($x^{-1}$, if $x$ is the P-Loss or MSS value), where higher values indicate greater similarity. 
 
 \input{extra_figures/evaluation_graph.tex}
-
-
-% \section{Post hoc Analysis of Loss Performance}
-\label{sec:results_posthoc}
-As discussed in the previous section and summarized in Figure~\ref{fig:posthoc_evaluation}, for each program and evaluation (or scoring) method, there are four sets of 1000 bootstrapped values corresponding to the four loss functions. A post-hoc test is conducted in two stages in order to determine whether there is a difference in performance between loss functions for each program, and if so, which are the best performers. The first stage determines whether there is a difference in group means, with the null hypothesis being that all groups have similar mean ranks. The second stage ranks the loss functions from best to worst using the non-parametric Scott-Knott test (\gls{NPSK})~\cite{tantithamthavorn2017mvt,tantithamthavorn2018optimization}.
-The Kruskal-Wallis test is used for the first stage~\cite{kruskal1952use}; this test pools and ranks all evaluation measures for a program, then tests whether the differences in mean rank for all loss function groups is zero. The Kruskal-Wallis test calculates an H statistic that is compared to a chi-square distribution with k-1 degrees of freedom (k is the number of groups, or 4, and degrees of freedom is 3). Using the significance level of 0.05, if the H statistic is greater than the critical value of the chi-square distribution then the null hypothesis is rejected, meaning that at least one group has a mean rank significantly above others~\cite{kruskal1952use}. Table~\ref{tab:kruskal_auto} shows the Kruskal-Wallis results for every program and evaluation method, and shows that significant differences between loss function performance measures (i.e., the bootstrapped distributions of the evaluation for each loss function) exist in all cases except MSS for the \AmpMod{} program. 
+ A post-hoc test is conducted in two stages in order to determine whether there is a difference in performance between loss functions for each program, and if so, which are the best performers. The first stage determines whether there is a difference in group means, with the null hypothesis being that all groups have similar mean ranks. The second stage ranks the loss functions from best to worst using the non-parametric Scott-Knott test (\gls{NPSK})~\cite{tantithamthavorn2017mvt,tantithamthavorn2018optimization}.
+The Kruskal-Wallis test is used for the first stage~\cite{kruskal1952use}; this test pools and ranks all evaluation measures for a program, then tests whether the differences in mean rank for all loss function groups is zero. The Kruskal-Wallis test calculates an H statistic that is compared to a chi-square distribution with k-1 degrees of freedom (k is the number of groups, or 4, and degrees of freedom is 3). Using the significance level of 0.05, if the H statistic is greater than the critical value of the chi-square distribution then the null hypothesis is rejected, meaning that at least one group has a mean rank significantly above others~\cite{kruskal1952use}. \todo{More detail for NPSK and leadup to results}
 
 \begin{table}[ht]
 \centering
@@ -185,9 +173,10 @@ The Kruskal-Wallis test is used for the first stage~\cite{kruskal1952use}; this 
 % \label{tab:kruskal_manual}
 % \end{table}
 
-
-
 \subsection{Best Performers For Each Program}
+
+Table~\ref{tab:kruskal_auto} shows the Kruskal-Wallis results for every program and evaluation method, we see a significant differences between loss function performance measures (i.e., the bootstrapped distributions of the evaluation for each loss function) in 11 of the 12 cases, with the exception of  MSS for the \AmpMod{} program.  
+
 Based on the bootstrapped distribution of scores, the NPSK algorithm ranks the loss functions from 1 (best) to a maximum of 4 (worst). In cases where the distributions are similar, multiple loss functions can be clustered into the same rank. In Figure~\ref{fig:npsk_all}, we use color-coded violin plots to visualize the best performers for each program. The corresponding colors for each rank are
 \colorbox{rank1}{\textcolor{black}{\textbf{1}}} \colorbox{rank2}{\textcolor{white}{\textbf{2}}} \colorbox{rank3}{\textcolor{white}{\textbf{3}}} \colorbox{rank4}{\textcolor{black}{\textcolor{white}{\textbf{4}}}}.
 
@@ -218,43 +207,6 @@ Table~\ref{tab:combined_ranks} shows the SNPK rankings of bootstrapped evaluatio
 % \section{Takeaways, Practical Implications, and Caveats}
 % (Q1) To what extent do automatic evaluation metrics agree with manual listening tests? (Q2) Can novel loss functions utilizing Dynamic Time Warping (DTW) and Scale-Invariant Mean Squared Error (SIMSE) provide advantages over standard loss functions, and if so, when? (Q3) Is an iterative differentiable optimization a viable strategy for design of sound-matching experiments?
 The experiment results provide answers regarding the main hypothesis of this work as well as the secondary questions. Based on these answers, we can make practical recommendations for future research. 
-
-\subsection{Takeaways}
-Perhaps the most important takeaway regarding our main hypothesis is that the loss function that yields the best sound-matching outcomes varies depending on the synthesizer program. This is likely due to the interaction between how the parameters of the synthesizer influence the sound, and the core sonic features used by the loss function.
-
-\textbf{Q1}: To what extent do automatic evaluation metrics agree with manual listening tests? we see somewhat consistent results between the rankings assigned by manual hearing tests (which we take as the ground truth), and automatic measures of P-Loss and MSS. With the exception of P-Loss in \BPNoise{} narrowly selecting a different spectrogram based loss, all measures of performance selected the same top performer. Due to the simplicity of our programs and the occasional deviations, we cannot conclude that these automatic measures are substitutes for human hearing tests. As many previous works have done\todo{cite}, the use of MSS and/or P-Loss as general loss functions does seem appropriate, however, we advise the use of listening tests or custom made loss functions for more specific analysis. 
-
-\textbf{Q2}: Are DTW and SIMSE effective measures of loss? If so, 
-
- \DTWEnv{} consistently outperformed other measures in amplitude-modulated synthesis, where envelope alignment is critical. \SIMSESpec{} performed best in subtractive synthesis, where scale-invariance captures noise filtering effects more robustly than L1-based measures. These results indicate that the advantages of novel losses are context-dependent, and the necessity of further creative approaches to differentiable sound-similarity measures. 
-
-\textbf{Q3}: Can iterative differentiable optimization be applied effectively in synthesizers using classical DSP functions?
-The approach of designing DSP functions in Faust and transpiling to differentiable Faust code yielded meaningful outputs and enabled comparative evaluation of losses. The use of Faust for synthesizer definition was convenient, and transpiling to Jax enabled quick gradient optimization. We were able to run our 1200 experiments within 72 hours on a laptop without a GPU\footnote{Lenovo ThinkPad T480, i5-8350U CPU at 1.70GHz, 32 GB RAM.}.
-
-\subsection{Practical Recommendations:}
-Based on our findings, several actionable guidelines emerge. These heuristics can guide practitioners in selecting appropriate similarity measures and synthesis methods for future sound-matching experiments.
-\begin{itemize}
-    \item In leu of listening tests, MSS or P-Loss are generally useful for large-scale benchmarking, but confirm conclusions with manual listening when accuracy in isolated cases is important. 
-    \item For amplitude-modulated synthesis, DTW-based losses (e.g., \DTWEnv{}) are recommended over spectrogram based and JTFS. 
-    \item For subtractive/noise-filtered synthesis, spectrogram based losses are most effective. Based on our results, SIMSE appears to be the better method of spectrogram comparisons relative to L1, but the amplitude agnosticism of SIMSE likely plays a role in its poor performance in additive synthesis.  
-    \item In our amplitude modulation experiments, \JTFS{} did not outperform other measures, contradicting prior claims of its superiority for mesostructures~\cite{vahidi2023mesostructures}. Thus, our results call into question its effectiveness as a general mesostructure measure
-    \item Iterative differentiable optimization via Faust-to-JAX is a viable strategy for defining various differentiable DSP functions, requiring only modest hardware resource and providing a more natural approach to synthesizer definition.
-\end{itemize}
-
-\subsection{Applicability to More Complex Synthesizers}
-The experiments in this study were conducted with differentiable synthesizers chosen to isolate fundamental synthesis principle with 2 parameters each. While this level of simplicity facilitates controlled comparisons, it does not fully capture the richness of real-world synthesizers, which can have hundreds of parameters with various routes. As a result, the extent of the generalizability of our findings does require further research. 
-
-Nonetheless, we believe that the insights here can extend naturally to more complex domains. Depending on the feature of interest, the observed dependence of loss performance on synthesis method is will likely remain stable even with added complexities such as layers of modulation, filtering, or nonlinearity. 
-
-\DTWEnv{} measures very specific features of audio, and its use in the recommended settings---where low frequency amplitude modulation matching is required---would likely yield the desired results regardless of synthesizer complexity. Likewise, the use of \SIMSESpec{} or \LoneSpec{} for matching filter cut-offs is likely to be successful regardless of the underlying sound. 
-
-% Third, the iterative differentiable optimization framework proved viable even on limited hardware, which indicates that similar pipelines could be applied to larger differentiable synthesizers if computational resources allow.
-
-% At the same time, real-world synthesizers present new challenges. 
-% High-dimensional parameter spaces may exacerbate issues of local minima and make optimization less stable, particularly when loss functions are only partially informative. 
-
-
-% Non-differentiable components (e.g., physical modeling, complex routing) also limit the direct applicability of gradient-based methods. 
 
 % Future work should therefore investigate hybrid approaches, combining differentiable blocks with surrogate models or gradient-free optimization for non-differentiable components. 
 % Out-of-domain targets, such as recorded instruments or environmental sounds, represent another direction where the loss–synth interaction may behave differently than in controlled in-domain experiments.
