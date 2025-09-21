@@ -1,20 +1,21 @@
 
-\subsection{Takeaways}
-Perhaps the most important takeaway regarding our main hypothesis is that the loss function that yields the best sound-matching outcomes varies depending on the synthesizer program. This is likely due to the interaction between how the parameters of the synthesizer influence the sound, and the core sonic features used by the loss function.
+\subsection{Key Findings}
+The most important takeaway regarding our main hypothesis is that the loss function that yields the best sound-matching outcomes varies depending on the synthesizer program. This is likely due to the interaction between how the parameters of the synthesizer influence the sound, and the core sonic features used by the loss function.
 
-\textbf{Q1}: To what extent do automatic evaluation metrics agree with manual listening tests? we see somewhat consistent results between the rankings assigned by manual hearing tests (which we take as the ground truth), and automatic measures of P-Loss and MSS. With the exception of P-Loss in \BPNoise{} narrowly selecting a different spectrogram based loss, all measures of performance selected the same top performer. Due to the simplicity of our programs and the occasional deviations, we cannot conclude that these automatic measures are substitutes for human hearing tests. As many previous works have done\todo{cite}, the use of MSS and/or P-Loss as general loss functions does seem appropriate, however, we advise the use of listening tests or custom made loss functions for more specific analysis. 
+\textbf{Q1}: To what extent do automatic evaluation metrics agree with manual listening tests? 
+\\We see somewhat consistent results between the rankings assigned by manual hearing tests (which we take as the ground truth), and automatic measures of P-Loss and MSS. With the exception of P-Loss in \BPNoise{} narrowly selecting a different spectrogram based loss, all measures of performance selected the same top performer. However, given the simplicity of our programs and the occasional deviations, we cannot conclude that these automatic measures are substitutes for human hearing tests. As many previous works have done\todo{cite}, the use of MSS and/or P-Loss as general loss functions does seem appropriate, however, we advise the use of listening tests or custom made loss functions for more specific analysis. 
 
-\textbf{Q2}: Are DTW and SIMSE effective measures of loss? If so, 
+\textbf{Q2}: Are DTW and SIMSE effective measures of loss? If so, in what contexts?\\
+\DTWEnv{} consistently outperformed other measures in amplitude-modulated synthesis, where envelope alignment is critical. \SIMSESpec{} performed best in subtractive synthesis, where scale-invariance captures noise-filtering effects more robustly than L1-based measures. These results suggest that the advantages of these novel losses are context-dependent, underscoring the need for further exploration of creative differentiable similarity measures. 
 
- \DTWEnv{} consistently outperformed other measures in amplitude-modulated synthesis, where envelope alignment is critical. \SIMSESpec{} performed best in subtractive synthesis, where scale-invariance captures noise filtering effects more robustly than L1-based measures. These results indicate that the advantages of novel losses are context-dependent, and the necessity of further creative approaches to differentiable sound-similarity measures. 
 
-\textbf{Q3}: Can iterative differentiable optimization be applied effectively in synthesizers using classical DSP functions?
+\textbf{Q3}: Can iterative differentiable optimization be applied effectively in synthesizers using classical DSP functions? \\
 The approach of designing DSP functions in Faust and transpiling to differentiable Faust code yielded meaningful outputs and enabled comparative evaluation of losses. The use of Faust for synthesizer definition was convenient, and transpiling to Jax enabled quick gradient optimization. We were able to run our 1200 experiments within 72 hours on a laptop without a GPU\footnote{Lenovo ThinkPad T480, i5-8350U CPU at 1.70GHz, 32 GB RAM.}.
 
 \subsection{Practical Recommendations:}
 Based on our findings, several actionable guidelines emerge. These heuristics can guide practitioners in selecting appropriate similarity measures and synthesis methods for future sound-matching experiments.
 \begin{itemize}
-    \item In leu of listening tests, MSS or P-Loss are generally useful for large-scale benchmarking, but confirm conclusions with manual listening when accuracy in isolated cases is important. 
+    \item In lieu of listening tests, MSS or P-Loss are generally useful for large-scale benchmarking, but confirm conclusions with manual listening when accuracy in isolated cases is important. 
     \item For amplitude-modulated synthesis, DTW-based losses (e.g., \DTWEnv{}) are recommended over spectrogram based and JTFS. 
     \item For subtractive/noise-filtered synthesis, spectrogram based losses are most effective. Based on our results, SIMSE appears to be the better method of spectrogram comparisons relative to L1, but the amplitude agnosticism of SIMSE likely plays a role in its poor performance in additive synthesis.  
     \item In our amplitude modulation experiments, \JTFS{} did not outperform other measures, contradicting prior claims of its superiority for mesostructures~\cite{vahidi2023mesostructures}. Thus, our results call into question its effectiveness as a general mesostructure measure

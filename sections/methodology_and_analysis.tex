@@ -2,15 +2,9 @@
 
 \section{Experimental Setup}
 \label{sec:experiment_setup}
-We systematically evaluate iterative sound-matching pipelines that combine
-different differentiable loss functions with differentiable synthesizers.
-By ``performance'' we mean the similarity of the synthesized output to a
-target, assessed via P-Loss, MSS, and---most importantly---manual listening
-tests. This setup allows us to test our central hypothesis: that the relative
-performance of a loss function is contingent on the synthesis method, and
-thus no universal ``best'' similarity measure exists.
+At a glance, our methodology is to conduct controlled, low-level differentiable experiments—without proxy networks—by pairing four DSP-based synthesizers with four differentiable loss functions. We optimize parameters directly via gradients in order to isolate loss–synthesizer interactions. This controlled setup systematically evaluates the performance of iterative sound-matching pipelines, where “performance” is defined as the similarity of the synthesized output to a target. Similarity is assessed with P-Loss, MSS, and—most importantly—manual listening tests. This design allows us to directly test our central hypothesis: that the effectiveness of a loss function depends on the synthesis method, and that no universal “best” similarity measure exists.
 
-We evaluate four loss functions (Section~\ref{sec:loss_implementation})
+Here we discuss the implementation of the four loss functions (Section~\ref{sec:loss_implementation})
 across four differentiable synthesizers (Section~\ref{sec:programs}). For
 each loss–synthesizer pair, we run a large number of trials and evaluate
 their outcomes automatically and manually
@@ -43,7 +37,7 @@ We use the soft-DTW function, which is differentiable and---depending on its par
 \label{sec:programs}
 The synthesizer programs are meant to be simple examples that test the building blocks of digital sound synthesis. Subtractive, additive, and FM/AM synthesis are three of the most common techniques in sound design~\cite{smith1991viewpoints}. In subtractive synthesis, frequencies are removed from a sound via digital filters. In additive synthesis, complex sounds are created via the linear combination of simpler sounds~\cite{lyons1997understanding,smith2007introduction}. As discussed previously, FM/AM synthesis refers to the general technique of modulating the frequency or amplitude of a waveform (the carrier) by another waveform (the modulator).
 
-For each program, we provide the Faust code~\cite{orlarey2009faust}, which can be run in the online IDE~\footnote{\url{https://faustide.grame.fr/}}. Faust is a functional language for audio synthesis that can succinctly define signal processing chains. Following Braun's methodology~\cite{braun2024dac}, programs are first defined in Faust, then converted (or \textit{transpiled}) to differentiable Jax functions using the DawDreamer library\footnote{\url{https://github.com/DBraun/DawDreamer}}. 
+For each program, we provide the Faust code~\cite{orlarey2009faust}, which can be run in the online IDE~\footnote{\url{https://faustide.grame.fr/}}. Faust is a functional language for audio synthesis that can succinctly define signal processing chains. Following Braun's methodology~\cite{braun2024dac}, programs are first defined in Faust, then converted (or \textit{transpiled}) to differentiable JAX functions using the DawDreamer library\footnote{\url{https://github.com/DBraun/DawDreamer}}. 
 \begin{lstlisting}[caption={\BPNoise}, label={lst:program0}, language=Faust,
                   float, floatplacement=!H, xleftmargin=1em, xrightmargin=0.5em, firstnumber=0, aboveskip=0em, belowskip=-1em]
 import("stdfaust.lib");
@@ -104,6 +98,7 @@ The two automatic evaluation methods used here are P-Loss and MSS, as described 
 Automatic sound evaluation methods are often unreliable, as their alignment with the subjective judgments of human listeners is uncertain. Therefore, listening tests are conducted by randomly sampling 40 experiment results for each program and loss function pair. Two of the authors then assign blinded similarity scores to the outputs and targets using a 5-point Likert scale (1 = no similarity, 5 = near identical)~\cite{jebb2021review}. Using Spearman's rank correlation~\cite{spearman1987proof,rebekic2015pearson}, we found a very strong rate of agreement between the human listeners (see Section~\ref{sec:consistency_in_rankings}), a good indicator that the scores assigned by manual listeners can be treated as the ground truth. We then combine the ranks assigned by both authors, giving us 80 ranks per program and loss function pair. 
 
 
+
 % Agreement between the assigned scores is measured using Spearman’s rank correlation, which provides both a correlation coefficient ($\rho$) ranging from –1 (perfect negative correlation) to 1 (perfect positive correlation), and a p-value testing the null hypothesis of no correlation~\cite{spearman1987proof,rebekic2015pearson}. Across all programs, the correlation was very strong ($\rho = 0.86$, $p < 10^{-180}$). Per-program correlations were also very strong: $\rho = 0.71$ for \BPNoise{} ($p < 10^{-25}$), $\rho = 0.64$ for \AddSineSaw{} ($p < 10^{-19}$), $\rho = 0.84$ for \AmpMod{} ($p < 10^{-43}$), and $\rho = 0.85$ for \FMMod{} ($p < 10^{-44}$). This high rate of agreement is a good indicator that the scores assigned by manual listeners can be treated as the ground truth. 
 
 % For each program and loss function, the blind manual hearing test gives us 80 ranks, which are given by two of the authors to a set of 40 randomly selected experiment results. This gives 160 pairs of ranks per program, and 640 for all programs. We computed Spearman correlations between the two reviewers.
@@ -131,7 +126,7 @@ For consistency and statistical robustness, the distributions are upsampled to 1
 
 \input{extra_figures/evaluation_graph.tex}
  A post-hoc test is conducted in two stages in order to determine whether there is a difference in performance between loss functions for each program, and if so, which are the best performers. The first stage determines whether there is a difference in group means, with the null hypothesis being that all groups have similar mean ranks. The second stage ranks the loss functions from best to worst using the non-parametric Scott-Knott test (\gls{NPSK})~\cite{tantithamthavorn2017mvt,tantithamthavorn2018optimization}.
-The Kruskal-Wallis test is used for the first stage~\cite{kruskal1952use}; this test pools and ranks all evaluation measures for a program, then tests whether the differences in mean rank for all loss function groups is zero. The Kruskal-Wallis test calculates an H statistic that is compared to a chi-square distribution with k-1 degrees of freedom (k is the number of groups, or 4, and degrees of freedom is 3). Using the significance level of 0.05, if the H statistic is greater than the critical value of the chi-square distribution then the null hypothesis is rejected, meaning that at least one group has a mean rank significantly above others~\cite{kruskal1952use}. \todo{More detail for NPSK and leadup to results}
+The Kruskal-Wallis test is used for the first stage~\cite{kruskal1952use}; this test pools and ranks all evaluation measures for a program, then tests whether the differences in mean rank for all loss function groups is zero. The Kruskal-Wallis test calculates an H statistic that is compared to a chi-square distribution with k-1 degrees of freedom (k is the number of groups, or 4, and degrees of freedom is 3). Using the significance level of 0.05, if the H statistic is greater than the critical value of the chi-square distribution then the null hypothesis is rejected, meaning that at least one group has a mean rank significantly above others~\cite{kruskal1952use}. 
 
 \begin{table}[ht]
 \centering
@@ -174,10 +169,11 @@ The Kruskal-Wallis test is used for the first stage~\cite{kruskal1952use}; this 
 % \end{table}
 
 \subsection{Best Performers For Each Program}
+Table~\ref{tab:kruskal_auto} shows the Kruskal-Wallis results for every program and evaluation method, we see significant differences between loss function performance measures (i.e., the bootstrapped distributions of the evaluation for each loss function) in 11 of the 12 cases, with the exception of  MSS for the \AmpMod{} program.  
 
-Table~\ref{tab:kruskal_auto} shows the Kruskal-Wallis results for every program and evaluation method, we see a significant differences between loss function performance measures (i.e., the bootstrapped distributions of the evaluation for each loss function) in 11 of the 12 cases, with the exception of  MSS for the \AmpMod{} program.  
+Based on the bootstrapped distribution of the scores, the NPSK algorithm ranks the loss functions from 1 (best) to a maximum of 4 (worst). In cases where the distributions are similar, multiple loss functions can be clustered into the same rank.
 
-Based on the bootstrapped distribution of scores, the NPSK algorithm ranks the loss functions from 1 (best) to a maximum of 4 (worst). In cases where the distributions are similar, multiple loss functions can be clustered into the same rank. In Figure~\ref{fig:npsk_all}, we use color-coded violin plots to visualize the best performers for each program. The corresponding colors for each rank are
+In Figure~\ref{fig:npsk_all}, we use color-coded violin plots to visualize the best performers for each program. The corresponding colors for each rank are
 \colorbox{rank1}{\textcolor{black}{\textbf{1}}} \colorbox{rank2}{\textcolor{white}{\textbf{2}}} \colorbox{rank3}{\textcolor{white}{\textbf{3}}} \colorbox{rank4}{\textcolor{black}{\textcolor{white}{\textbf{4}}}}.
 
 \input{extra_figures/ranking_tables}
@@ -191,10 +187,11 @@ For this synthesizer program, the spectrogram-based models performed the best. T
 As shown in Figure~\ref{fig:npsk_p1}, JTFS was the best performing loss function in all evaluation methods. Moreover, all evaluation methods produced identical results. 
 
 \subsubsection{\AmpMod}
-IP-Loss and manual hearing tests yield identical rankings, and MSS results vary for for ranks 2 to 4. It is not surprising that MSS results differ from the hearing tests, as we saw in Table~\ref{tab:kruskal_auto}, MSS showed no significant differences between groups. As shown in Figure~\ref{fig:npsk_p2}, all models selected \DTWEnv~as the best performer. This may be due to \DTWEnv's focus on periodic changes in loudness.
+P-Loss and manual hearing tests yield identical rankings, and MSS results vary for ranks 2 to 4. It is not surprising that MSS results differ from the hearing tests, as we saw in Table~\ref{tab:kruskal_auto}, MSS showed no significant differences between groups. As shown in Figure~\ref{fig:npsk_p2}, all models selected \DTWEnv~as the best performer. This may be due to \DTWEnv's focus on periodic changes in loudness.
 
 \subsubsection{\FMMod}
 \DTWEnv~is again the best performer here. As shown in Figure~\ref{fig:npsk_p3}, all methods of analysis gave identical rankings to all programs.
+
 
 \subsection{Consistency In Rankings}
 \label{sec:consistency_in_rankings}
