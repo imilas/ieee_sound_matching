@@ -1,7 +1,6 @@
 \section{Background and Related Work}
 \label{sec:background_related}
- Sound-matching sits at the intersection of digital signal processing, audio representation, and optimization. 
-In this section we first formalize the sound-matching task, then review core synthesis methods, similarity measures, and optimization approaches. 
+ Sound-matching sits at the intersection of digital signal processing, audio representation, and optimization. Here we first formalize the sound-matching task, then review core synthesis methods, similarity measures, and optimization approaches. 
 We conclude with a survey of related work and a discussion of gaps in the field. 
 
 \subsection{Formalization of Sound-Matching}
@@ -17,7 +16,35 @@ The key components are:
 \end{itemize}
 
 This formalization highlights that sound-matching is not a single well-defined optimization problem, but rather depends on design choices for $g$, $\phi$, and $L$. 
-Moreover, the ``correct'' solution may not exist in a strict sense: depending on the artistic goal, multiple parameter settings may yield acceptable or even preferable outputs.  In the following sections we will discuss the various components of sound-matching, the subjectivity of ``correct'' solutions, and important issues in the field. 
+Moreover, the ``correct'' solution may not exist in a strict sense: depending on the artistic goal, multiple parameter settings may yield acceptable or even preferable outputs.  In the following sections we will discuss the various components of sound-matching, the subjectivity of ``correct'' solutions, and important issues in the field.
+
+ Figure~\ref{fig:sound_design_loop_iterative} shows a general model for iterative sound-matching. To begin the process, the parameters are arbitrarily initialized (usually random generation), the similarity of the target and output is measured, and the parameter is \textit{optimized} with the goal of increasing the similarity, or alternatively, reducing the loss. This process repeats until termination. 
+\begin{figure}[ht]
+    \centering
+\begin{tikzpicture}[node distance=2cm, auto]
+
+    % Nodes
+    \node (start) [text centered] {\( g (\hat{\theta}) = x \)};
+    \node (L) [above of=start,right of=start, text centered] {\( L(\hat{\theta},t) {\ \propto \ } \phi(x) - \phi(t) \)};
+    \node (optimize) [below of=L,right of=L, text centered] {Optimize $\hat{\theta}$};
+    \node (new_theta) [below of=optimize,right of = start, text centered] {New \( \hat{\theta} \)};
+
+    % Highlight and arrow for the start node
+    \draw[->, very thick, red] (start) ++(-2,1.5) -- (start)
+        node[midway, below, align=center, sloped, color=red] {Start}
+        node[midway, above, align=center, sloped, color=red] {Random $\hat{\theta}$};
+        
+    % Arrows with multi-line labels
+    \draw[->, bend left] (start) to node[midway, right, align=center] {} (L);
+    \draw[->, bend left] (L) to node[midway, right, align=center] {} (optimize);
+    \draw[->, bend left] (optimize) to node[midway, below, align=center] {} (new_theta);
+    \draw[->, bend left] (new_theta) to node[midway, left, align=center] {} (start);
+
+\end{tikzpicture}
+    % \caption{ Iterative approach to sound design. Synthesizer $g$ with arbitrary initialized parameters $\hat{\theta}$, creates sound $x$. The target sound $t$ is used as the goal. Parameters $\hat{\theta}$ are adjusted to minimize error (or loss) $L(\hat{\theta},t)$, where $L$ is proportional to the difference between the representations of $x$ and $t$. $\phi$ is the audio feature extractor, or representation function.}
+    \caption{ Iterative approach to sound design.}
+    \label{fig:sound_design_loop_iterative}
+\end{figure}
 
 
 \subsection{Digital Signal Processing and Synthesis}
@@ -38,12 +65,7 @@ Since the advent of DSP in the 1960s~\cite{stranneby2004digital}, a wide variety
 Sound design involves modifying these parameters until a desired output is reached~\cite{roads1996computer,pinch2004analog}. 
 
 Early sound-matching research focused heavily on frequency and amplitude modulation (\gls{FM}/\gls{AM}) synthesis~\cite{horner1993machine,mitchell2007evolutionary,vahidi2023mesostructures}, which is simple to implement yet expressive~\cite{chowning1973synthesis}. 
-Other approaches studied in isolation include additive and subtractive synthesis~\cite{engel2020ddsp,masuda2023improving,salimi2020make} and physical modeling~\cite{riionheimo2003parameter,han2024learning}. 
-
-\highlight{By \textit{isolation}, we mean settings where the effect of individual parameters on the output sound remains tractable. 
-Recent work has also explored commercial Virtual Studio Technology (VST) synthesizers~\cite{yee2018automatic,esling2019flow}. 
-While powerful, such systems obscure the interactions between modules, losses, and outputs. 
-In contrast, small-scale differentiable synthesizers built from isolated DSP blocks offer interpretability, making them particularly useful for benchmarking. }
+Other synthesis methods studied in \textit{isolation} include additive and subtractive synthesis~\cite{engel2020ddsp,masuda2023improving,salimi2020make} and physical modeling~\cite{riionheimo2003parameter,han2024learning}. By \textit{isolation}, we mean settings where the effect of individual parameters on the output sound remains tractable. For example, we exclude studies using commercial Virtual Studio Technology (VST) which can obscure the interactions between modules, losses, and outputs. 
 
 Finally, recent years have seen a growing interest in differentiable DSP (\gls{DDSP})~\cite{engel2020ddsp}, which integrates gradient-based optimization~\cite{goodfellow2016deep,boyd2004convex} with DSP building blocks. 
 Implementing complex DSP functions in a differentiable manner remains challenging, and robust differentiable audio similarity measures are still under active investigation~\cite{masuda2021soundmatch,vahidi2023mesostructures,uzrad2024diffmoog}.
@@ -70,7 +92,7 @@ L(\theta, t) = \left\| \phi(t) - \phi(x) \right\|_1
 Here we discuss four methods of audio representation and the corresponding loss functions, including technical justifications for our novel methods.
 
 \subsubsection{Parameter Loss}
-A common measure of similarity in sound-matching is the distance between synthesizer parameter sets, referred to as ``P-Loss"~\cite{han2023perceptual}. Typically, for the implementation of P-Loss the parameter sets are treated as vectors in space, and L1 or L2 distance is applied. There are two major limitations to this approach: First, the target and output sound must be made by the same synthesizer; otherwise the parameter sets cannot be compared (see Section~\ref{sec:matching_types}). Second, the relationship between synthesizer parameters and the audio output is not linear~\cite{shier2020spiegelib,han2023perceptual,esling2019flow}. 
+A common measure of similarity in sound-matching is the distance between synthesizer parameter sets, referred to as ``P-Loss"~\cite{han2023perceptual}. Typically, for the implementation of P-Loss the parameter sets are treated as vectors in space, and L1 or L2 distance is applied. There are two major limitations to this approach: First, the target and output sound must be made by the same synthesizer; otherwise the parameter sets cannot be compared (see Section~\ref{sec:in-domain}). Second, the relationship between synthesizer parameters and the audio output is not linear~\cite{shier2020spiegelib,han2023perceptual,esling2019flow}. 
 
 \subsubsection{Fourier Spectrograms}
 \label{sec:fourier_specs}
@@ -115,6 +137,50 @@ The heuristics (i.e., how $\theta^*$ is approximated) used in past works can be 
 
 Genetic algorithms (\gls{GA})~\cite{holland1992genetic} have been the earliest and most common heuristic for direct sound-matching~\cite{horner1993machine,mitchell2007evolutionary,yee2018automatic}. These algorithms start with arbitrary parameter sets that can be treated as an evolving population where the genomes are the parameter values. The most fit members of the group are the parameters which perform the best in the loss function, and create a new generation of parameters via mutation (random change in subset of parameters) and crossovers (combination of parameter sets); this process repeats until the goal or a maximum number of generations is reached. Rather than using random mutations, differentiable approaches allow goal-oriented updates to the synthesizer parameters (the goal being the minimization of loss), but with some drawbacks: other than requiring more computation power, differentiable functions require careful implementation of operations that are continuous and numerically stable; this makes the implementation of signal processing functions quite difficult, contributing to the scarcity of works in this domain.
 
+
+\begin{table*}[t]
+\centering
+\caption{Summary of select works in sound-matching. Gen. refers to whether the generations are done in 1-shot (generally, output by a neural network) or a search is conducted with the goal of iteratively getting closer to the target sound.}
+\setlength{\tabcolsep}{3pt} % Reduce horizontal spacing
+\renewcommand{\arraystretch}{1.05} % Reduce vertical spacing
+\scriptsize % Reduce font size
+\resizebox{\textwidth}{!}{
+\begin{tabular}{|>{\raggedright\arraybackslash}m{2cm}|>{\raggedright\arraybackslash}m{2cm}|>{\raggedright\arraybackslash}m{2cm}|>{\raggedright\arraybackslash}m{2cm}|>{\raggedright\arraybackslash}m{1.2cm}|>{\raggedright\arraybackslash}m{1.2cm}|>{\raggedright\arraybackslash}m{1cm}|>{\raggedright\arraybackslash}m{1cm}|}
+\hline
+\textbf{Work} & \textbf{Synthesis} & \textbf{Loss} & \textbf{Heuristics} & \textbf{Goal} & \textbf{Domain} & \textbf{Year} & \textbf{Gen. } \\
+\hline
+Horner \textit{\textit{et al.}}~\cite{horner1993machine} & Non-differentiable FM & STFT (McAulay-Quatieri) & GA & Replicate & In & 1991 & Iter \\
+\hline
+Mitchel \textit{\textit{et al.}}~\cite{mitchell2007evolutionary} & Non-differentiable FM & Spectral Relative & Evolutionary & Replicate & In (Contrived) & 2007 & Iter \\
+\hline
+Yee-King \textit{\textit{et al.}}~\cite{yee2018automatic} & Non-differentiable VST & P-Loss (for Supervised), Spectral (MFCC) & Supervised \& Evolutionary & Replicate & In & 2018 & Both \\
+\hline
+Esling \textit{\textit{et al.}}~\cite{esling2019flow} & Non-differentiable VST & Spec MSS/SC P-Loss & Supervised \& Modeling & Replicate & In* \& Out & 2019 & 1-shot \\
+\hline
+Shier \textit{\textit{et al.}}~\cite{shier2020spiegelib} & Custom, non-diff & FFT \& Spectral & Supervised \& Direct & Replicate & In & 2020 & Both \\
+\hline
+Salimi \textit{\textit{et al.}}~\cite{salimi2020make} & DSP & STFT and Envelope & Supervised & Imitate & Out & 2020 & 1-shot \\
+\hline
+Masuda \textit{\textit{et al.}}~\cite{masuda2021soundmatch} & DDSP & P-Loss initially, fine-tune with Spec. & Supervised & Both & In \& Out & 2021 & 1-shot \\
+\hline
+Han \textit{\textit{et al.}}~\cite{han2023perceptual} & NN-encoder $\rightarrow$ physical model & PNP (approx. of STFT) & Supervised & Replicate & In & 2023 & 1-shot \\
+\hline
+Vahidi \textit{\textit{et al.}}~\cite{vahidi2023mesostructures} & Differentiable FM & JTFS/MSS & Gradient desc. & Replicate & In & 2023 & Iter \\
+\hline
+Barkan \textit{et al.}~\cite{barkan2023inversynthII}& Diff. Synthesizer Proxy& P-Loss + L1 Spec (weighted) &  Supervised (init.), Semi-Supervised & Replicate& In & 2023 & Both
+\\
+\hline
+Uzrad \textit{\textit{et al.}}~\cite{uzrad2024diffmoog} & DDSP & Synth. Chain and P-Loss & Supervised & Replicate & In \& Out & 2024 & 1-shot \\
+\hline
+Cherep \textit{et al.}~\cite{creativecherep2024} & DDSP & CLAP & Evolutionary & Imitate & Out & 2024 & Iter \\
+\hline
+\end{tabular}
+}
+
+\label{tab:summary}
+\end{table*}
+
+
 \subsection{Historical Framing of Sound-Matching}
 Given the attributes discussed above, Table~\ref{tab:summary} summarizes relevant literature. Here we expand with a historical analysis of past sound-matching work.
 
@@ -130,7 +196,7 @@ However, limited testing produced contradictory results, and they concluded that
 
 Recent years have seen more works in sound-matching using supervised machine learning techniques. In 2018, Yee-King \textit{et al.} rendered 60,000 audio-parameter pairs from the \textit{Dexed} \gls{VST} synthesizer~\footnote{https://asb2m10.github.io/dexed/}, and showed that NNs trained on this dataset can outperform GA and hill-climber (\gls{HC})~\cite{hoffmann2000heuristic} methods in rendering speed, with slight improvements in MFCC error (used as an objective performance test). The speed improvement appears trivial, considering the iterative nature of GAs when compared to offline training of supervised models. For GAs and HC optimizer, MFCCs were used as a measure of performance as well as a loss function. For training the networks, P-Loss was used, since differentiable MFCCs were not possible in their pipeline. Importantly, informal listening tests found the results unsatisfactory, likely due to the synthesizer’s 155-parameter complexity. 
 
-Masuda \textit{et al.} also applied supervised learning~\cite{masuda2021soundmatch}. Their work highlights the issue of non-linearity in parameter-to-synthesizer outputs and out-of-domain search. This work uses a differentiable subtractive synthesizer (two oscillators and an LP filter) alongside a NN model pre-trained with P-Loss on an in-domain dataset of randomly selected parameters. After training, the model was fine-tuned using 20,000 out-of-domain sounds from the NSynth dataset~\cite{engel2017neural} and multi-scale spectrogram loss~\cite{engel2020ddsp}. This approach proved more effective---i.e., achieved lower multi-level spectral difference in out-of-domain tests---than baseline models, which were either not exposed to out-of-domain sounds or trained exclusively with P-Loss. Subjective hearing tests were conducted, showing a preference for the fine-tuned model~\cite{masuda2022soundmatch}. Masuda \textit{et al.} later extended this work with semi-supervised learning, highlighting significant gaps in in-domain and out-of-domain performance~\cite{masuda2023improving}.
+Masuda \textit{et al.} also applied supervised learning~\cite{masuda2021soundmatch}. Their work highlights the issue of non-linearity in parameter-to-synthesizer outputs and out-of-domain search. This work uses a differentiable subtractive synthesizer (two oscillators and an LP filter) alongside a NN model pre-trained with P-Loss on an in-domain dataset of randomly selected parameters. After training, the model was fine-tuned using 20,000 out-of-domain sounds from the NSynth dataset~\cite{engel2017neural} and multi-scale spectrogram loss~\cite{engel2020ddsp}. This approach proved more effective---i.e., achieved lower multi-level spectral difference in out-of-domain tests---than baseline models, which were either not exposed to out-of-domain sounds or trained exclusively with P-Loss. Subjective hearing tests were conducted, showing a preference for the fine-tuned model~\cite{masuda2021soundmatch}. Masuda \textit{et al.} later extended this work with semi-supervised learning, highlighting significant gaps in in-domain and out-of-domain performance~\cite{masuda2023improving}.
 
 Rather than focusing on a particular implementation, Shier \textit{et al.} presented Spieglib, a library for implementation of sound-matching pipelines~\cite{shier2020spiegelib}. This library provides different choices for DNNs, GAs, synthesizers, and feature extractors. Shier \textit{et al.} presented an experiment with a similar setup to Yee-King \textit{et al.}~\cite{yee2018automatic}, however, they found a genetic algorithm as the best performing.
 
