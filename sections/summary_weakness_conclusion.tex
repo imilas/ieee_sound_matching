@@ -22,6 +22,32 @@ Based on our findings, several actionable guidelines emerge. These heuristics ca
     \item Iterative differentiable optimization via Faust-to-JAX is a viable strategy for defining various differentiable DSP functions, requiring only modest hardware resource and providing a more natural approach to synthesizer definition.
 \end{itemize}
 
+\subsection{Illustrative Loss Landscapes}
+
+To complement our quantitative, statistically robust analysis, we provide qualitative examples of loss landscapes to illustrate why specific losses succeed or fail in particular synthesis contexts. These examples should not be seen as conclusive evidence, but rather as illustrative aids to understanding the mechanisms behind the numerical results.
+
+Figure~\ref{fig:loss_landscape_noisebp} shows the case of \BPNoise{} modified to use only a high-pass filter parameter. Here, \LoneSpec{}, \SIMSESpec{}, and \JTFS{} exhibit clear global minima near the correct parameter (red dashed line), whereas \DTWEnv{} remains relatively flat around the target, making gradient-based exploration more challenging. This observation explains DTW’s weaker performance in this context.
+
+In contrast, Figure~\ref{fig:loss_landscape_ampmod} depicts a simplified version of \AmpMod{} with only the amplitude-modulation parameter (range: 0.1–20\,Hz). In this case, \DTWEnv{} yields the smoothest and most informative landscape, strongly correlating with proximity to the target. This aligns with its superior performance in amplitude-modulated synthesis observed in our experiments.
+
+These examples underscore the importance of loss landscapes in shaping optimization dynamics and further motivate future work on landscape-aware loss design.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/experiment_plots/comparing_loss_landscapes_normalized.png}
+    \caption{Loss landscapes for \BPNoise{} with only a high-pass filter parameter. 
+    \LoneSpec{}, \SIMSESpec{}, and \JTFS{} show clear global minima near the correct parameter, while \DTWEnv{} remains flat around the target.}
+    \label{fig:loss_landscape_noisebp}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/experiment_plots/comparing_lanscapes_1_1d_normalized.png}
+    \caption{Loss landscapes for a simplified \AmpMod{} synthesizer with only amplitude modulation parameter. 
+    \DTWEnv{} exhibits the smoothest and most informative landscape, explaining its superior performance in amplitude-modulated synthesis.}
+    \label{fig:loss_landscape_ampmod}
+\end{figure}
+
 \subsection{Applicability to More Complex Synthesizers}
 The experiments in this study were conducted with differentiable synthesizers chosen to isolate fundamental synthesis principle with 2 parameters each. While this level of simplicity facilitates controlled comparisons, it does not fully capture the richness of real-world synthesizers, which can have hundreds of parameters with various routes. As a result, the extent of the generalizability of our findings does require further research. 
 
