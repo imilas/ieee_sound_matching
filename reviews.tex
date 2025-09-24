@@ -1,0 +1,210 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[strings]{underscore} % allow _ in text
+\usepackage{natbib}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=blue!60!black,
+  citecolor=blue!60!black
+}
+
+% Compact lists
+\setlist[itemize]{leftmargin=1.2em,itemsep=0.3em,topsep=0.3em}
+\setlist[enumerate]{leftmargin=1.4em,itemsep=0.3em,topsep=0.3em}
+
+% Handy macros used in your text
+\newcommand{\DTWEnv}{\textsc{DTW\_Envelope}}
+\newcommand{\SIMSESpec}{\textsc{SIMSE\_Spec}}
+\newcommand{\LoneSpec}{\textsc{L1\_Spec}}
+\newcommand{\JTFS}{\textsc{JTFS}}
+
+\title{\vspace{-0.5em}Response to Reviewers\\
+\large Manuscript: \emph{Evaluating Sound Similarity Metrics for Differentiable, Iterative Sound-Matching}}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{-1.25em}
+
+\noindent
+We sincerely thank you and the reviewers for the thoughtful and constructive feedback on our manuscript titled~\emph{``Evaluating Sound Similarity Metrics for Differentiable, Iterative Sound-Matching''}. We have carefully considered all comments and revised the manuscript accordingly. Below, we provide a detailed point-by-point response to each comment. 
+For each reviewer, we first provide the review in full, with the key concerns highlighted. Below the full review, we address the concerns in sections. Each section contains the reviewer's key requests or issues, followed by the changes necessary. Some of our revisions are not direct responses to the concrete, point by point suggestions made by the reviewers, but address more general concerns expressed in the body of the reviews (simplification of the introduction and background requested by reviewer 1 for example). As such, for the sake of brevity we took the liberty to paraphrase and aggregate the reviewer's requests and concerns as accurately as possible when necessary. 
+
+\medskip
+\noindent
+We hope the revisions address all concerns and improve the clarity and quality of the manuscript.
+
+\section*{Reviewer 1}
+
+\noindent
+The Introduction section lacks a clear articulation of the central research question early on. The core problem that no single loss function performs optimally across synthesizer types is buried within extended historical context and repeated definitions. Moreover, the use of a single subsection label (A. Digital Synthesis with Sound-Matching) without any follow-up sections is structurally inconsistent. \textbf{We recommend tightening the Introduction to focus more directly on problem motivation and contribution, and removing or completing the subsection structure.} \\
+\textbf{The current division of the manuscript into Introduction, Background, and Past Works results in significant conceptual overlap and repetition.} Historical framing, loss function taxonomy, and method classification are spread across all three sections. \textbf{A clearer organizational approach would be to merge Background, and Past Works into a unified Background and Related Work section, where formal definitions, theoretical framing, and literature review are presented coherently.} This would allow the Introduction to focus solely on the motivation, problem framing, and contribution. \\
+Section IV titled ``Programs, Methodology, and Results'' is overloaded and blends experimental setup with results and interpretation. \textbf{For clear clarity and alignment with structural norms, we recommend splitting this into three sections: (1) Experimental Setup (including synthesizer programs, loss definitions, optimization procedure); (2) Experimental Results (performance metrics, statistical tests, and rankings); and (3) Discussion (qualitative interpretation, synthesis-specific observations, and practical implications).} \\
+Conceptually, the work serves primarily as a benchmarking study rather than a novel methodological contribution. While the comparison is comprehensive, the novel losses (DTW\_Envelope, SIMSE\_Spec) are adaptations of known techniques and are not framed with sufficient theoretical justification. \textbf{There is also limited interpretability analysis; for example, the paper does not explore why DTW performs well on modulated noise or why SIMSE outperforms L1 in certain scenarios.} Additionally, the synthesizers used are very simple (only 2--3 parameters), and all experiments are conducted in-domain, limiting the generalizability of the findings to real-world synthesis environments with more complex parameter spaces or out-of-domain targets. \\
+\textbf{The manuscript would also benefit from clearer practical implications.} While the authors argue that sound-matching is a creative process and reject the idea of a universal loss, they stop short of offering actionable heuristics. \textbf{Some guidance (e.g., Use DTW for AM synthesis; SIMSE for subtractive synthesis) would strengthen the paper’s relevance to practitioners.} \\
+\textbf{The paper would be improved by formally stating additional hypotheses that are currently only implicit.} For example, the observed agreement between manual and automatic evaluation metrics, the effectiveness of the novel losses, and the usability of iterative optimization as a general strategy are all important insights, but are not positioned as testable hypotheses upfront. \\
+\textbf{Suggested Actions for Revision:}
+\begin{enumerate}
+  \item \textbf{Clearly state additional hypotheses regarding metric agreement, perceptual evaluation, and loss novelty.}
+  \item \textbf{Deepen the technical and perceptual justification for DTW\_Envelope and SIMSE\_Spec.}
+  \item \textbf{Add qualitative or spectral analyses of where specific losses succeed or fail.}
+  \item \textbf{Expand discussion to address applicability to more complex or real-world synthesizers.}
+  \item \textbf{Provide practical takeaways or usage guidelines for different loss-synth combinations.}
+  \item \textbf{Restructure the manuscript to clarify the boundary between methodology, results, and discussion.}
+\end{enumerate}
+
+\subsection*{Introduction clarity}
+\noindent\textit{Paraphrase of key requests:}
+\begin{itemize}
+  \item Central research question and core problem not stated early enough.
+  \item Historical context and repeated definitions obscure the main motivation.
+  \item Introduction should focus solely on the motivation, problem framing, and contribution.
+  \item We recommend tightening the Introduction to focus more directly on problem motivation and contribution, and removing or completing the subsection structure.
+\end{itemize}
+
+\noindent\textbf{Response:} \\
+We agree with the reviewer’s comment regarding lack of clarity and focus in the Introduction. The Introduction has been revised accordingly: 
+\begin{itemize}
+  \item The Introduction is now a single continuous section, without subsection headings.  
+  \item We have removed unnecessary historical context and repeated definitions, reducing the length by roughly 25\%. We moved some of this material to the new \emph{Background and Related Work} section.  
+  \item The central hypothesis now appears at the beginning of the third paragraph (previously it appeared mid-way through paragraph 10).  
+  \item In addition to the main hypothesis, we have added three explicit research questions, covering metric agreement (Q1), the utility of novel DTW and SIMSE losses (Q2), and the viability of iterative optimization (Q3).  These are stated directly after the central hypothesis.
+  \item The Introduction concludes with a concise statement of our contributions, listing our systematic evaluation across synthesizers, the introduction of DTW and SIMSE losses, the discussion of automatic versus manual metrics, a proposed nomenclature for categorizing sound-matching works, and a list of important issues in the field that require further research.  
+\end{itemize}
+
+\subsection*{Improve Background and Related Work}
+\noindent\textit{Paraphrase of key request:} A clearer organizational approach would be to merge Background and Past Works into a unified Background and Related Work section, where formal definitions, theoretical framing, and literature review are presented coherently.  
+
+\noindent\textbf{Response:} \\
+We agree that the organization and writing in these sections could be improved. We merged \emph{Background} and \emph{Past Works} into a unified \emph{Background and Related Work} section. We edited these sections to improve reading and remove redundancies between the various subsections while taking precautions in compromising the flow.
+The \emph{background and Related Work} section contains the following topics in order:  
+\begin{itemize}
+  \item A formal definition of sound-matching and its components
+  \item Definitions of synthesizers, losses, and optimization heuristics,  
+  \item A chronological review of prior sound-matching approaches
+  \item A discussion of gaps in the field and four critical issues.
+  \item A justification for our methodology, and how our experiments address two of the critical issues (Loss and Synthesizer selection).
+\end{itemize}
+
+\subsection*{Deepen the technical and perceptual justification for DTW\_Envelope and SIMSE\_Spec.}
+\noindent While the comparison is comprehensive, the novel losses (DTW\_Envelope, SIMSE\_Spec) are adaptations of known techniques and are not framed with sufficient theoretical justification. 
+
+\noindent\textbf{Response} \\
+We have expanded the theoretical and perceptual justifications for DTW\_Envelope and SIMSE\_Spec in subsection \textbf{II.C Sound Representation and Loss Functions} under \textbf{Background and Previous Works}. For SIMSE\_Spec, we emphasize that scale-invariance removes sensitivity to global gain, making it particularly appropriate for subtractive synthesis where filter cutoffs alter spectral energy but preserve timbral shape. For DTW\_Envelope, we clarify its perceptual motivation: aligning amplitude envelopes is crucial for AM synthesis, where traditional spectrogram L1 distances fail to capture similarity. We explicitly frame these losses not as wholly new techniques, but as carefully adapted methods tested in an iterative differentiable setting, a contribution that has not previously been made.  
+
+We did not modify the defintions in \textbf{III.A Loss Function Implementation Details}, dedicating this section to only technical explanations. However, we discuss the empirical effectiveness of these losses in the \textbf{IV.A Key Findings} subsection, as an important takeaway.
+
+\subsection*{Analyses of where specific losses succeed or fail.}
+\noindent ``Add qualitative or spectral analyses of where specific losses succeed or fail''
+
+\noindent\textbf{Response} \\
+This is an interesting suggestion. Our original experiments were designed to emphasize quantitative, statistically robust measurements of loss function performance, which is why we initially avoided focusing on individual examples of sounds, spectrograms, or loss landscapes (to reduce the risk of cherry-picking). However, we think that illustrative examples can provide helpful intuition for readers and motivate future research.
+
+To this end, we have added qualitative visualizations of loss landscapes (see \textbf{Figures 4 and 5} in the revised manuscript). These examples highlight why specific losses may succeed or fail and reinforce the broader importance of loss landscapes in assessing the appropriateness of similarity measures~\cite{vahidi2023mesostructures,turian2020sorry}. This addition also supports our argument that effective navigation of loss landscapes represents an important gap in current knowledge and a promising direction for future work.
+
+\begin{itemize}
+  \item For the HP-Noise synthesizer, \LoneSpec{}, \SIMSESpec{}, and \JTFS{} exhibit clear minima at the target parameter, while \DTWEnv{} remains relatively flat around the target, consistent with its weaker performance in this setting.
+  \item For the S-Noise-AM synthesizer, \DTWEnv{} produces the smoothest and most informative landscape, while spectrogram-based losses and \JTFS{} provide less reliable gradients. This aligns with the superior performance of \DTWEnv{} observed in amplitude-modulated synthesis.
+\end{itemize}
+
+These additions serve as illustrative examples that reinforce the mechanisms underlying our quantitative findings and highlight the importance of loss landscape navigation as an open area for future research.
+
+\subsection*{Restructure the manuscript to clarify the boundary between methodology, results, and discussion.}
+\noindent Section IV titled ``Programs, Methodology, and Results'' is overloaded and blends experimental setup with results and interpretation. For clear clarity and alignment with structural norms, we recommend splitting this into three sections: (1) Experimental Setup (including synthesizer programs, loss definitions, optimization procedure); (2) Experimental Results (performance metrics, statistical tests, and rankings); and (3) Discussion (qualitative interpretation, synthesis-specific observations, and practical implications).
+
+\noindent\textbf{Response} \\
+In the revised manuscript we have:
+\begin{itemize}
+  \item Split the original Section IV into three distinct sections:
+    \begin{enumerate}
+      \item \textbf{Experimental Setup} -- describes synthesizer programs, loss definitions, optimization procedure, and evaluation metrics.  (The only partial overlap is at the beginning of the subsection \textbf{Best Performers For Each Program}, which transitions between results and discussion.)
+      \item \textbf{Experimental Results} -- presents performance metrics, statistical tests (Kruskal--Wallis, NPSK), and rankings of losses across synthesizers.
+      \item \textbf{Discussion} -- provides qualitative interpretation, synthesis-specific observations, applicability to complex synthesizers, and practical implications.
+    \end{enumerate}
+  \item Moved explanatory material regarding experiment setup out of the \textbf{Experimental Results} and into the \textbf{Experimental Setup} section where appropriate, ensuring results sections are now strictly empirical.
+  \item Added new subsections (\emph{Takeaways}, \emph{Practical Recommendations}, \emph{Applicability to More Complex Synthesizers}) to make the discussion more explicit and actionable.
+\end{itemize}
+We believe this major restructuring and rewrite of appropriate sections has clarified the flow of the manuscript and made the boundary between methodology, results, and discussion much clearer.
+
+\subsection*{Expand discussion to address applicability to more complex or real-world synthesizers.}
+\noindent 4. Expand discussion to address applicability to more complex or real-world synthesizers
+
+\noindent\textbf{Response} \\
+We added a new subsection, \emph{Applicability to More Complex Synthesizers}, that explicitly discusses how the insights from our controlled two-parameter DSP-based synthesizers generalize to richer synthesizers with many parameters and complex routing. While acknowledging the limitations of our simplified test bed, we argue that the observed dependencies between synthesis method and loss function remain informative even in more complex settings.
+
+\subsection*{Provide practical takeaways or usage guidelines for different loss--synth combinations.}
+\noindent 5. Provide practical takeaways or usage guidelines for different loss-synth combinations.  
+
+\noindent\textbf{Response} \\
+We introduced a new subsection, \emph{Practical Recommendations}, which distills our findings into actionable heuristics for practitioners. DTWEnv is recommended for amplitude-modulated synthesis, SIMSE for subtractive/noise-filtered synthesis, and MSS or P-Loss as large-scale proxies for sound-matching evaluation (with manual validation advised). We also note that our results challenge prior claims about JTFS’s universal superiority for mesostructures.
+
+\section*{Reviewer 2}
+
+\noindent
+The paper considers the evaluation of different audio similarity metrics for sound matching applications.  The authors categorize prior methods largely as direct optimization via gradient-free iterative search or open-loop inference via a supervised deep learning model.  Moreover, different approaches which may or may not accommodate out-of-domain sounds.  Accordingly, the authors propose the combined use of differentiable synthesizers and closed-loop iteration as a sound means of achieving synthesizer sound matching, effectively combining the advantages of otherwise disparate methods (i.e. access to gradients while iteratively improving matching results).  Additionally, within their evaluation of different similarity metrics (parameter losses, spectral distances, etc.), they also introduce a DTW-based similarity metric to partially neutralize the effect of time alignment on similarity scores.  A primary conclusion of the work is that there is no one best sound similarity measure capable of working across all synthesizers.  \\
+The subject matter of the work is relevant, the experimental setup is satisfactory, and I do not have reason to doubt the correctness of their analysis.  However, my primary concerns with this work are that:  
+\begin{enumerate}
+  \item \textbf{It is not clear what the proposed method really is, and the paper reads largely as a readout of evaluations that were conducted by the authors.}  
+  \item \textbf{The authors claim that differentiable iterative sound matching is largely unexplored, encouraging development of techniques in this area.}  
+    \begin{itemize}
+      \item \textbf{Barkan et. al, ``Inversynth II: Sound Matching via Self-Supervised Synthesizer-Proxy and Inference-Time Finetuning'' explored precisely this, training an initial ``one-shot'' supervised model, and then performing inference-time optimization, updating model weights to improve the matching against test audio.  Moreover, their use of a synthesizer-proxy negates the explicit need of implementing the synthesizer math differentiably, while still falling under the category of differentiable iterative sound matching.}  
+      \item \textbf{Cherep et. al, ``Creative Text-to-Audio Generation via Synthesizer Programming'' uses a differentiable synthesizer and the CLAP score as a similarity metric for iterative optimization.  While the authors lean into synthesizer sound matching against a text query, the method would be readily applicable to audio-to-audio sound matching using the CLAP audio tower alone.}  
+    \end{itemize}
+  \item \textbf{This work addresses the problems on ``Loss Selection'' and ``Synthesis Selection.''  However, the results as presented here are largely inconclusive (i.e. it is not imminently clear how to select losses/synthesizer pairings), leaving very little in the way of clear takeaways sparking future research.}
+\end{enumerate}
+
+\subsection*{Clarity of proposed method}
+\noindent It is not clear what the proposed method really is, and the paper reads largely as a readout of evaluations.  
+
+\noindent\textbf{Response:} \\
+As the reviewer points out, we wanted the revised paper to ``not read merely as a set of experiments''.  In the revised version of the paper, we take steps to ensure that our contributions are clear: (i) controlled benchmarking of loss--synth pairings, (ii) novel, context-dependent benefits of DTW and SIMSE, and (iii) practical heuristics that can guide both future research and applied sound design. These contributions are first stated at the end of the introduction, and expanded on in later in the appropriate sections:
+
+\medskip
+\noindent In \textbf{II.B Digital Signal Processing and Synthesis}, we state the importance of isolated experiments:
+\begin{quote}\small\ttfamily
+Other synthesis methods studied in \textit{isolation} include additive and subtractive synthesis~\cite{engel2020ddsp,masuda2023improving,salimi2020make} and physical modeling~\cite{riionheimo2003parameter,han2024learning}. By \textit{isolation}, we mean settings where the effect of individual parameters on the output sound remains tractable. For example, we exclude studies using commercial Virtual Studio Technology (VST) which can obscure the interactions between modules, losses, and outputs. 
+\end{quote}
+
+\noindent To further clarify the methodology and its importance, we have added a new subsection, \emph{What Approach Should We Take?}, placed immediately before the Methodology. This subsection clarifies our experimental design and explains why our contribution is unique. Specifically, we use:  
+\begin{enumerate}
+  \item Simple differentiable DSP synthesizers to isolate synthesis--loss interactions,  
+  \item Multiple losses tested side by side within the same framework, and  
+  \item Direct gradient descent optimization without neural proxies.  
+\end{enumerate}
+This section makes clear that our work is not simply a report of evaluations, but a controlled benchmarking study designed to reveal how losses and synthesis methods interact.  
+
+\medskip
+\noindent We restate our methodology in the opening paragraph of the \textbf{Methodology} section. Our empirical survey, uses a \emph{controlled experimental design} intended to isolate the interactions between differentiable loss functions and DSP-based synthesizers. Unlike proxy- or embedding-based approaches (e.g., Inversynth II, CLAP), our methodology avoids neural intermediaries and tests fundamental building blocks directly via gradients. This allows us to provide low-level empirical evidence that loss function performance depends strongly on the synthesis method, which we argue is a necessary precursor for generalizable, real-world sound-matching systems.
+
+\subsection*{Relation to prior work}
+\noindent The authors claim that differentiable iterative sound matching is largely unexplored, but prior work (Barkan et al., Cherep et al.) could be considered in this category.  
+
+\noindent\textbf{Response:} \\
+We thank the reviewer for pointing out sound-matching works which fall under the ``differentiable and iterative'' description that were not covered in our literature review. We believe that the term ``under-explored'' is perhaps more appropriate. We've added these works to \textbf{Table 1} which provides a summary of important previous works, and discussed these works in more detail in the \textbf{Background and Related works} subsection titled: \textbf{F. Historical Framing of Sound-Matching}. 
+\begin{itemize}
+  \item \textbf{Barkan et al. (Inversynth II):} Their work relies on neural proxies for the synthesizer, with inference-time finetuning of the encoder. This constitutes iterative optimization, but the optimization occurs on an approximate model rather than directly on differentiable DSP functions. By contrast, our approach avoids proxy error and directly analyzes how losses behave relative to known synthesis structures.  
+  \item \textbf{Cherep et al.:} Their work uses CLAP embeddings with evolutionary search for text-to-audio tasks. While applicable to audio-to-audio matching, CLAP acts as a black-box representation and does not isolate loss--synth interactions. Our approach is complementary, focusing on controlled experiments with simple differentiable DSP synthesizers to expose the strengths and weaknesses of different similarity measures.  In addition, embedding models such as CLAP use simpler representations at their core, commonly the Fourier transformations, and our work explores the low level functions that are often used for the training of embedding models.
+\end{itemize}
+Looking at these works, we see that our contribution is distinct: we provide the missing \textbf{low-level benchmarking} of loss functions across multiple synthesis methods, which is not addressed by proxy-based or embedding-based approaches.
+
+\subsection*{This work addresses the problems on ``Loss Selection'' and ``Synthesis Selection.''  However, the results as presented here are largely inconclusive (i.e. it is not imminently clear how to select losses/synthesizer pairings), leaving very little in the way of clear takeaways sparking future research.}
+
+\noindent\textbf{Response} \\
+In the revised paper, we've added two sections which address the valid issues raised here and by Reviewer 1:
+\begin{itemize}
+  \item We introduced a new subsection, \emph{Practical Recommendations}, which distills our findings into actionable heuristics for practitioners. DTWEnv is recommended for amplitude-modulated synthesis, SIMSE for subtractive/noise-filtered synthesis, and MSS or P-Loss as large-scale proxies for sound-matching evaluation (with manual validation being strongly advised). We also note that our results challenge prior claims about JTFS’s universal superiority for mesostructures.
+  \item We added a new subsection, \emph{Applicability to More Complex Synthesizers}, that explicitly discusses how the insights from our controlled two-parameter DSP-based synthesizers generalize to richer synthesizers with many parameters and complex routing. While acknowledging the limitations of our simplified testbed, we argue that the observed dependencies between synthesis method and loss function remain informative even in more complex settings.
+\end{itemize}
+
+\end{document}
