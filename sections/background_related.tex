@@ -231,7 +231,7 @@ Having looked at the current literature, we identify four major areas of weaknes
     and desired output characteristics. Existing studies typically evaluate losses only with simple synthesis 
     setups~\cite{vahidi2023mesostructures}, leaving open questions about their generality. 
     \item \SynthSelect: There is a lack of diversity in the synthesis methods used in sound-matching. The effects of using different isolated DSP functions in iterative sound-matching and how these interact with loss functions remains largely untested.
-    \item \PeriodicLoss: The sinusoidal nature of loss function landscapes is a problem that appears frequently\todo{cite and make clearer}. In differentiable settings, this problem causes gradient descent updates to local minima. 
+    \item \PeriodicLoss: Loss function landscapes are not easy to navigate, as there can be many local minima, or large flat areas~\cite{turian2020sorry,vahidi2023mesostructures}.  In differentiable settings, this can cause gradient descent updates to not reach the global minima. 
     \item \OutDomain: Sound-matching with out-of-domain sounds is a largely unexplored area, yet a necessary one for practical applications for sound designers.
 \end{enumerate}
 
