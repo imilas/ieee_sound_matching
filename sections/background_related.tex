@@ -115,7 +115,7 @@ Dynamic Time Warping (DTW) is a method for measuring similarity between multi-di
 
 DTW provides robustness to local temporal shifts, making it well suited for comparing modulated signals where the perceptual similarity lies in envelope dynamics rather than precise onset alignment. 
 For example, two tremolo signals with slightly different phase are perceptually similar but would appear distant under spectrogram L1. 
-By applying DTW specifically to amplitude envelopes, we can match two sounds with identical rates ofloudness modulation regardless of alignments. 
+A possible use case to consider is the application of DTW to amplitude envelopes, which may be able to match two sounds with identical rates of loudness modulation regardless of alignments. 
 To our knowledge, DTW applied in this way has not been used as a loss in sound-matching (whether differentiable and iterative or not).
 
 
