@@ -318,7 +318,8 @@ and offering insights likely to generalize to more complex domains.
     At a glance, our methodology is to conduct controlled, low-level differentiable experiments—without proxy networks—by pairing four DSP-based synthesizers with four differentiable loss functions. We optimize parameters directly via gradients in order to isolate loss–synthesizer interactions. This controlled setup systematically evaluates the performance of iterative sound-matching pipelines, where “performance” is defined as the similarity of the synthesized output to a target. Similarity is assessed with P-Loss, MSS, and—most importantly—manual listening tests. This design allows us to directly test our central hypothesis: that the effectiveness of a loss function depends on the synthesis method, and that no universal “best” similarity measure exists.
 \end{displayquote}
 
-\subsection*{R2.2 Relation to Prior Work}
+\subsection{R2.2 Relation to Prior Work}
+\label{R2.2}
 \noindent \textbf{The authors claim that differentiable iterative sound matching is largely unexplored, but prior work (Barkan et al., Cherep et al.) could be considered in this category.}\\
 
 \noindent\textbf{Response:} \\
@@ -347,70 +348,156 @@ For a more detailed response, see our response to the Reviewer.1 in Sections~\na
 
 
 \section{Reviewer 4}
-\subsection{Use of Appropriate Symbols}
+Here we've addressed the four bigger concerns first, leaving the minor edits for \nameref{r4.minor}.
+
+
+\subsection{Original Review}
+Well written paper with comprehensive literature review and extensive experiments to bridge existing research gap. Although this paper does not have any ground-breaking new methods that could achieve SOTA performance, the experimental results could still serve as a useful reference for researchers who want to try this field. So I believe it should be accepted with some minor modifications.
+
+(\textbf{R4.1}) Page 3, Left Column, the first equation.
+I am not sure if `t` is a common symbol to represent `target` in sound marking, but my field of audio/signal processing, `t` usually represents `time`. So it is a bit confusing to me when reading it for the first time.
+Would something like $x_\theta$ and $x_t$ be better? So x always represent the sound. And the subscript indicated if the sound is from the output given the parameter theta, or the target sound. Even better, probably we can use $x_0$ instead of $x_t$ to represent the target sound?
+
+Page 3 Right column section C.
+Isn't it better to move the symbol explanation earlier to where the first equation is? I could only under the equations after reading section C.
+
+(\textbf{R4.2}) Page 3 Right column at the end
+You mentioned "There is no optimal or correct version of an 8-bit snare sound".
+This statement is true when you are given only the text description of the sound. However, if you have the target sound $x_0$ (or t in your current draft), the target sound itself is "correct", isn't it? So your hypothesis only holds if you don't have the target sound but the text description, am I understanding it correctly?
+
+Page 6 Right column Section C Point 4.
+"out-of-domain sounds is an unexplored area". Unexplored means no one has done it before to me. But in Table 1, you have already cited a few work that tried to do it. So, should it be "underexplored" instead of "unexplored"?
+
+
+Page 6 Right column Section IV A
+You mentioned "four different synthesizers" here, but you never elaborate on which four, not until page 8. Probably you can specify the four synthesizers earlier?
+
+(\textbf{R4.3}) Also, in the blinded hearing test, the two listeners are the authors, it seems a bit to biased to me. Not sure how difficult is it to add one more listener, but I believe having an extra sound engineer/musician who is not one of the author would yield a more convincing listening results.
+
+Page 7 Left Column 1st Paragraph
+You described the Likert scale from 1 to 5 here. But in the next paragraph, you describe the Likert scores again. Not sure if I misunderstood anything, but It looks a bit redundant to me. Would it be possible to combine both to reduce redundancy?
+
+(\textbf{R4.4}) Page 7 Right Column section B
+"If one of these tones is slightly shifted in time, then the spectrogram will no longer overlap". This is true if we don't apply any techniques like DTW to realign them, right?
+So the STFT losses doesn't work for the cases where there's time shift?
+
+Page 11, the "weakness" section under Summary
+Just a minor grammar question, Is there a missing subject in the first sentence?
+While [we] cannot prove ...
+
+
+(\textbf{R4.5}) One final question that is just out of curiosity.
+In your iterative algorithm, you always run it for 200 steps, right?
+In my field of machine learning, if we set 200 steps, the result in the final step might not be the optimal one due to overfitting. So sometimes we obtain the optimal results at around 100 steps, and the model gets worse after this.
+Do you have the same thing in your algorithm? Or the final step is always the best step?
+
+
+
+\subsection{\textbf{R4.1} Use of Appropriate Symbols}
 \noindent\textbf{Review:}
 The notation \textbf{[for the equation introduced in II.A]} is confusing. In the manuscript, $t$ is used to denote the target sound, but in audio/signal processing $t$ usually represents time.  
 A clearer alternative would be to write $x_\theta$ and $x_0$, so that $x$ always denotes a sound waveform, with the subscript indicating whether it is generated from parameters $\theta$ or given as the target.  
 This avoids overloading $t$ and improves readability.
+\\
 
 \noindent\textbf{Response:}
-This is a helpful suggestion, and we have made the switch from $x$ and $t$ to $x_{\theta}$ and $x_0$. 
+This is a helpful suggestion, and we have made the switch from $x$ and $t$ to $x_{\theta}$ and $x_0$ throughout the manuscript. 
 
-\section{Optimal Targets}
+\subsection{\textbf{R4.2} Optimal Targets}
 \noindent\textbf{Review:}
 You mentioned "There is no optimal or correct version of an 8-bit snare sound".
-This statement is true when you are given only the text description of the sound. However, if you have the target sound $x_0$  the target sound itself is "correct", isn't it? So your hypothesis only holds if you don't have the target sound but the text description, am I understanding it correctly?
+This statement is true when you are given only the text description of the sound. However, if you have the target sound $x_0$  the target sound itself is "correct", isn't it? So your hypothesis only holds if you don't have the target sound but the text description, am I understanding it correctly?\\
 
 \noindent\textbf{Response:}
+The original statement referred to how realistically in sound-design, a "correct" solution rarely exists due to our subjective experience of sound. To reduce confusion, the section has been rephrased as follows:
+\begin{displayquote}
+    Moreover, the ``correct'' solution may not exist in a strict sense: depending on the artistic goal, multiple parameter settings may yield acceptable or even preferable outputs.  In the following sections we will discuss the various components of sound-matching, the subjectivity of ``correct'' solutions, and important issues in the field.
+\end{displayquote}
 
+\subsection{Hearing Tests}
+\noindent{\textbf{Review:}}
+Also, in the blinded hearing test, the two listeners are the authors, it seems a bit to biased to me. Not sure how difficult is it to add one more listener, but I believe having an extra sound engineer/musician who is not one of the author would yield a more convincing listening results.
+\\
 
-\subsection{STFT Losses and Time-Shifts}
+\noindent{\textbf{Response:}}
+
+\subsection{\textbf{R4.4} STFT Losses and Time-Shifts}
 \noindent\textbf{Review:}
 "If one of these tones is slightly shifted in time, then the spectrogram will no longer overlap". This is true if we don't apply any techniques like DTW to realign them, right?
 So the STFT losses doesn't work for the cases where there's time shift?
 
 \noindent\textbf{Response:}
+What we refer to as STFT losses refers to the near ubiquitous approach of applying L1/L2 to STFT spectrograms. This approach does not account for two sounds that are nearly identical but slightly time-shifted~\cite{vahidi2023mesostructures,turian2020sorry}.
 
-\subsection{Can We Overfit?}
+\subsection{\textbf{R4.5} Can We Overfit? Is it Bad}
 \noindent\textbf{Review:}
 One final question that is just out of curiosity.
 In your iterative algorithm, you always run it for 200 steps, right?
 In my field of machine learning, if we set 200 steps, the result in the final step might not be the optimal one due to overfitting. So sometimes we obtain the optimal results at around 100 steps, and the model gets worse after this.
 Do you have the same thing in your algorithm? Or the final step is always the best step?
 
-\noindent\textbf{Response}
+\noindent\textbf{Response} 
+Since we are not training a model that will be applied to other scenarios, overfitting here just means that the parameter updates are stuck around a local minimum. This means that \textit{if} the target parameters have been reached, subsequent updates will not diverge from it (or at least stay very close). We can share our visualization of the gradient update paths in 2D, which we felt was not statistically robust enough for the paper. Figures~\ref{fig:p0_simse_iterations} and~\ref{fig:p2_dtw_iterations}, we see that once the gradient updates (small red dots connected by lines) take the parameters from the starting position (green circle) to the target (green star), subsequent updates move sligtly and randomly around the target. 
 
 
-\subsection{Minor Edits}
+\begin{figure*}[h]
+    \centering
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiment_plots/p0_SIMSE_Spec.png}
+        \caption{SIMSE\_Spec reaching target and not diverging in \BPNoise}
+        \label{fig:p0_simse_iterations}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/experiment_plots/p2_DTW_Onset.png}
+        \caption{DTW\_Env reaching target and not diverging in \AmpMod}
+        \label{fig:p2_dtw_iterations}
+    \end{minipage}
+\end{figure*}
+
+
+\subsection{R4 Minor Edits}
+\label{r4.minor}
 \noindent\textbf{Review}
 Isn't it better to move the symbol explanation earlier to where the first equation is? I could only under the equations after reading section C.
 
 \noindent\textbf{Response:}
 We have moved symbol explanations right after the introduction in 
 \textbf{II. A Formalization of Sound-Matching}. 
+\\
 
 \noindent\textbf{Review:}
 "out-of-domain sounds is an unexplored area". Unexplored means no one has done it before to me. But in Table 1, you have already cited a few work that tried to do it. So, should it be "underexplored" instead of "unexplored"?
 
 \noindent\textbf{Response:}
+We've changed our phrasing where necessary. See also \nameref{R2.2}.
+\\
 
 \noindent\textbf{Review:}
 You mentioned "four different synthesizers" here, but you never elaborate on which four, not until page 8. Probably you can specify the four synthesizers earlier?
 
+\noindent\textbf{Response:}
+We've modified the beginning of Section \textbf{III. Experimental Setup and Results}
+
+\begin{displayquote}
+    At a glance, our methodology is to conduct controlled, low-level differentiable experiments without the use of proxy networks. We pair four differentiable losses with four differentiable DSP-based synthesizers: BP-Noise (band-pass noise with LP/HP filters), Add-SineSaw (additive sine and saw oscillators), Noise-AM (noise modulated by an LFO), and SineSaw-AM (sine-modulated saw oscillator). 
+\end{displayquote}
 
 \noindent\textbf{Review:}
-You described the Likert scale from 1 to 5 here. But in the next paragraph, you describe the Likert scores again. Not sure if I misunderstood anything, but It looks a bit redundant to me. Would it be possible to combine both to reduce redundancy?
+You described the Likert scale from 1 to 5 here. But in the next paragraph, you describe the Likert scores again. 
+
+\noindent\textbf{Response:}
+This has been fixed in our rewrite of the methodology section (\textbf{III. Experimental Setup and Results}).
+\\
 
 \noindent\textbf{Review:}
-Just a minor grammar question, Is there a missing subject in the first sentence?While [we] cannot prove ...
+Fix "While [we] cannot prove ..."
 
-
-\noindent\textbf{Review:}
-
-
-
-
-
+\noindent\textbf{Response:}
+Fixed, thank you.
+\\
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
