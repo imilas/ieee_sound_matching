@@ -9,10 +9,10 @@ Following prior works~\cite{vahidi2023mesostructures,han2023perceptual}, we defi
 The key components are:
 \begin{itemize}
     \item $g(\theta)$: A parametric audio synthesizer $g$ with parameters $\theta$.
-    \item $x$: The synthesizer output, $x = g(\theta)$.
-    \item $t$: The target sound to be replicated or imitated. 
+    \item $x_\theta$: The synthesizer output, $x_\theta = g(\theta)$.”.
+    \item $\xzero$: The target sound to be replicated or imitated. 
     \item $\phi(\cdot)$: A representation (feature extraction) function mapping signals into a comparison space.
-    \item $L$: A loss function that measures distance between $x$ and $t$, typically via $L(\theta,t) = d(\phi(x), \phi(t))$ for some metric $d$.
+    \item $L$: A loss function that measures distance between $\xtheta$ and $\xzero$, typically via $L(\theta,\xzero) = d(\phi(\xtheta), \phi(\xzero))$ for some metric $d$.
 \end{itemize}
 
 This formalization highlights that sound-matching is not a single well-defined optimization problem, but rather depends on design choices for $g$, $\phi$, and $L$. 
@@ -23,22 +23,23 @@ Moreover, the ``correct'' solution may not exist in a strict sense: depending on
     \centering
 \begin{tikzpicture}[node distance=2cm, auto]
 
-    % Nodes
-    \node (start) [text centered] {\( g (\hat{\theta}) = x \)};
-    \node (L) [above of=start,right of=start, text centered] {\( L(\hat{\theta},t) {\ \propto \ } \phi(x) - \phi(t) \)};
-    \node (optimize) [below of=L,right of=L, text centered] {Optimize $\hat{\theta}$};
-    \node (new_theta) [below of=optimize,right of = start, text centered] {New \( \hat{\theta} \)};
+% Nodes
+\node (start) [text centered] {\( g(\hat{\theta}) = x_{\theta} \)};
+\node (L) [above of=start, right of=start, text centered] 
+    {\( L(\hat{\theta}, x_{0}) \propto \phi(x_{\theta}) - \phi(x_{0}) \)};
+\node (optimize) [below of=L, right of=L, text centered] {Optimize $\hat{\theta}$};
+\node (new_theta) [below of=optimize, right of=start, text centered] {New \( \hat{\theta} \)};
 
-    % Highlight and arrow for the start node
-    \draw[->, very thick, red] (start) ++(-2,1.5) -- (start)
-        node[midway, below, align=center, sloped, color=red] {Start}
-        node[midway, above, align=center, sloped, color=red] {Random $\hat{\theta}$};
-        
-    % Arrows with multi-line labels
-    \draw[->, bend left] (start) to node[midway, right, align=center] {} (L);
-    \draw[->, bend left] (L) to node[midway, right, align=center] {} (optimize);
-    \draw[->, bend left] (optimize) to node[midway, below, align=center] {} (new_theta);
-    \draw[->, bend left] (new_theta) to node[midway, left, align=center] {} (start);
+% Highlight and arrow for the start node
+\draw[->, very thick, red] (start) ++(-2,1.5) -- (start)
+    node[midway, below, align=center, sloped, color=red] {Start}
+    node[midway, above, align=center, sloped, color=red] {Random $\hat{\theta}$};
+
+% Arrows with multi-line labels
+\draw[->, bend left] (start) to node[midway, right, align=center] {} (L);
+\draw[->, bend left] (L) to node[midway, right, align=center] {} (optimize);
+\draw[->, bend left] (optimize) to node[midway, below, align=center] {} (new_theta);
+\draw[->, bend left] (new_theta) to node[midway, left, align=center] {} (start);
 
 \end{tikzpicture}
     % \caption{ Iterative approach to sound design. Synthesizer $g$ with arbitrary initialized parameters $\hat{\theta}$, creates sound $x$. The target sound $t$ is used as the goal. Parameters $\hat{\theta}$ are adjusted to minimize error (or loss) $L(\hat{\theta},t)$, where $L$ is proportional to the difference between the representations of $x$ and $t$. $\phi$ is the audio feature extractor, or representation function.}
@@ -78,15 +79,15 @@ A digital sound (or an audio signal) is a series of numbers~\cite{smith1991viewp
 In sound-matching, particularly in a Deep Learning (\gls{DL}) context~\cite{goodfellow2016deep}, the similarity function can also be called a \textit{loss} function, where the emphasis is on measurement and reduction of the distance between target and output. It is important to note that there is a close relationship between the loss function $L$ and the sound representation function $\phi$. $L$ is the result of a distance measure $d$ applied to the features extracted by $\phi$. 
 
 \[
-L(\theta, t) = d\langle\phi(t),\phi(x)\rangle
+L(\theta, \xzero) = d(\phi(\xtheta), \phi(\xzero))
 \]
 
 \noindent
 
-A proxy representation is the output of the function \( \phi \), which can be thought of as a feature extraction function that maps the sounds \( t \) and \( x \) to their respective representations. 
+A proxy representation is the output of the function \( \phi \), which can be thought of as a feature extraction function that maps the sounds  $\xzero$ and $\xtheta$  to their respective representations. 
 The proportionality or distance metric $d$ has typically been the L1 or L2 distance~\cite{turian2020sorry,richard2025model}, with L1 being calculated as the mean of the absolute difference between every point in the proxy representation:
 \[
-L(\theta, t) = \left\| \phi(t) - \phi(x) \right\|_1
+L(\theta, \xzero) = \left\| \phi(\xzero) - \phi(\xtheta) \right\|_1
 \]
 
 Here we discuss four methods of audio representation and the corresponding loss functions, including technical justifications for our novel methods.
@@ -115,22 +116,22 @@ Dynamic Time Warping (DTW) is a method for measuring similarity between multi-di
 
 DTW provides robustness to local temporal shifts, making it well suited for comparing modulated signals where the perceptual similarity lies in envelope dynamics rather than precise onset alignment. 
 For example, two tremolo signals with slightly different phase are perceptually similar but would appear distant under spectrogram L1. 
-A possible use case to consider is the application of DTW to amplitude envelopes, which may be able to match two sounds with identical rates of loudness modulation regardless of alignments. 
+A possible use case to consider is the application of DTW to amplitude envelopes, which may be able to match two sounds with similar rates of loudness modulation regardless of alignments. 
 To our knowledge, DTW applied in this way has not been used as a loss in sound-matching (whether differentiable and iterative or not).
 
 
 \subsection{In-Domain versus Out-of-Domain}
 \label{sec:in-domain}
-The choice of domain depends on whether we want to use the same synthesizer for the target and output sounds, the scenario that is called \textit{in-domain}, or have target sounds that came from sources other than the synthesizer, or \textit{out-of-domain}. To paraphrase the description given by Masuda \textit{et al.}~\cite{masuda2021soundmatch}, if $g$, the synthesizer of choice, can accurately replicate the target sound $t$, or put differently, if $t$ itself is an output of $g$, then the sound-matching task is \textit{in-domain}. If $t$ is not an output of $g$, then the sound-matching task is \textit{out-of-domain}. In-domain tasks in general are simpler, and often there is a guarantee that there is a correct answer to the sound-matching problem, particularly if the goal is accurate replication of the sound. If the target sound is out-of-domain, replication is not guaranteed, and the goal becomes the \textit{imitation} of some aspect of sound. 
+The choice of domain depends on whether we want to use the same synthesizer for the target and output sounds, the scenario that is called \textit{in-domain}, or have target sounds that came from sources other than the synthesizer, or \textit{out-of-domain}. To paraphrase the description given by Masuda \textit{et al.}~\cite{masuda2021soundmatch}, if $g$, the synthesizer of choice, can accurately replicate the target sound $\xzero$, or put differently, if $\xzero$ itself is an output of $g$, then the sound-matching task is \textit{in-domain}. If $\xzero$ is not an output of $g$, then the sound-matching task is \textit{out-of-domain}. In-domain tasks in general are simpler, and often there is a guarantee that there is a correct answer to the sound-matching problem, particularly if the goal is accurate replication of the sound. If the target sound is out-of-domain, replication is not guaranteed, and the goal becomes the \textit{imitation} of some aspect of sound. 
 
 Regardless of the domain, the generation goal can be \textit{replication} or \textit{imitation} of the target sound. In replication, the goal is to make an identical copy of the target sound. Imitation is an artistic pursuit and harder to define, since the goal is to make new sounds that only retain a subset of the target's sonic features. While closely related to the in-domain versus out-of-domain problem, the choice of replication versus imitation is more dependent on how the loss and representation functions are defined. 
 
-\subsection{Supvervised vs Direct Optimization}
+\subsection{Supvervised versus Direct Optimization}
 \label{sec:optimization}
 
 The choice of \textit{heuristics} is yet another important attribute sound-matching. The goal of sound-matching is to find the optimal parameters $\theta^*$ that minimize the loss between the synthesizer output and the target sound. 
 \[
-\theta^* = \arg\min_{\theta} L(\theta,t)
+\theta^* = \arg\min_{\theta} L(\theta,\xzero)
 \]
 
 The heuristics (i.e., how $\theta^*$ is approximated) used in past works can be broadly split into the two categories of \textit{direct optimization} and \textit{supervised}  (or inference) methods. Direct optimization refers to the iterative generation of a sound output, measurement of similarity between target and output, and application of updates to the parameters to maximize similarity (or minimize loss)~\cite{horner1993machine,mitchell2007evolutionary,yee2018automatic,vahidi2023mesostructures}; while supervised methods use large datasets of synthesizer sounds and corresponding parameters to learn the generation objective, commonly with the use of DNNs~\cite{engel2020ddsp,salimi2020make,yee2018automatic,esling2019flow}. These models often make their parameter predictions in a single step (or 1-shot). 
@@ -201,13 +202,16 @@ Masuda \textit{et al.} also applied supervised learning~\cite{masuda2021soundmat
 Rather than focusing on a particular implementation, Shier \textit{et al.} presented Spieglib, a library for implementation of sound-matching pipelines~\cite{shier2020spiegelib}. This library provides different choices for DNNs, GAs, synthesizers, and feature extractors. Shier \textit{et al.} presented an experiment with a similar setup to Yee-King \textit{et al.}~\cite{yee2018automatic}, however, they found a genetic algorithm as the best performing.
 
 Differentiable loss functions that use spectrogram differences can be computationally expensive. To mitigate this, Han \textit{et al.}~\cite{han2023perceptual} introduced ``perceptual-neural-physical loss'' (PNP). PNP is an approximation of loss functions; specifically, a loss function that uses the L2 norm of the difference between the features of two sounds, or $||\phi(t) - \phi(x)||^2_2$, where $\phi$ could be a spectrogram or JTFS function. PNP loss functions are fast and differentiable, but require training and parameter estimation. A Riemannian metric M needs to be calculated for the minimization of locally linear approximation of the ``true" spectral loss function~\cite{han2023perceptual}. 
+
 \[
-\|\phi(t) - \phi(x)\|_2^2 = \langle \tilde{\theta} - \theta | \mathbf{M}(\theta) | \tilde{\theta} - \theta \rangle + O(\|\tilde{\theta} - \theta\|_2^3). \tag{4}
+\| \varphi(\xzero) - \varphi(\xtheta) \|_2^2
+= \langle \tilde{\theta} - \theta \,|\, M(\theta) \,|\, \tilde{\theta} - \theta \rangle
++ O(\|\tilde{\theta} - \theta\|_3^2).
 \]
 
 This metric is calculated alongside the neural parameter estimator. Once trained, PNP enabled the fast differentiable optimization of computationally expensive loss functions such as JTFS with FM and physical models~\cite{han2023perceptual,han2024learning}.
 
-A neural approximation for another part of the supervised sound-matching chain---this time the synthesizer---was proposed by Barkan \textit{et al.}~\cite{barkan2023inversynthII}. As they noted, without a differentiable synthesizer, ``model-based'' (or what we call supervised) approaches cannot directly compare $x_o$ to $x_t$, often opting for P-Loss, which may not correctly map the parameters of sound to the output audio~\cite{esling2019flow,han2023perceptual,masuda2023improving}. This approach used a model mapping sounds to parameters, another approximating the synthesizer, and a loss function which combines P-Loss with STFT differences. This ``Inversynth II'' (IS2) approach yielded significant improvements to previous works which did not use the STFT approximations for loss~\cite{esling2019flow,barkan2019inversynth}. Barkan \textit{et al.} then attempted to improve the IS2 model with Inference-Time
+A neural approximation for another part of the supervised sound-matching chain---this time the synthesizer---was proposed by Barkan \textit{et al.}~\cite{barkan2023inversynthII}. As they noted, without a differentiable synthesizer, ``model-based'' (or what we call supervised) approaches cannot directly compare $\xtheta$ to $\xzero$, often opting for P-Loss, which may not correctly map the parameters of sound to the output audio~\cite{esling2019flow,han2023perceptual,masuda2023improving}. This approach used a model mapping sounds to parameters, another approximating the synthesizer, and a loss function which combines P-Loss with STFT differences. This ``Inversynth II'' (IS2) approach yielded significant improvements to previous works which did not use the STFT approximations for loss~\cite{esling2019flow,barkan2019inversynth}. Barkan \textit{et al.} then attempted to improve the IS2 model with Inference-Time
 Fine-tuning (ITF). For ITF, the synthesizer approximation is frozen and the encoder is iteratively fine-tuned for a particular sample. However, ITF often degraded performance, possibly due to proxy–synthesizer mismatch or overfitting.
 
 Uzrad \textit{et al.}~\cite{uzrad2024diffmoog} took another unique approach to sound-matching: using a differentiable \textit{synthesis chain} of DSP generators and effects and a loss function that combines P-Loss with a \textit{signal-chain loss}. The synthesizer is a customizable chain of effects, which feed one output as input to the next step of the chain; signal-chain loss compares the parameter and output difference at every output step in the chain~\cite{uzrad2024diffmoog}. Possible chain functionalities are FM/AM, Low-Frequency Oscillators (\gls{LFO}), filters, and envelopes. Like the results shown by Masuda \textit{et al.}~\cite{masuda2021soundmatch}, better out-of-domain results were achieved when pre-trained on in-domain data and fine-tuned using out-of-domain NSynth data~\cite{engel2017neural}.
@@ -239,8 +243,8 @@ Having looked at the current literature, we identify four major areas of weaknes
 We argue that isolated benchmarking is a necessary precursor to building robust, generalizable sound-matching systems. To address the problems of \LossSelect{} and \SynthSelect{}, we adopt a methodology with three key characteristics that have not previously appeared together.
 
 \begin{enumerate}
-    \item Use simple differentiable synthesizers built from common DSP functions (oscillators, filters, envelopes) to address the \SynthSelect{} problem. Restricting to small-scale, low-parameter models avoids the confounding effects of neural proxies or embedding models, enabling direct analysis of how synthesis method interacts with loss functions. 
-    \item Evaluate experiments under multiple loss functions to address the \LossSelect{} problem. Prior work has typically tested losses in isolation, making direct comparisons rare~\todo{cite}.  
+    \item Use simple differentiable synthesizers built from common DSP functions (oscillators, filters, envelopes) to address the \SynthSelect{} problem. Restriction to small-scale, low-parameter models avoids the confounding effects of neural proxies or embedding models, enabling direct analysis of how synthesis method interacts with loss functions. 
+    \item Evaluate experiments under multiple loss functions to address the \LossSelect{} problem. Prior work has typically tested losses in isolation, making direct comparisons of loss functions difficult~\cite{vahidi2023mesostructures,han2023perceptual,uzrad2024diffmoog}. Particularly rare are comparisons which are done in the context of different methods of synthesis.  
     \item Optimize synthesizer parameters directly with gradient descent, without neural approximations. This complements prior proxy-based methods by providing the missing “low-level experiments” that clarify fundamental interactions between DSP functions and similarity measures. 
 \end{enumerate}
 

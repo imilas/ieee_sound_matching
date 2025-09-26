@@ -1,6 +1,6 @@
 % Section IV titled "Programs, Methodology, and Results" is overloaded and blends experimental setup with results and interpretation. For clear clarity and alignment with structural norms, we recommend splitting this into three sections: (1) Experimental Setup (including synthesizer programs, loss definitions, optimization procedure); (2) Experimental Results (performance metrics, statistical tests, and rankings); and (3) Discussion (qualitative interpretation, synthesis-specific observations, and practical implications).
 
-\section{Experimental Setup}
+\section{Experimental Setup and Results}
 \label{sec:experiment_setup}
 At a glance, our methodology is to conduct controlled, low-level differentiable experiments—without proxy networks—by pairing four DSP-based synthesizers with four differentiable loss functions. We optimize parameters directly via gradients in order to isolate loss–synthesizer interactions. This controlled setup systematically evaluates the performance of iterative sound-matching pipelines, where “performance” is defined as the similarity of the synthesized output to a target. Similarity is assessed with P-Loss, MSS, and—most importantly—manual listening tests. This design allows us to directly test our central hypothesis: that the effectiveness of a loss function depends on the synthesis method, and that no universal “best” similarity measure exists.
 

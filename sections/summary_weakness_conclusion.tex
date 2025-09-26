@@ -13,21 +13,21 @@ The most important takeaway regarding our main hypothesis is that the loss funct
 \textbf{Q3}: Can iterative differentiable optimization be applied effectively in synthesizers using classical DSP functions? \\
 The approach of designing DSP functions in Faust and transpiling to differentiable Faust code yielded meaningful outputs and enabled comparative evaluation of losses. The use of Faust for synthesizer definition was convenient, and transpiling to Jax enabled quick gradient optimization. We were able to run our 1200 experiments within 72 hours on a laptop without a GPU\footnote{Lenovo ThinkPad T480, i5-8350U CPU at 1.70GHz, 32 GB RAM.}.
 
-\subsection{Practical Recommendations:}
-Based on our findings, several actionable guidelines emerge. These heuristics can guide practitioners in selecting appropriate similarity measures and synthesis methods for future sound-matching experiments.
+\subsection{Practical Recommendations}
+    Our findings not only provide answers to the research questions proposed in the introduction, but also serve as guidelines for practitioners in selecting appropriate similarity measures and synthesis methods for future sound-matching experiments.
 \begin{itemize}
-    \item In lieu of listening tests, MSS or P-Loss are generally useful for large-scale benchmarking, but confirm conclusions with manual listening when accuracy in isolated cases is important. 
-    \item For amplitude-modulated synthesis, DTW-based losses (e.g., \DTWEnv{}) are recommended over spectrogram based and JTFS. 
-    \item For subtractive/noise-filtered synthesis, spectrogram based losses are most effective. Based on our results, SIMSE appears to be the better method of spectrogram comparisons relative to L1, but the amplitude agnosticism of SIMSE likely plays a role in its poor performance in additive synthesis.  
-    \item In our amplitude modulation experiments, \JTFS{} did not outperform other measures, contradicting prior claims of its superiority for mesostructures~\cite{vahidi2023mesostructures}. Thus, our results call into question its effectiveness as a general mesostructure measure
-    \item Iterative differentiable optimization via Faust-to-JAX is a viable strategy for defining various differentiable DSP functions, requiring only modest hardware resource and providing a more natural approach to synthesizer definition.
+    \item In lieu of listening tests, MSS or P-Loss are generally useful for large-scale benchmarking. However, we encourage confirmation of conclusions with manual listening, particularly if specificity is important. 
+    \item For amplitude-modulated synthesis, DTW-based losses such as \DTWEnv{} are recommended over spectrogram differences and JTFS.
+    \item  For subtractive/noise-filtered synthesis, spectrogram based losses are most effective. Based on our results, SIMSE appears to be the better method of spectrogram comparisons relative to L1, but the amplitude agnosticism of SIMSE likely plays a role in its poor performance in additive synthesis.  
+    \item Iterative differentiable optimization via the Faust-to-JAX pipeline is a viable strategy for defining various differentiable DSP functions, requiring only modest hardware resource and providing a more natural approach to synthesizer definition.
+    \item In our amplitude modulation experiments, \JTFS{} did not outperform other measures, contradicting prior claims of its superiority for mesostructures~\cite{vahidi2023mesostructures}. Thus, our results call into question its effectiveness as a general mesostructure measure, and highlight a need for further research into its utility.
 \end{itemize}
 
 \subsection{Illustrating Loss Landscapes}
 \label{sec:loss_landscape_examples}
 To complement our quantitative analysis, we provide examples of loss landscapes that illustrate why specific losses succeed or fail in certain synthesis contexts. These are illustrative aids rather than conclusive evidence, and highlight the importance of \PeriodicLoss{} discussed earlier in Section~\ref{sec:lacking}.
 
-We show the landscapes of the loss functions with simplified versions of \BPNoise{} (HP-Noise) and \AmpMod{} (S-Noise-AM), each reduced to a single parameter for one-dimensional visualization. HP-Noise uses only a high-pass filter with cutoff between 100–20,000 Hz, while S-Noise-AM varies only the modulation rate between 0.1–20 Hz. Loss values are normalized to 0–1 to allow comparison across functions.
+We show the landscapes of the loss functions with simplified versions of \BPNoise{} (HP-Noise) and \AmpMod{} (S-Noise-AM), each reduced to a single parameter for one-dimensional visualization. HP-Noise uses only a high-pass filter with cut-off between 100–20,000 Hz, while S-Noise-AM varies only the modulation rate between 0.1–20 Hz. Loss values are normalized to 0–1 to allow comparison across functions.
 
 Figure~\ref{fig:loss_landscape_noisebp} shows the HP-Noise results. \LoneSpec{}, \SIMSESpec{}, and \JTFS{} exhibit clear minima at the correct parameter (red dashed line), whereas \DTWEnv{} remains relatively flat, making gradient-based optimization more difficult.
 
