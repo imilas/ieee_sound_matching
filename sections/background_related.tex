@@ -108,7 +108,8 @@ Perceptually, listeners are often tolerant of loudness changes while remaining s
 
 \subsubsection{Joint-Time Frequency Spectrum}
 Recent works have focused on the limitations of parameter and spectral loss functions in sound-matching~\cite{vahidi2023mesostructures,uzrad2024diffmoog}, seeking to create more effective general solutions for the comparison of audio. 
-Noting the aforementioned weaknesses of comparing STFT spectrograms\todo{you discussed loudness only and not misalignments}, Vahidi \textit{et al.} proposed differentiable Joint-Time Frequency Scattering (\gls{JTFS})~\cite{anden2015joint} as an alternative to spectrogram loss in sound-matching, and showed improved performance in sound-matching with differentiable chirplet synthesizers~\cite{vahidi2023mesostructures}. JTFS is the result of the application of a 2D wavelet transformation to the time-frequency representation of a signal~\cite{anden2015joint} and has been reported as more sensitive to mesostructural features such \todo{list}~\cite{vahidi2023mesostructures}.
+Noting the weaknesses of comparing STFT spectrograms (such as alignment and loudness distances), Vahidi \textit{et al.} proposed differentiable Joint-Time Frequency Scattering (\gls{JTFS})~\cite{anden2015joint} as an alternative to spectrogram loss in sound-matching, and showed improved performance in sound-matching with differentiable chirplet synthesizers~\cite{vahidi2023mesostructures}. JTFS is the result of the application of a 2D wavelet transformation to the time-frequency representation of a signal~\cite{anden2015joint} and has been reported as more sensitive to \textit{mesostructural} features such as melody, syncopation, and textural
+contrast~\cite{vahidi2023mesostructures}.
 
 
 \subsubsection{Dynamic Envelope Warping}
@@ -120,13 +121,13 @@ A possible use case to consider is the application of DTW to amplitude envelopes
 To our knowledge, DTW applied in this way has not been used as a loss in sound-matching (whether differentiable and iterative or not).
 
 
-\subsection{In-Domain versus Out-of-Domain}
+\subsection{In-Domain Versus Out-of-Domain}
 \label{sec:in-domain}
 The choice of domain depends on whether we want to use the same synthesizer for the target and output sounds, the scenario that is called \textit{in-domain}, or have target sounds that came from sources other than the synthesizer, or \textit{out-of-domain}. To paraphrase the description given by Masuda \textit{et al.}~\cite{masuda2021soundmatch}, if $g$, the synthesizer of choice, can accurately replicate the target sound $\xzero$, or put differently, if $\xzero$ itself is an output of $g$, then the sound-matching task is \textit{in-domain}. If $\xzero$ is not an output of $g$, then the sound-matching task is \textit{out-of-domain}. In-domain tasks in general are simpler, and often there is a guarantee that there is a correct answer to the sound-matching problem, particularly if the goal is accurate replication of the sound. If the target sound is out-of-domain, replication is not guaranteed, and the goal becomes the \textit{imitation} of some aspect of sound. 
 
 Regardless of the domain, the generation goal can be \textit{replication} or \textit{imitation} of the target sound. In replication, the goal is to make an identical copy of the target sound. Imitation is an artistic pursuit and harder to define, since the goal is to make new sounds that only retain a subset of the target's sonic features. While closely related to the in-domain versus out-of-domain problem, the choice of replication versus imitation is more dependent on how the loss and representation functions are defined. 
 
-\subsection{Supvervised versus Direct Optimization}
+\subsection{Supvervised Versus Direct Optimization}
 \label{sec:optimization}
 
 The choice of \textit{heuristics} is yet another important attribute sound-matching. The goal of sound-matching is to find the optimal parameters $\theta^*$ that minimize the loss between the synthesizer output and the target sound. 
