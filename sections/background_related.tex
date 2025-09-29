@@ -212,13 +212,13 @@ Differentiable loss functions that use spectrogram differences can be computatio
 
 This metric is calculated alongside the neural parameter estimator. Once trained, PNP enabled the fast differentiable optimization of computationally expensive loss functions such as JTFS with FM and physical models~\cite{han2023perceptual,han2024learning}.
 
-A neural approximation for another part of the supervised sound-matching chain---this time the synthesizer---was proposed by Barkan \textit{et al.}~\cite{barkan2023inversynthII}. As they noted, without a differentiable synthesizer, ``model-based'' (or what we call supervised) approaches cannot directly compare $\xtheta$ to $\xzero$, often opting for P-Loss, which may not correctly map the parameters of sound to the output audio~\cite{esling2019flow,han2023perceptual,masuda2023improving}. This approach used a model mapping sounds to parameters, another approximating the synthesizer, and a loss function which combines P-Loss with STFT differences. This ``Inversynth II'' (IS2) approach yielded significant improvements to previous works which did not use the STFT approximations for loss~\cite{esling2019flow,barkan2019inversynth}. Barkan \textit{et al.} then attempted to improve the IS2 model with Inference-Time
+A neural approximation for another part of the supervised sound-matching chain---this time the synthesizer---was proposed by Barkan \textit{et al.}~\cite{barkan2023inversynthII}. As they noted, without a differentiable synthesizer, ``model-based'' (or what we call supervised) approaches cannot directly compare $\xtheta$ to $\xzero$, often opting for P-Loss, which may not correctly map the parameters of sound to the output audio~\cite{esling2019flow,han2023perceptual,masuda2023improving}. This approach used a model for mapping sounds to parameters, another for approximating the synthesizer, and a loss function which combines P-Loss with STFT differences. This ``Inversynth II'' (IS2) approach yielded significant improvements to previous works which did not use the STFT approximations for loss~\cite{esling2019flow,barkan2019inversynth}. Barkan \textit{et al.} then attempted to improve the IS2 model with Inference-Time
 Fine-tuning (ITF). For ITF, the synthesizer approximation is frozen and the encoder is iteratively fine-tuned for a particular sample. However, ITF often degraded performance, possibly due to proxy–synthesizer mismatch or overfitting.
 
 Uzrad \textit{et al.}~\cite{uzrad2024diffmoog} took another unique approach to sound-matching: using a differentiable \textit{synthesis chain} of DSP generators and effects and a loss function that combines P-Loss with a \textit{signal-chain loss}. The synthesizer is a customizable chain of effects, which feed one output as input to the next step of the chain; signal-chain loss compares the parameter and output difference at every output step in the chain~\cite{uzrad2024diffmoog}. Possible chain functionalities are FM/AM, Low-Frequency Oscillators (\gls{LFO}), filters, and envelopes. Like the results shown by Masuda \textit{et al.}~\cite{masuda2021soundmatch}, better out-of-domain results were achieved when pre-trained on in-domain data and fine-tuned using out-of-domain NSynth data~\cite{engel2017neural}.
 
 
- Audio embeddings can also be used as a similarity metric. In a recent work, Cherep \textit{et al.} used latent representations from the CLAP model~\cite{wu2023large} along with a differentiable synthesizer~\cite{synthhaxcherep2023} to create creative interpretations of sound effects. In their approach, a desired sound-effect is described in text and embedded using CLAP, followed by iterative updates from a gradient-free optimizer~\cite{evosax2022github} to the synthesizer's parameters to minimize embedding differences. Based on manual hearing tests, this approach did not produce the ``correct'' sounds more frequently than previous works~\cite{kreuk2022audiogen}. However, it did yield better scores for ``artistic-interpretation'' (or what this works refers to as ``imitation'').
+ Audio embeddings can also be used as a similarity metric. In a recent work, Cherep \textit{et al.} used latent representations from the CLAP model~\cite{wu2023large} along with a differentiable synthesizer~\cite{synthhaxcherep2023} to create creative interpretations of sound effects. In their approach, a desired sound-effect is described in text and embedded using CLAP, followed by iterative updates from a gradient-free optimizer~\cite{evosax2022github} to the synthesizer's parameters to minimize embedding differences. Based on manual hearing tests, this approach did not produce the ``correct'' sounds more frequently than previous works~\cite{kreuk2022audiogen}. However, it did yield better scores for ``artistic-interpretation'' (what we referred to as ``imitation''). It should be noted that audio embedding models are often trained using simpler loss functions---particularly those which utilize Fourier transforms---therefore improving such simpler loss functions is likely to improve the embedding models.
 
 % masuda and esling both noted out-of-domain drop in performance
 % yee king noted performance drop in manual surveys 
@@ -229,7 +229,7 @@ Uzrad \textit{et al.}~\cite{uzrad2024diffmoog} took another unique approach to s
 \label{sec:lacking}
 %-----> much of the original text (available in older version) is removed for brevity)
 
-Having looked at the current literature, we identify four major areas of weakness in sound-matching. We target the first two issues in this work, while the latter two issues are left for future work.
+Having looked at the current literature, we identify four major areas of weakness in sound-matching. We target the first two issues in this work, while the latter two are left for future work.
 \begin{enumerate}
     \item \LossSelect: It remains unclear whether there exists a universally best-performing loss function, 
     or whether performance depends on factors such as the sound domain, synthesizer architecture, 
@@ -250,7 +250,7 @@ We argue that isolated benchmarking is a necessary precursor to building robust,
 \end{enumerate}
 
 Together, these design choices supply the controlled experimental evidence missing from the literature, 
-clarifying how losses and synthesis methods interact in differentiable, iterative settings, 
+clarifying how losses and synthesis methods interact in iterative sound-matching,
 and offering insights likely to generalize to more complex domains.
 
 

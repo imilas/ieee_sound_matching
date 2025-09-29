@@ -247,7 +247,7 @@ In \textbf{IV.A Key Findings}, we discuss important findings and provide answers
 \begin{displayquote}
     Our findings not only provide answers to the research questions proposed in the introduction, but also serve as guidelines for practitioners in selecting appropriate similarity measures and synthesis methods for future sound-matching experiments.
 \begin{itemize}
-    \item In lieu of listening tests, MSS or P-Loss are generally useful for large-scale benchmarking. However, we encourage confirmation of conclusions with manual listening, particularly if specificity is important. 
+    \item In lieu of listening tests, MSS or P-Loss are generally useful for large-scale benchmarking. However, we encourage confirming the results with manual listening, particularly if specificity is important. 
     \item For amplitude-modulated synthesis, DTW-based losses such as \DTWEnv{} are recommended over spectrogram differences and JTFS.
     \item  For subtractive/noise-filtered synthesis, spectrogram based losses are most effective. Based on our results, SIMSE appears to be the better method of spectrogram comparisons relative to L1, but the amplitude agnosticism of SIMSE likely plays a role in its poor performance in additive synthesis.
     \item Iterative differentiable optimization via the Faust-to-JAX pipeline is a viable strategy for defining various differentiable DSP functions, requiring only modest hardware resource and providing a more natural approach to synthesizer definition.
@@ -341,7 +341,7 @@ We acknowledge the reviewer’s concern that our main result may appear inconclu
 As for clear takeaways, we've added two new sections which address the valid issues raised here and by Reviewer 1. 
 
 \begin{itemize}
-  \item \textbf{IV.B Practical Recommendations} which distills our findings into actionable guidelines for practitioners. DTW_Env is recommended for amplitude-modulated synthesis, SIMSE for subtractive/noise-filtered synthesis, and MSS or P-Loss as large-scale proxies for sound-matching evaluation (with manual validation being strongly advised). We also note that our results challenge prior claims about JTFS’s universal superiority for mesostructures.
+  \item \textbf{IV.B Practical Recommendations} which distills our findings into actionable guidelines for practitioners. DTW\_Env is recommended for amplitude-modulated synthesis, SIMSE for subtractive/noise-filtered synthesis, and MSS or P-Loss as large-scale proxies for sound-matching evaluation (with manual validation being strongly advised). We also note that our results challenge prior claims about JTFS’s universal superiority for mesostructures.
   \item \textbf{IV.D Applicability to More Complex Synthesizers} that explicitly discusses how the insights from our controlled two-parameter DSP-based synthesizers generalize to richer synthesizers with many parameters and complex routing. While acknowledging the limitations of our simplified testbed, we argue that the observed dependencies between synthesis method and loss function remain informative even in more complex settings.
 \end{itemize}
 For a more detailed response, see our response to the Reviewer.1 in Sections~\nameref{R1.6} and \nameref{R1.7}. Our response to \nameref{R1.5} may also be of interest.
