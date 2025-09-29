@@ -53,7 +53,7 @@
 \maketitle
 \vspace{-1.25em}
 
-\noindent Dear Editor Alberto Bernardini, \\
+\noindent Dear Editor, Alberto Bernardini, \\
 \noindent
 We'd like to thank you and the reviewers for the thoughtful and constructive feedback on our manuscript. We have carefully considered all comments and revised the manuscript accordingly. Here you will find our detailed point-by-point response to the feedback. 
 
@@ -146,7 +146,7 @@ We agree that the earlier draft blurred the boundaries between setup, results, a
       \item \textbf{IV-D. Applicability to More Complex Synthesizers}: discussion on how observed patterns extend beyond the simplified testbed to richer, real-world synthesizers.  
     \end{enumerate}
 
-  \item To improve clarity, we also relocated explanatory material about experiment design (e.g., parameter settings, optimizer configuration) previously scattered across the results section into Sections III-A–E, so that the results sections are strictly empirical while the discussion is interpretive.  
+  \item To improve clarity, we also relocated explanatory material about experiment design (e.g., parameter settings, optimizer configuration) previously scattered across the results section into Sections III-A–E, ensuring that the results sections remain strictly empirical, while the discussion is reserved for interpretation. 
 \end{itemize}
 
 Overall, this restructuring produces a clearer separation of topics: methodology is isolated in Section III-A–E, empirical findings are concentrated in Section III-F–G, and broader interpretation is reserved for Section IV. We believe this major restructuring and rewrites of appropriate sections has improved flow of the manuscript and made the boundary between methodology, results, and discussion much clearer.
@@ -184,7 +184,7 @@ We did not modify the definitions in \textbf{III.A Loss Function Implementation 
 \noindent\textbf{Response:} \\
 This is an interesting suggestion. Our original experiments were designed to emphasize quantitative, statistically robust measurements of loss function performance, which is why we initially avoided focusing on individual examples of sounds, spectrograms, or loss landscapes (in part to reduce the risk of cherry-picking). We do concede that illustrative examples can provide helpful intuition for readers and motivate future research, however, we believe that an analysis of loss landscapes (rather than spectrograms or qualitative tests) is a more useful approach to an explanation for \textit{where} and \textit{why} losses might succeed or fail.
 
-To this end, we have added a new Section \textbf{IV.C llustrating Loss Landscapes} where qualitative visualizations of loss landscapes  are added. These examples highlight why specific losses may succeed or fail and reinforce the broader importance of loss landscapes in assessing the appropriateness of similarity measures~\cite{vahidi2023mesostructures,turian2020sorry}, supporting our argument that effective navigation of loss landscapes represents an important gap in current knowledge and a possible direction for future work:
+To this end, we have added a new Section \textbf{IV.C Illustrating Loss Landscapes} where qualitative visualizations of loss landscapes  are added. These examples highlight why specific losses may succeed or fail and reinforce the broader importance of loss landscapes in assessing the appropriateness of similarity measures~\cite{vahidi2023mesostructures,turian2020sorry}, supporting our argument that effective navigation of loss landscapes represents an important gap in current knowledge and a possible direction for future work:
 
 
 \begin{displayquote}
@@ -228,7 +228,7 @@ We added a new subsection, \textbf{IV.D Applicability to More Complex Synthesize
 \begin{displayquote}
     The experiments in this study were conducted with differentiable synthesizers chosen to isolate fundamental synthesis principle with 2 parameters each. While this level of simplicity facilitates controlled comparisons, it does not fully capture the richness of real-world synthesizers, which can have hundreds of parameters with various routes. As a result, the extent of the generalizability of our findings does require further research. 
 
-    Nonetheless, we believe that the insights here can extend naturally to more complex domains. Depending on the feature of interest, the observed dependence of loss performance on synthesis method is will likely remain stable even with added complexities such as layers of modulation, filtering, or nonlinearity. 
+    Nonetheless, we believe that the insights here can extend naturally to more complex domains. Depending on the feature of interest, the observed dependence of loss performance on synthesis method will likely remain stable even with added complexities such as layers of modulation, filtering, or nonlinearity. 
     
     \DTWEnv{} measures very specific features of audio, and its use in the recommended settings---where low frequency amplitude modulation matching is required---would likely yield the desired results regardless of synthesizer complexity. Likewise, the use of \SIMSESpec{} or \LoneSpec{} for matching filter cut-offs is likely to be successful regardless of the underlying sound. 
     \end{displayquote}
@@ -258,21 +258,21 @@ In \textbf{IV.A Key Findings}, we discuss important findings and provide answers
 \section{Reviewer 2}
 \subsection{Original Review}
 \noindent
-The paper considers the evaluation of different audio similarity metrics for sound matching applications.  The authors categorize prior methods largely as direct optimization via gradient-free iterative search or open-loop inference via a supervised deep learning model.  Moreover, different approaches which may or may not accommodate out-of-domain sounds.  Accordingly, the authors propose the combined use of differentiable synthesizers and closed-loop iteration as a sound means of achieving synthesizer sound matching, effectively combining the advantages of otherwise disparate methods (i.e. access to gradients while iteratively improving matching results).  Additionally, within their evaluation of different similarity metrics (parameter losses, spectral distances, etc.), they also introduce a DTW-based similarity metric to partially neutralize the effect of time alignment on similarity scores.  A primary conclusion of the work is that there is no one best sound similarity measure capable of working across all synthesizers.  \\
+The paper considers the evaluation of different audio similarity metrics for sound-matching applications.  The authors categorize prior methods largely as direct optimization via gradient-free iterative search or open-loop inference via a supervised deep learning model.  Moreover, different approaches which may or may not accommodate out-of-domain sounds.  Accordingly, the authors propose the combined use of differentiable synthesizers and closed-loop iteration as a sound means of achieving synthesizer sound-matching, effectively combining the advantages of otherwise disparate methods (i.e. access to gradients while iteratively improving matching results).  Additionally, within their evaluation of different similarity metrics (parameter losses, spectral distances, etc.), they also introduce a DTW-based similarity metric to partially neutralize the effect of time alignment on similarity scores.  A primary conclusion of the work is that there is no one best sound similarity measure capable of working across all synthesizers.  \\
 The subject matter of the work is relevant, the experimental setup is satisfactory, and I do not have reason to doubt the correctness of their analysis.  However, my primary concerns with this work are that:  
 \begin{enumerate}
   \item \textbf{(R2.1) It is not clear what the proposed method really is, and the paper reads largely as a readout of evaluations that were conducted by the authors.}  
-  \item \textbf{(R2.2) The authors claim that differentiable iterative sound matching is largely unexplored, encouraging development of techniques in this area.}  
+  \item \textbf{(R2.2) The authors claim that differentiable iterative sound-matching is largely unexplored, encouraging development of techniques in this area.}  
     \begin{itemize}
-      \item \textbf{Barkan et. al, ``Inversynth II: Sound Matching via Self-Supervised Synthesizer-Proxy and Inference-Time Finetuning'' explored precisely this, training an initial ``one-shot'' supervised model, and then performing inference-time optimization, updating model weights to improve the matching against test audio.  Moreover, their use of a synthesizer-proxy negates the explicit need of implementing the synthesizer math differentiably, while still falling under the category of differentiable iterative sound matching.}  
-      \item \textbf{Cherep et. al, ``Creative Text-to-Audio Generation via Synthesizer Programming'' uses a differentiable synthesizer and the CLAP score as a similarity metric for iterative optimization.  While the authors lean into synthesizer sound matching against a text query, the method would be readily applicable to audio-to-audio sound matching using the CLAP audio tower alone.}  
+      \item \textbf{Barkan et. al, ``Inversynth II: sound-matching via Self-Supervised Synthesizer-Proxy and Inference-Time Finetuning'' explored precisely this, training an initial ``one-shot'' supervised model, and then performing inference-time optimization, updating model weights to improve the matching against test audio.  Moreover, their use of a synthesizer-proxy negates the explicit need of implementing the synthesizer math differentiably, while still falling under the category of differentiable iterative sound-matching.}  
+      \item \textbf{Cherep et. al, ``Creative Text-to-Audio Generation via Synthesizer Programming'' uses a differentiable synthesizer and the CLAP score as a similarity metric for iterative optimization.  While the authors lean into synthesizer sound-matching against a text query, the method would be readily applicable to audio-to-audio sound-matching using the CLAP audio tower alone.}  
     \end{itemize}
   \item \textbf{(R2.3) This work addresses the problems on ``Loss Selection'' and ``Synthesis Selection.''  However, the results as presented here are largely inconclusive (i.e. it is not imminently clear how to select losses/synthesizer pairings), leaving very little in the way of clear takeaways sparking future research.}
 \end{enumerate}
 
 \subsection{R2.1 Clarity of Proposed Method}
 \label{R2.1}
-\noindent\textbf{Review:}
+\noindent\textbf{Reviewer:}\\
 \noindent \textbf{It is not clear what the proposed method really is, and the paper reads largely as a readout of evaluations. } 
 \\
 
@@ -320,7 +320,8 @@ and offering insights likely to generalize to more complex domains.
 
 \subsection{R2.2 Relation to Prior Work}
 \label{R2.2}
-\noindent \textbf{The authors claim that differentiable iterative sound matching is largely unexplored, but prior work (Barkan et al., Cherep et al.) could be considered in this category.}\\
+\noindent\textbf{Reviewer:}\\
+\noindent \textbf{Review: The authors claim that differentiable iterative sound-matching is largely unexplored, but prior work (Barkan et al., Cherep et al.) could be considered in this category.}\\
 
 \noindent\textbf{Response:} \\
 We thank the reviewer for pointing out sound-matching works that match the ``differentiable and iterative'' description, but were not covered in our literature review. We believe that the term ``under-explored'' is perhaps more appropriate. We've added these works to \textbf{Table 1} which provides a summary of notable previous work, and discussed them in more detail in the final paragraphs of \textbf{II.F Historical Framing of Sound-Matching}: 
@@ -331,17 +332,16 @@ We thank the reviewer for pointing out sound-matching works that match the ``dif
 Looking at these works, we see that our contribution is distinct: we provide the missing \textbf{low-level benchmarking} of loss functions across multiple synthesis methods, which is not addressed by proxy-based or embedding-based approaches.
 
 \subsection*{R2.3 Clear Takeaways}
-\noindent\textbf{Review:}
+\noindent\textbf{Reviewer:}\\
 \textbf{This work addresses the problems on ``Loss Selection'' and ``Synthesis Selection.''  However, the results as presented here are largely inconclusive (i.e. it is not imminently clear how to select losses/synthesizer pairings), leaving very little in the way of clear takeaways sparking future research.\\}
 
 \noindent\textbf{Response:} \\
-
 We acknowledge the reviewer’s concern that our main result may appear inconclusive. However, we see this as an important finding in itself: much of the prior literature implicitly over-claims general effectiveness of particular loss functions based on narrow or in-domain settings. Our revisions now explicitly emphasize that the lack of a “silver bullet” for loss functions is a core contribution of this work. By showing that loss effectiveness depends on the synthesis context, the inconclusiveness can be seen as evidence against over-generalization, and an argument for more thorough, context-sensitive benchmarks in measuring sound similarity.\\
 
 As for clear takeaways, we've added two new sections which address the valid issues raised here and by Reviewer 1. 
 
 \begin{itemize}
-  \item \textbf{IV.B Practical Recommendations} which distills our findings into actionable guidlines for practitioners. DTWEnv is recommended for amplitude-modulated synthesis, SIMSE for subtractive/noise-filtered synthesis, and MSS or P-Loss as large-scale proxies for sound-matching evaluation (with manual validation being strongly advised). We also note that our results challenge prior claims about JTFS’s universal superiority for mesostructures.
+  \item \textbf{IV.B Practical Recommendations} which distills our findings into actionable guidelines for practitioners. DTW_Env is recommended for amplitude-modulated synthesis, SIMSE for subtractive/noise-filtered synthesis, and MSS or P-Loss as large-scale proxies for sound-matching evaluation (with manual validation being strongly advised). We also note that our results challenge prior claims about JTFS’s universal superiority for mesostructures.
   \item \textbf{IV.D Applicability to More Complex Synthesizers} that explicitly discusses how the insights from our controlled two-parameter DSP-based synthesizers generalize to richer synthesizers with many parameters and complex routing. While acknowledging the limitations of our simplified testbed, we argue that the observed dependencies between synthesis method and loss function remain informative even in more complex settings.
 \end{itemize}
 For a more detailed response, see our response to the Reviewer.1 in Sections~\nameref{R1.6} and \nameref{R1.7}. Our response to \nameref{R1.5} may also be of interest.
@@ -355,15 +355,15 @@ Here we've addressed the four bigger concerns first, leaving the minor edits for
 Well written paper with comprehensive literature review and extensive experiments to bridge existing research gap. Although this paper does not have any ground-breaking new methods that could achieve SOTA performance, the experimental results could still serve as a useful reference for researchers who want to try this field. So I believe it should be accepted with some minor modifications.
 
 (\textbf{R4.1}) Page 3, Left Column, the first equation.
-I am not sure if `t` is a common symbol to represent `target` in sound marking, but my field of audio/signal processing, `t` usually represents `time`. So it is a bit confusing to me when reading it for the first time.
-Would something like $x_\theta$ and $x_t$ be better? So x always represent the sound. And the subscript indicated if the sound is from the output given the parameter theta, or the target sound. Even better, probably we can use $x_0$ instead of $x_t$ to represent the target sound?
+\textbf{I am not sure if `t` is a common symbol to represent `target` in sound marking, but my field of audio/signal processing, `t` usually represents `time`. So it is a bit confusing to me when reading it for the first time.
+Would something like $x_\theta$ and $x_t$ be better?} So x always represent the sound. And the subscript indicated if the sound is from the output given the parameter theta, or the target sound. Even better, probably we can use $x_0$ instead of $x_t$ to represent the target sound?
 
 Page 3 Right column section C.
 Isn't it better to move the symbol explanation earlier to where the first equation is? I could only under the equations after reading section C.
 
-(\textbf{R4.2}) Page 3 Right column at the end
+(\textbf{R4.2}) \textbf{Page 3 Right column at the end
 You mentioned "There is no optimal or correct version of an 8-bit snare sound".
-This statement is true when you are given only the text description of the sound. However, if you have the target sound $x_0$ (or t in your current draft), the target sound itself is "correct", isn't it? So your hypothesis only holds if you don't have the target sound but the text description, am I understanding it correctly?
+This statement is true when you are given only the text description of the sound. However, if you have the target sound $x_0$ (or t in your current draft), the target sound itself is "correct", isn't it?} So your hypothesis only holds if you don't have the target sound but the text description, am I understanding it correctly?
 
 Page 6 Right column Section C Point 4.
 "out-of-domain sounds is an unexplored area". Unexplored means no one has done it before to me. But in Table 1, you have already cited a few work that tried to do it. So, should it be "underexplored" instead of "unexplored"?
@@ -372,13 +372,13 @@ Page 6 Right column Section C Point 4.
 Page 6 Right column Section IV A
 You mentioned "four different synthesizers" here, but you never elaborate on which four, not until page 8. Probably you can specify the four synthesizers earlier?
 
-(\textbf{R4.3}) Also, in the blinded hearing test, the two listeners are the authors, it seems a bit to biased to me. Not sure how difficult is it to add one more listener, but I believe having an extra sound engineer/musician who is not one of the author would yield a more convincing listening results.
+(\textbf{R4.3}) \textbf{Also, in the blinded hearing test, the two listeners are the authors, it seems a bit too biased to me.} Not sure how difficult is it to add one more listener, but I believe having an extra sound engineer/musician who is not one of the authors would yield a more convincing listening results.
 
 Page 7 Left Column 1st Paragraph
 You described the Likert scale from 1 to 5 here. But in the next paragraph, you describe the Likert scores again. Not sure if I misunderstood anything, but It looks a bit redundant to me. Would it be possible to combine both to reduce redundancy?
 
-(\textbf{R4.4}) Page 7 Right Column section B
-"If one of these tones is slightly shifted in time, then the spectrogram will no longer overlap". This is true if we don't apply any techniques like DTW to realign them, right?
+(\textbf{R4.4}) \textbf{Page 7 Right Column section B
+"If one of these tones is slightly shifted in time, then the spectrogram will no longer overlap". This is true if we don't apply any techniques like DTW to realign them, right?}
 So the STFT losses doesn't work for the cases where there's time shift?
 
 Page 11, the "weakness" section under Summary
@@ -386,27 +386,27 @@ Just a minor grammar question, Is there a missing subject in the first sentence?
 While [we] cannot prove ...
 
 
-(\textbf{R4.5}) One final question that is just out of curiosity.
+(\textbf{R4.5}) O\textbf{ne final question that is just out of curiosity.
 In your iterative algorithm, you always run it for 200 steps, right?
 In my field of machine learning, if we set 200 steps, the result in the final step might not be the optimal one due to overfitting. So sometimes we obtain the optimal results at around 100 steps, and the model gets worse after this.
-Do you have the same thing in your algorithm? Or the final step is always the best step?
+Do you have the same thing in your algorithm? Or the final step is always the best step?}
 
 
 
 \subsection{\textbf{R4.1} Use of Appropriate Symbols}
-\noindent\textbf{Review:}
-The notation \textbf{[for the equation introduced in II.A]} is confusing. In the manuscript, $t$ is used to denote the target sound, but in audio/signal processing $t$ usually represents time.  
+\noindent\textbf{Reviewer:}\\
+\textbf{The notation \textbf{[for the equation introduced in II.A]} is confusing. In the manuscript, $t$ is used to denote the target sound, but in audio/signal processing $t$ usually represents time.  
 A clearer alternative would be to write $x_\theta$ and $x_0$, so that $x$ always denotes a sound waveform, with the subscript indicating whether it is generated from parameters $\theta$ or given as the target.  
-This avoids overloading $t$ and improves readability.
+This avoids overloading $t$ and improves readability.}
 \\
 
 \noindent\textbf{Response:}
 This is a helpful suggestion, and we have made the switch from $x$ and $t$ to $x_{\theta}$ and $x_0$ throughout the manuscript. 
 
 \subsection{\textbf{R4.2} Optimal Targets}
-\noindent\textbf{Review:}
-You mentioned "There is no optimal or correct version of an 8-bit snare sound".
-This statement is true when you are given only the text description of the sound. However, if you have the target sound $x_0$  the target sound itself is "correct", isn't it? So your hypothesis only holds if you don't have the target sound but the text description, am I understanding it correctly?\\
+\noindent\textbf{Reviewer:}\\
+\textbf{You mentioned "There is no optimal or correct version of an 8-bit snare sound".
+This statement is true when you are given only the text description of the sound. However, if you have the target sound $x_0$  the target sound itself is "correct", isn't it? So your hypothesis only holds if you don't have the target sound but the text description, am I understanding it correctly?\\}
 
 \noindent\textbf{Response:}
 The original statement referred to how realistically in sound-design, a "correct" solution rarely exists due to our subjective experience of sound. To reduce confusion, the section has been rephrased as follows:
@@ -416,29 +416,34 @@ The original statement referred to how realistically in sound-design, a "correct
 
 \subsection{R4.3 Hearing Tests}
 \label{}
-\noindent{\textbf{Review:}}
-Also, in the blinded hearing test, the two listeners are the authors, it seems a bit too biased to me. Not sure how difficult is it to add one more listener, but I believe having an extra sound engineer/musician who is not one of the author would yield a more convincing listening results.
+\noindent\textbf{Reviewer:}\\
+\textbf{Also, in the blinded hearing test, the two listeners are the authors, it seems a bit too biased to me. Not sure how difficult is it to add one more listener, but I believe having an extra sound engineer/musician who is not one of the author would yield a more convincing listening results.
+}
 \\
+
 \noindent{\textbf{Response:}}
 The listening tests were done without use of any labels or previous exposure to outputs, which we believe minimizes the risk of bias. Unfortunately, adding another listener was not possible given the allotted time for the revisions. If the reviewer feels that this is necessary, it can be done for the next round of reviews. 
 
 \subsection{\textbf{R4.4} STFT Losses and Time-Shifts}
-\noindent\textbf{Review:}
-"If one of these tones is slightly shifted in time, then the spectrogram will no longer overlap". This is true if we don't apply any techniques like DTW to realign them, right?
-So the STFT losses doesn't work for the cases where there's time shift?
+\noindent\textbf{Reviewer:}\\
+\textbf{"If one of these tones is slightly shifted in time, then the spectrogram will no longer overlap". This is true if we don't apply any techniques like DTW to realign them, right?
+So the STFT losses doesn't work for the cases where there's time shift?}
+\\
 
 \noindent\textbf{Response:}
 What we refer to as STFT losses refers to the near ubiquitous approach of applying L1/L2 to STFT spectrograms. This approach does not account for two sounds that are nearly identical but slightly time-shifted~\cite{vahidi2023mesostructures,turian2020sorry}.
 
-\subsection{\textbf{R4.5} Can We Overfit? Is it Bad}
-\noindent\textbf{Review:}
-One final question that is just out of curiosity.
+\subsection{\textbf{R4.5} Can We Overfit? Is it a Concern?}
+\noindent\textbf{Reviewer:}\\
+\textbf{One final question that is just out of curiosity.
 In your iterative algorithm, you always run it for 200 steps, right?
 In my field of machine learning, if we set 200 steps, the result in the final step might not be the optimal one due to overfitting. So sometimes we obtain the optimal results at around 100 steps, and the model gets worse after this.
 Do you have the same thing in your algorithm? Or the final step is always the best step?
+}
+\\
 
-\noindent\textbf{Response} 
-Since we are not training a model that will be applied to other scenarios, overfitting here just means that the parameter updates are stuck around a local minimum. This means that \textit{if} the target parameters have been reached, subsequent updates will not diverge from it (or at least stay very close). We can share our visualization of the gradient update paths in 2D, which we felt was not statistically robust enough for the paper. Figures~\ref{fig:p0_simse_iterations} and~\ref{fig:p2_dtw_iterations}, we see that once the gradient updates (small red dots connected by lines) take the parameters from the starting position (green circle) to the target (green star), subsequent updates move sligtly and randomly around the target. 
+\noindent\textbf{Response:} 
+Since we are not training a model that will be applied to other scenarios, overfitting here just means that the parameter updates are stuck around a local or global minimum. This means that \textit{if} the target parameters have been reached, subsequent updates will not diverge from it (or at least stay very close). We can share our visualization of the gradient update paths in 2D, which we felt was not statistically robust enough for the paper. Figures~\ref{fig:p0_simse_iterations} and~\ref{fig:p2_dtw_iterations}, we see that once the gradient updates (small red dots connected by lines) take the parameters from the starting position (green circle) to the target (green star), subsequent updates fluctuate slightly and randomly around the target. 
 
 
 \begin{figure*}[h]
@@ -461,7 +466,7 @@ Since we are not training a model that will be applied to other scenarios, overf
 
 \subsection{R4 Minor Edits}
 \label{r4.minor}
-\noindent\textbf{Review}
+\noindent\textbf{Reviewer:}\\
 Isn't it better to move the symbol explanation earlier to where the first equation is? I could only under the equations after reading section C.
 
 \noindent\textbf{Response:}
@@ -469,14 +474,14 @@ We have moved symbol explanations right after the introduction in
 \textbf{II. A Formalization of Sound-Matching}. 
 \\
 
-\noindent\textbf{Review:}
+\noindent\textbf{Reviewer:}\\
 "out-of-domain sounds is an unexplored area". Unexplored means no one has done it before to me. But in Table 1, you have already cited a few work that tried to do it. So, should it be "underexplored" instead of "unexplored"?
 
 \noindent\textbf{Response:}
 We've changed our phrasing where necessary. See also \nameref{R2.2}.
 \\
 
-\noindent\textbf{Review:}
+\noindent\textbf{Reviewer:}\\
 You mentioned "four different synthesizers" here, but you never elaborate on which four, not until page 8. Probably you can specify the four synthesizers earlier?
 
 \noindent\textbf{Response:}
@@ -486,14 +491,14 @@ We've modified the beginning of Section \textbf{III. Experimental Setup and Resu
     At a glance, our methodology is to conduct controlled, low-level differentiable experiments without the use of proxy networks. We pair four differentiable losses with four differentiable DSP-based synthesizers: BP-Noise (band-pass noise with LP/HP filters), Add-SineSaw (additive sine and saw oscillators), Noise-AM (noise modulated by an LFO), and SineSaw-AM (sine-modulated saw oscillator). 
 \end{displayquote}
 
-\noindent\textbf{Review:}
+\noindent\textbf{Reviewer:}\\
 You described the Likert scale from 1 to 5 here. But in the next paragraph, you describe the Likert scores again. 
 
 \noindent\textbf{Response:}
 This has been fixed in our rewrite of the methodology section (\textbf{III. Experimental Setup and Results}).
 \\
 
-\noindent\textbf{Review:}
+\noindent\textbf{Reviewer:}\\
 Fix "While [we] cannot prove ..."
 
 \noindent\textbf{Response:}

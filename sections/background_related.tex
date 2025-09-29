@@ -127,7 +127,7 @@ The choice of domain depends on whether we want to use the same synthesizer for 
 
 Regardless of the domain, the generation goal can be \textit{replication} or \textit{imitation} of the target sound. In replication, the goal is to make an identical copy of the target sound. Imitation is an artistic pursuit and harder to define, since the goal is to make new sounds that only retain a subset of the target's sonic features. While closely related to the in-domain versus out-of-domain problem, the choice of replication versus imitation is more dependent on how the loss and representation functions are defined. 
 
-\subsection{Supvervised Versus Direct Optimization}
+\subsection{Supervised Versus Direct Optimization}
 \label{sec:optimization}
 
 The choice of \textit{heuristics} is yet another important attribute sound-matching. The goal of sound-matching is to find the optimal parameters $\theta^*$ that minimize the loss between the synthesizer output and the target sound. 
@@ -237,7 +237,7 @@ Having looked at the current literature, we identify four major areas of weaknes
     setups~\cite{vahidi2023mesostructures}, leaving open questions about their generality. 
     \item \SynthSelect: There is a lack of diversity in the synthesis methods used in sound-matching. The effects of using different isolated DSP functions in iterative sound-matching and how these interact with loss functions remains largely untested.
     \item \PeriodicLoss: Loss function landscapes are not easy to navigate, as there can be many local minima, or large flat areas~\cite{turian2020sorry,vahidi2023mesostructures}.  In differentiable settings, this can cause gradient descent updates to not reach the global minima. 
-    \item \OutDomain: Sound-matching with out-of-domain sounds is a largely unexplored area, yet a necessary one for practical applications for sound designers.
+    \item \OutDomain: Sound-matching with out-of-domain sounds is an under-explored area, yet a necessary one for practical applications for sound designers.
 \end{enumerate}
 
 \subsection{What Approach Should We Take?}

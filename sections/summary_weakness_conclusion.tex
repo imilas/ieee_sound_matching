@@ -19,7 +19,7 @@ The approach of designing DSP functions in Faust and transpiling to differentiab
     \item In lieu of listening tests, MSS or P-Loss are generally useful for large-scale benchmarking. However, we encourage confirmation of conclusions with manual listening, particularly if specificity is important. 
     \item For amplitude-modulated synthesis, DTW-based losses such as \DTWEnv{} are recommended over spectrogram differences and JTFS.
     \item  For subtractive/noise-filtered synthesis, spectrogram based losses are most effective. Based on our results, SIMSE appears to be the better method of spectrogram comparisons relative to L1, but the amplitude agnosticism of SIMSE likely plays a role in its poor performance in additive synthesis.  
-    \item Iterative differentiable optimization via the Faust-to-JAX pipeline is a viable strategy for defining various differentiable DSP functions, requiring only modest hardware resource and providing a more natural approach to synthesizer definition.
+    \item Iterative differentiable optimization via the Faust-to-JAX pipeline is a viable strategy for defining various differentiable DSP functions, requiring only modest hardware resources and providing a more natural approach to synthesizer definition.
     \item In our amplitude modulation experiments, \JTFS{} did not outperform other measures, contradicting prior claims of its superiority for mesostructures~\cite{vahidi2023mesostructures}. Thus, our results call into question its effectiveness as a general mesostructure measure, and highlight a need for further research into its utility.
 \end{itemize}
 
@@ -54,9 +54,9 @@ Figure~\ref{fig:loss_landscape_ampmod} shows the S-Noise-AM results. Here, \DTWE
 
 
 \subsection{Applicability to More Complex Synthesizers}
-The experiments in this study were conducted with differentiable synthesizers chosen to isolate fundamental synthesis principle with 2 parameters each. While this level of simplicity facilitates controlled comparisons, it does not fully capture the richness of real-world synthesizers, which can have hundreds of parameters with various routes. As a result, the extent of the generalizability of our findings does require further research. 
+The experiments in this study were conducted with differentiable synthesizers chosen to isolate fundamental synthesis principles, each with two parameters. While this level of simplicity facilitates controlled comparisons, it does not fully capture the richness of real-world synthesizers, which can have hundreds of parameters with various routes. As a result, the extent of the generalizability of our findings does require further research. 
 
-Nonetheless, we believe that the insights here can extend naturally to more complex domains. Depending on the feature of interest, the observed dependence of loss performance on synthesis method is will likely remain stable even with added complexities such as layers of modulation, filtering, or nonlinearity. 
+Nonetheless, we believe that the insights here can extend naturally to more complex domains. Depending on the feature of interest, the observed dependence of loss performance on synthesis method is likely to remain stable even with added complexities such as layers of modulation, filtering, or nonlinearity. 
 
 \DTWEnv{} measures very specific features of audio, and its use in the recommended settings---where low frequency amplitude modulation matching is required---would likely yield the desired results regardless of synthesizer complexity. Likewise, the use of \SIMSESpec{} or \LoneSpec{} for matching filter cut-offs is likely to be successful regardless of the underlying sound. 
 
@@ -72,7 +72,7 @@ Nonetheless, we believe that the insights here can extend naturally to more comp
 \label{sec:summary_conclusion}
 \textbf{Summary:} Sound-matching is an umbrella term for the algorithmic programming of audio synthesizers, often with the goal of assisting sound designers. Here we provided a history of sound-matching, major issues in the field, and discussed the importance of ``differentiable iterative sound-matching'' as a natural extension of current literature.
 
-The main hypothesis tested here is whether the performance of differentiable loss functions is influenced by the synthesis techniques used for sound-matching. We created iterative sound-matching experiments by combining four different loss functions with four different sound synthesis programs. We ranked the performance of the iterative sound-matching pipelines for every loss function and program, and observed that the success of the pipeline (that is, how closely the output sound matches the target sound) is program dependent. In other words, different synthesizer programs work best with different loss functions. Notably, we see that our novel use of DTW and SIMSE based differentiable loss functions (\DTWEnv{} and \SIMSESpec) can outperform what are regarded as the SOTA loss functions in 3 of 4 cases, although this is highly synthesizer dependent. 
+The main hypothesis tested here is whether the performance of differentiable loss functions is influenced by the synthesis techniques used for sound-matching. We conducted systematic iterative sound-matching experiments by combining four different loss functions with four different sound synthesis programs. We ranked the performance of the iterative sound-matching pipelines for every loss function and program, and observed that the success of the pipeline (that is, how closely the output sound matches the target sound) is program dependent. In other words, different synthesizer programs work best with different loss functions. Notably, we see that our novel use of DTW and SIMSE based differentiable loss functions (\DTWEnv{} and \SIMSESpec) can outperform what are regarded as the SOTA loss functions in 3 of 4 cases, although this is highly synthesizer dependent. 
 
 
 
