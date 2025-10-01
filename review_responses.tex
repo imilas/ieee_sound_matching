@@ -70,7 +70,7 @@ The Introduction section lacks a clear articulation of the central research ques
 Section IV titled ``Programs, Methodology, and Results'' is overloaded and blends experimental setup with results and interpretation. \textbf{(R1.3) For clear clarity and alignment with structural norms, we recommend splitting this into three sections: (1) Experimental Setup (including synthesizer programs, loss definitions, optimization procedure); (2) Experimental Results (performance metrics, statistical tests, and rankings); and (3) Discussion (qualitative interpretation, synthesis-specific observations, and practical implications).} \\
 Conceptually, the work serves primarily as a benchmarking study rather than a novel methodological contribution. While the comparison is comprehensive, the novel losses (DTW\_Envelope, SIMSE\_Spec) are adaptations of known techniques and are not framed with sufficient theoretical justification. \textbf{(R1.4) There is also limited interpretability analysis; for example, the paper does not explore why DTW performs well on modulated noise or why SIMSE outperforms L1 in certain scenarios.} Additionally, the synthesizers used are very simple (only 2--3 parameters), and all experiments are conducted in-domain, limiting the generalizability of the findings to real-world synthesis environments with more complex parameter spaces or out-of-domain targets. \\
 \textbf{(R1.5) The manuscript would also benefit from clearer practical implications.} While the authors argue that sound-matching is a creative process and reject the idea of a universal loss, they stop short of offering actionable heuristics. \textbf{Some guidance (e.g., Use DTW for AM synthesis; SIMSE for subtractive synthesis) would strengthen the paper’s relevance to practitioners.} \\
-\textbf{(R1.1) The paper would be improved by formally stating additional hypotheses that are currently only implicit.} For example, the observed agreement between manual and automatic evaluation metrics, the effectiveness of the novel losses, and the usability of iterative optimization as a general strategy are all important insights, but are not positioned as testable hypotheses upfront. \\
+\textbf{(R1.1) The paper would be improved by formally stating additional hypotheses that are currently only implicit.} For example, the observed agreement between manual and automatic evaluation metrics, the effectiveness of the novel losses, and the usability of iterative differentiable optimization as a general strategy are all important insights, but are not positioned as testable hypotheses upfront. \\
 \textbf{Suggested Actions for Revision:}
 \begin{enumerate}
   \item \textbf{(R1.1) Clearly state additional hypotheses regarding metric agreement, perceptual evaluation, and loss novelty.}
@@ -113,7 +113,7 @@ We agree with the reviewer’s comment regarding lack of clarity and focus in th
 \noindent\textbf{The current division of the manuscript into Introduction, Background, and Past Works results in significant conceptual overlap and repetition. Historical framing, loss function taxonomy, and method classification are spread across all three sections. A clearer organizational approach would be to merge Background, and Past Works into a unified Background and Related Work section, where formal definitions, theoretical framing, and literature review are presented coherently. This would allow the Introduction to focus solely on the motivation, problem framing, and contribution.}\\
 
 \noindent\textbf{Response:} \\
-We agree that the organization and writing in these sections could be improved. We merged \emph{Background} and \emph{Past Works} into a unified section, \textbf{II. Background and Related Work}. We applied major edits and rewrites to these sections to improve reading and remove redundancies between the various subsections while taking precautions in compromising the flow.
+We agree that the organization and writing in these sections could be improved. We merged \emph{Background} and \emph{Past Works} into a unified section, \textbf{II. Background and Related Work}. We applied major edits and rewrites to these sections to improve reading and remove redundancies between the various subsections while taking precautions against compromising the flow.
 \textbf{II. Background and Related Work} contains the following topics in order:  
 \begin{itemize}
   \item A formal definition of sound-matching and its components.
@@ -134,11 +134,11 @@ We agree that the organization and writing in these sections could be improved. 
 We agree that the earlier draft blurred the boundaries between setup, results, and discussion. In the revised manuscript we implemented the reviewer’s suggestion as follows:
 
 \begin{itemize}
-  \item \textbf{III. Experimental Setup and Results A-E}: Sections III.A–E now exclusively describe the methodological components: the synthesizer programs, the definitions of losses, the optimization procedure, evaluation metrics, and statistical tests. Each subsection is focused on describing how the experiments are designed, without interpretation of outcomes. For instance, the synthesizer section defines parameter ranges, while the evaluation section specifies how statistical significance is tested. The only partial overlap is at the beginning of the \textbf{III-F Best Performers for Each Program}, which serves as a transition between results and discussion.
+  \item \textbf{III. Experimental Setup and Results A-E} sections now exclusively describe the methodological components: the synthesizer programs, the definitions of losses, the optimization procedure, evaluation metrics, and statistical tests. Each subsection is focused on describing how the experiments are designed, without interpretation of outcomes. For instance, the synthesizer section defines parameter ranges, while the evaluation section specifies how statistical significance is tested. The only partial overlap is at the beginning of the \textbf{III-F Best Performers for Each Program}, which serves as a transition between results and discussion.
 
-  \item Experimental findings are presented in \textbf{III-F Best Performers for Each Program} and \textbf{III-G Consistency in Rankings}, which together form the \emph{Results} component. Section III-F reports which losses performed best for each synthesizer, while Section III-G quantifies the consistency of rankings across bootstrap resamples. Keeping all numerical findings here avoids overlap with later interpretation.  
+  \item Experimental analysis are presented in \textbf{III-F Best Performers for Each Program} and \textbf{III-G Consistency in Rankings}, which together form the \emph{Results} component. Section III-F reports which losses performed best for each synthesizer, while Section III-G quantifies the consistency of rankings across bootstrap resamples. Keeping all numerical findings here avoids overlap with later interpretation.  
 
-  \item \textbf{IV. Discussion} then provides the qualitative interpretation, structured into four dedicated subsections:  
+  \item \textbf{IV. Discussion} is structured into four dedicated subsections:  
     \begin{enumerate}
       \item \textbf{IV-A. Key Findings}: summarizes the central empirical trends, such as the dependency of loss performance on synthesis method.  
       \item \textbf{IV-B. Practical Recommendations}: translates results into concrete recommendations for practitioners and researchers.  
@@ -154,7 +154,7 @@ Overall, this restructuring produces a clearer separation of topics: methodology
 \subsection*{R1.4 Justification for \DTWEnv{} and \SIMSESpec}
 \label{R1.4}
 \noindent\textbf{Reviewer:} \\
-\noindent While the comparison is comprehensive, the novel losses (DTW\_Envelope, SIMSE\_Spec) are adaptations of known techniques and are not framed with sufficient theoretical justification. 
+\textbf{\noindent While the comparison is comprehensive, the novel losses (DTW\_Envelope, SIMSE\_Spec) are adaptations of known techniques and are not framed with sufficient theoretical justification. }\\
 
 \noindent\textbf{Response:} \\
 We have expanded the theoretical justifications for DTW\_Envelope and \SIMSESpec{} in subsection \textbf{II.C Sound Representation and Loss Functions}. In \textbf{II.C.2 Fourier Spectrograms}, we discuss the possible application of SIMSE as an alternative to L1:
@@ -214,7 +214,9 @@ We show the landscapes of the loss functions with simplified versions of \BPNois
     \end{minipage}
 \end{figure*}
 
-While this may not be the "qualitative" or "spectral" analysis, we believe it is instructive on the mechanisms underlying our quantitative findings and highlight the importance of loss landscape navigation as an open area for future research.
+While this may not be the "qualitative" or "spectral" analysis, we believe it is instructive on the mechanisms underlying our quantitative findings and highlight the importance of loss landscape navigation as an open area for future research (See also~\nameref{R4.5}).
+
+
 
 \subsection*{R1.6 Applicability to More Complex or Real-world Synthesizers.}
 \label{R1.6}
@@ -241,7 +243,6 @@ We added a new subsection, \textbf{IV.D Applicability to More Complex Synthesize
 \\
 
 \noindent\textbf{Response} \\
-
 In \textbf{IV.A Key Findings}, we discuss important findings and provide answers to our research questions. The following section, \textbf{IV.B Practical Recommendations}, distills our findings into actionable heuristics for practitioners. 
 
 \begin{displayquote}
@@ -344,7 +345,7 @@ As for clear takeaways, we've added two new sections which address the valid iss
   \item \textbf{IV.B Practical Recommendations} which distills our findings into actionable guidelines for practitioners. DTW\_Env is recommended for amplitude-modulated synthesis, SIMSE for subtractive/noise-filtered synthesis, and MSS or P-Loss as large-scale proxies for sound-matching evaluation (with manual validation being strongly advised). We also note that our results challenge prior claims about JTFS’s universal superiority for mesostructures.
   \item \textbf{IV.D Applicability to More Complex Synthesizers} that explicitly discusses how the insights from our controlled two-parameter DSP-based synthesizers generalize to richer synthesizers with many parameters and complex routing. While acknowledging the limitations of our simplified testbed, we argue that the observed dependencies between synthesis method and loss function remain informative even in more complex settings.
 \end{itemize}
-For a more detailed response, see our response to the Reviewer.1 in Sections~\nameref{R1.6} and \nameref{R1.7}. Our response to \nameref{R1.5} may also be of interest.
+For a more detailed response, see our response to Reviewer 1 in Sections~\nameref{R1.6} and \nameref{R1.7}. Our response to \nameref{R1.5} may also be of interest.
 
 
 \section{Reviewer 4}
@@ -409,7 +410,7 @@ This is a helpful suggestion, and we have made the switch from $x$ and $t$ to $x
 This statement is true when you are given only the text description of the sound. However, if you have the target sound $x_0$  the target sound itself is "correct", isn't it? So your hypothesis only holds if you don't have the target sound but the text description, am I understanding it correctly?\\}
 
 \noindent\textbf{Response:}
-The original statement referred to how realistically in sound-design, a "correct" solution rarely exists due to our subjective experience of sound. To reduce confusion, the section has been rephrased as follows:
+The original statement referred to how realistically in sound-design, a ``correct" solution rarely exists due to our subjective experience of sound and personal goals. The existence of an objective sound-matching goal is only true in \textit{in-domain replication} scenarios, which are far removed from real life applications. To reduce confusion, the section has been rephrased as follows:
 \begin{displayquote}
     Moreover, the ``correct'' solution may not exist in a strict sense: depending on the artistic goal, multiple parameter settings may yield acceptable or even preferable outputs.  In the following sections we will discuss the various components of sound-matching, the subjectivity of ``correct'' solutions, and important issues in the field.
 \end{displayquote}
@@ -422,7 +423,7 @@ The original statement referred to how realistically in sound-design, a "correct
 \\
 
 \noindent{\textbf{Response:}}
-The listening tests were done without use of any labels or previous exposure to outputs, which we believe minimizes the risk of bias. Unfortunately, adding another listener was not possible given the allotted time for the revisions. If the reviewer feels that this is necessary, it can be done for the next round of reviews. 
+The listening tests were done without use of any labels or previous exposure to outputs, which we believe minimizes the risk of bias. Additionally the strong correlation between the two listeners adds to our confidence in using the listening test results as the ground truth. Unfortunately, adding another listener was not possible given the allotted time for the revisions. If the reviewer feels that this is necessary, it can be done for the next round of reviews. 
 
 \subsection{\textbf{R4.4} STFT Losses and Time-Shifts}
 \noindent\textbf{Reviewer:}\\
@@ -431,9 +432,10 @@ So the STFT losses doesn't work for the cases where there's time shift?}
 \\
 
 \noindent\textbf{Response:}
-What we refer to as STFT losses refers to the near ubiquitous approach of applying L1/L2 to STFT spectrograms. This approach does not account for two sounds that are nearly identical but slightly time-shifted~\cite{vahidi2023mesostructures,turian2020sorry}.
+What we refer to as STFT losses refers to the near ubiquitous approach of applying L1/L2 to STFT spectrograms. This approach does not account for two sounds that are nearly identical but slightly time-shifted~\cite{vahidi2023mesostructures,turian2020sorry}. We've shown in this work that DTW can be used in loss functions to account for envelope time-shifts.
 
 \subsection{\textbf{R4.5} Can We Overfit? Is it a Concern?}
+\label{R4.5}
 \noindent\textbf{Reviewer:}\\
 \textbf{One final question that is just out of curiosity.
 In your iterative algorithm, you always run it for 200 steps, right?
@@ -443,7 +445,7 @@ Do you have the same thing in your algorithm? Or the final step is always the be
 \\
 
 \noindent\textbf{Response:} 
-Since we are not training a model that will be applied to other scenarios, overfitting here just means that the parameter updates are stuck around a local or global minimum. This means that \textit{if} the target parameters have been reached, subsequent updates will not diverge from it (or at least stay very close). We can share our visualization of the gradient update paths in 2D, which we felt was not statistically robust enough for the paper. Figures~\ref{fig:p0_simse_iterations} and~\ref{fig:p2_dtw_iterations}, we see that once the gradient updates (small red dots connected by lines) take the parameters from the starting position (green circle) to the target (green star), subsequent updates fluctuate slightly and randomly around the target. 
+Since we are not training a model that will be applied to other scenarios, overfitting here just means that the parameter updates are stuck around a local or global minimum. This means that \textit{if} the target parameters have been reached, subsequent updates will not diverge from it (or at least stay very close). We share some visualizations of the gradient update paths in 2D, which we felt was not statistically robust enough for the paper. Figures~\ref{fig:p0_simse_iterations} and~\ref{fig:p2_dtw_iterations}, we see that once the gradient updates (small red dots connected by lines) take the parameters from the starting position (green circle) to the target (green star), subsequent updates fluctuate slightly and randomly around the target. 
 
 
 \begin{figure*}[h]

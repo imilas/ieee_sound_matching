@@ -1,18 +1,7 @@
 \documentclass[lettersize,journal]{IEEEtran}
-% ========================
-% latexdiff underline/strike setup
-% ========================
-\usepackage[normalem]{ulem} % for \sout
-\usepackage{xcolor}         % for colors
-
-% Additions = blue underline
-\renewcommand{\DIFadd}[1]{\textcolor{blue}{\uline{#1}}}
-
-% Deletions = red strikeout
-\renewcommand{\DIFdel}[1]{\textcolor{red}{\sout{#1}}}
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL main.tex           Sun Sep 28 21:12:36 2025
-%DIF ADD revised_main.tex   Sun Sep 28 21:12:36 2025
+%DIF DEL main.tex           Mon Sep 29 12:34:32 2025
+%DIF ADD revised_main.tex   Mon Sep 29 12:34:32 2025
 \usepackage{amsmath,amsfonts}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \usepackage{algorithmic}
@@ -59,12 +48,13 @@
 \newcommand{\DTWEnv}{\texttt{DTW\_Envelope}}
 \newcommand{\LossSelect}{\textbf{Loss Selection}}
 \newcommand{\SynthSelect}{\textbf{Synthesis Selection}}
-%DIF 39c44
+%DIF 39-40c44-45
 %DIF < \newcommand{\PeriodicLoss}{\textbf{Periodic Loss}}
+%DIF < \newcommand{\OutDomain}{\textbf{Out-Domain Generation}}
 %DIF -------
 \newcommand{\PeriodicLoss}{\textbf{Loss Landscape Navigation}} %DIF > 
+\newcommand{\OutDomain}{\textbf{Out-of-Domain Generation}} %DIF > 
 %DIF -------
-\newcommand{\OutDomain}{\textbf{Out-Domain Generation}}
 \newcommand{\BPNoise}{\textbf{BP-Noise}}  
 \newcommand{\AddSineSaw}{\textbf{Add-SineSaw}}  
 \newcommand{\AmpMod}{\textbf{Noise-AM}}  
@@ -292,7 +282,7 @@ have explored the use of audio synthesizers to replicate natural sounds—such a
 \cite{lyons1997understanding,russ1999sound,shier2020spiegelib}}\hskip0pt%DIFAUXCMD
 . Manual sound design with a synthesizer is an iterative process of trial and error; when the artist has a desired (or target) sound in mind, sound design involves listening to the output, determining whether the output is closer or farther from the target, and adjusting the parameters of the synthesizer accordingly until the target is reached~\mbox{%DIFAUXCMD
 \cite{russ1999sound}}\hskip0pt%DIFAUXCMD
-. This paper explores the }\DIFdelend \DIFaddbegin \DIFadd{The possibilities afforded by these synthesizers are infinite, leading to their widespread adaption by artists and sound-designers~\mbox{%DIFAUXCMD
+. This paper explores the }\DIFdelend \DIFaddbegin \DIFadd{The possibilities afforded by these synthesizers are infinite, leading to their widespread adoption by artists and sound-designers~\mbox{%DIFAUXCMD
 \cite{lyons1997understanding,russ1999sound,stranneby2004digital}}\hskip0pt%DIFAUXCMD
 . A typical synthesizer has a number of parameterizable functions which affect the sound output in various ways, and manual sound-design often involves modifying the parameters until a conceptualized target sound is reached. The }\DIFaddend automation of this \DIFdelbegin \DIFdel{process, which we call }\textit{\DIFdel{iterative sound-matching}}%DIFAUXCMD
 \DIFdel{. 
@@ -345,7 +335,7 @@ and increase in computational power~\mbox{%DIFAUXCMD
 \DIFdel{We discuss the history of sound-matching, and provide a nomenclature for different subtypes of sound-matching tasks. A number of weaknesses in current literature (see Section~\ref{sec:lacking}) are identified. The experiments in this work focus on two of these core issues , referred to as }\DIFdelend \DIFaddbegin \DIFadd{We provide a review of past works and identify major perennial issues in the field. In particular, we are concerned with the issues of }\DIFaddend \LossSelect~and \SynthSelect. The former refers to the search for an optimal loss function, lack of novel algorithms, and the---perhaps needless---focus on outperforming state of the art (\gls{SOTA}), while the latter refers to the lack of diversity in synthesis methods. \DIFaddbegin \DIFadd{As a consequence of these problems, we find that not much is known about the interaction between different methods of synthesis and different loss functions. Is there a universally best performing loss function for audio? Is there a need for further development of bespoke loss functions?
 }\DIFaddend 
 
-\DIFdelbegin \DIFdel{In the case of \LossSelect, there }\DIFdelend \DIFaddbegin \DIFadd{The main hypothesis here is that }\textit{\DIFadd{the performance of a similarity measure (or loss function) is influenced by other factors in the environment, particularly the method of synthesis}}\DIFadd{. This hypothesis is proven false if a one loss function consistently proves most effective in a series of different sound-matching experiments. While there }\DIFaddend have been many works and experiments comparing the accuracy of loss functions\DIFdelbegin \DIFdel{and choosing the best performers~\mbox{%DIFAUXCMD
+\DIFdelbegin \DIFdel{In the case of \LossSelect, there }\DIFdelend \DIFaddbegin \DIFadd{The main hypothesis here is that }\textit{\DIFadd{the performance of a similarity measure (or loss function) is influenced by other factors in the environment, particularly the method of synthesis}}\DIFadd{. Testing this hypothesis requires a variety of sound-matching experiments that measure whether a single loss function proves most effective. While there }\DIFaddend have been many works and experiments comparing the accuracy of loss functions\DIFdelbegin \DIFdel{and choosing the best performers~\mbox{%DIFAUXCMD
 \cite{vahidi2023mesostructures,turian2020sorry,engel2020ddsp,uzrad2024diffmoog,han2023perceptual,masuda2021soundmatch,turian2020sorry,bruford2024synthesizer}}\hskip0pt%DIFAUXCMD
 . We note that these }\DIFdelend \DIFaddbegin \DIFadd{~\mbox{%DIFAUXCMD
 \cite{vahidi2023mesostructures,turian2020sorry,engel2020ddsp,uzrad2024diffmoog,han2023perceptual,masuda2021soundmatch,turian2020sorry,bruford2024synthesizer}}\hskip0pt%DIFAUXCMD
@@ -356,7 +346,7 @@ and increase in computational power~\mbox{%DIFAUXCMD
 (Q3) Is iterative differentiable optimization a viable strategy for design of sound-matching experiments?
 }\DIFaddend 
 
- \DIFdelbegin \DIFdel{Considering the interplay between the two problems, we design experimentsthat address them simultaneously. Testing the hypothesis that the performance of a similarity measure (or loss function ) is influenced by other factors in the environment, particularly the }\DIFdelend \DIFaddbegin \DIFadd{We adopt a lesser used }\textit{\DIFadd{iterative}} \DIFadd{and }\textit{\DIFadd{differentiable}} \DIFadd{approach to defining sound-matching experiments. The iterative approach better mimics the manual process of recursive listening and parameter adjustments towards sound design, while a differentiable environment allows access to the loss function gradients that can be used to better understand the nature of the problem. We define four differentiable synthesizers (each showcasing a fundamental }\DIFaddend method of synthesis \DIFdelbegin \DIFdel{. We combine 4 loss functions with 4 differentiable synthesizers, and compare their performance as measured by the similarity of the final output to the target}\DIFdelend \DIFaddbegin \DIFadd{used in modern synthesizers) and pair them with four different loss functions (two established methods, one utilizing DTW, and one utilizing SIMSE)}\DIFaddend . We evaluate the final similarity with two different automatic methods, as well as manual listening tests conducted by two of the authors. We \DIFdelbegin \DIFdel{compare the distributions of the evaluation scores in order to rank the loss functions from best to worst. The results of these experiments show that when accounting for different synthesizers, there is no consistent choice of sound similarity measure for optimal performance in sound-matching}\DIFdelend \DIFaddbegin \DIFadd{apply statistical ranking applied to the evaluation scores to compare outcomes across synthesizer–loss combinations and measure the similarity of different evaluation measures}\DIFaddend . 
+ \DIFdelbegin \DIFdel{Considering the interplay between the two problems, we design experimentsthat address them simultaneously. Testing the hypothesis that the performance of a similarity measure (or loss function ) is influenced by other factors in the environment, particularly the }\DIFdelend \DIFaddbegin \DIFadd{We adopt a lesser used }\textit{\DIFadd{iterative}} \DIFadd{and }\textit{\DIFadd{differentiable}} \DIFadd{approach to defining sound-matching experiments. The iterative approach better mimics the manual process of recursive listening and parameter adjustments towards sound design, while a differentiable environment allows access to the loss function gradients that can be used to better understand the nature of the problem. We define four differentiable synthesizers (each showcasing a fundamental }\DIFaddend method of synthesis \DIFdelbegin \DIFdel{. We combine 4 loss functions with 4 differentiable synthesizers, and compare their performance as measured by the similarity of the final output to the target}\DIFdelend \DIFaddbegin \DIFadd{used in modern synthesizers) and pair them with four different loss functions (two established methods, one utilizing DTW, and one utilizing SIMSE)}\DIFaddend . We evaluate the final similarity with two different automatic methods, as well as manual listening tests conducted by two of the authors. We \DIFdelbegin \DIFdel{compare the distributions of the evaluation scores in order to rank the loss functions from best to worst. The results of these experiments show that when accounting for different synthesizers, there is no consistent choice of sound similarity measure for optimal performance in sound-matching}\DIFdelend \DIFaddbegin \DIFadd{apply statistical ranking to the evaluation scores to compare outcomes across synthesizer–loss combinations and measure the similarity of different evaluation measures}\DIFaddend . 
 
 \DIFdelbegin \DIFdel{We note that for some synthesizers, our novel use of ``dynamic time warping of envelopes'' as a loss function for differentiable }\DIFdelend \DIFaddbegin \textbf{\DIFadd{Contributions.}} \DIFadd{The contributions of this paper include (1) an evaluation of multiple differentiable losses across multiple synthesis methods, (2) the introduction and justification of loss functions utilizing DTW and SIMSE (3) a discussion on the utility and agreement between manual and automatic evaluation metrics (4) a nomenclature of different }\DIFaddend sound-matching \DIFdelbegin \DIFdel{outperforms the standard methodsof audio comparison. These results imply that rather than aiming to outperform the SOTA and finding a universal best performer, more effort could be placed towards diversifying the existing similarity measuresof sound as well as conducting experiments using a variety of synthesis methods. Sound design is an inherently creative endeavor, and would likely benefit from a diversified range of solutions for different approaches}\DIFdelend \DIFaddbegin \DIFadd{approaches and unsolved issues in the field. 
 }
@@ -864,7 +854,7 @@ Rather than focusing on a particular implementation, Shier \textit{et al.} prese
 \cite{barkan2023inversynthII}}\hskip0pt%DIFAUXCMD
 . As they noted, without a differentiable synthesizer, ``model-based'' (or what we call supervised) approaches cannot directly compare $\xtheta$ to $\xzero$, often opting for P-Loss, which may not correctly map the parameters of sound to the output audio~\mbox{%DIFAUXCMD
 \cite{esling2019flow,han2023perceptual,masuda2023improving}}\hskip0pt%DIFAUXCMD
-. This approach used a model mapping sounds to parameters, another approximating the synthesizer, and a loss function which combines P-Loss with STFT differences. This ``Inversynth II'' (IS2) approach yielded significant improvements to previous works which did not use the STFT approximations for loss~\mbox{%DIFAUXCMD
+. This approach used a model for mapping sounds to parameters, another for approximating the synthesizer, and a loss function which combines P-Loss with STFT differences. This ``Inversynth II'' (IS2) approach yielded significant improvements to previous works which did not use the STFT approximations for loss~\mbox{%DIFAUXCMD
 \cite{esling2019flow,barkan2019inversynth}}\hskip0pt%DIFAUXCMD
 . Barkan }\textit{\DIFadd{et al.}} \DIFadd{then attempted to improve the IS2 model with Inference-Time
 Fine-tuning (ITF). For ITF, the synthesizer approximation is frozen and the encoder is iteratively fine-tuned for a particular sample. However, ITF often degraded performance, possibly due to proxy–synthesizer mismatch or overfitting.
@@ -884,7 +874,7 @@ to create creative interpretations of sound effects. In their approach, a desire
 \cite{evosax2022github} }\hskip0pt%DIFAUXCMD
 to the synthesizer's parameters to minimize embedding differences. Based on manual hearing tests, this approach did not produce the ``correct'' sounds more frequently than previous works~\mbox{%DIFAUXCMD
 \cite{kreuk2022audiogen}}\hskip0pt%DIFAUXCMD
-. However, it did yield better scores for ``artistic-interpretation'' (or what this works refers to as ``imitation'').
+. However, it did yield better scores for ``artistic-interpretation'' (what we referred to as ``imitation''). It should be noted that audio embedding models are often trained using simpler loss functions---particularly those which utilize Fourier transforms---therefore improving such simpler loss functions is likely to improve the embedding models.
 }\DIFaddend 
 
 %DIF >  masuda and esling both noted out-of-domain drop in performance
@@ -924,7 +914,7 @@ to the synthesizer's parameters to minimize embedding differences. Based on manu
 %DIFDELCMD < 
 
 %DIFDELCMD < %%%
-\DIFdelend Having looked at the current \DIFdelbegin \DIFdel{available }\DIFdelend literature, we \DIFdelbegin \DIFdel{note }\DIFdelend \DIFaddbegin \DIFadd{identify }\DIFaddend four major areas of weakness in sound-matching. We target the first two issues in this work, while the latter two issues are left for future work.
+\DIFdelend Having looked at the current \DIFdelbegin \DIFdel{available }\DIFdelend literature, we \DIFdelbegin \DIFdel{note }\DIFdelend \DIFaddbegin \DIFadd{identify }\DIFaddend four major areas of weakness in sound-matching. We target the first two issues in this work, while the latter two \DIFdelbegin \DIFdel{issues }\DIFdelend are left for future work.
 \begin{enumerate}
     \item \LossSelect: \DIFdelbegin \DIFdel{Is there a }\textit{\DIFdel{best performing}} %DIFAUXCMD
 \DIFdelend \DIFaddbegin \DIFadd{It remains unclear whether there exists a universally best-performing }\DIFaddend loss function, 
@@ -938,7 +928,7 @@ to the synthesizer's parameters to minimize embedding differences. Based on manu
     \item \PeriodicLoss: \DIFdelbegin \DIFdel{The sinusoidal nature of loss function landscapes is a problem that appears frequently}\DIFdelend \DIFaddbegin \DIFadd{Loss function landscapes are not easy to navigate, as there can be many local minima, or large flat areas~\mbox{%DIFAUXCMD
 \cite{turian2020sorry,vahidi2023mesostructures}}\hskip0pt%DIFAUXCMD
 }\DIFaddend .  In differentiable settings, this \DIFdelbegin \DIFdel{problem causes }\DIFdelend \DIFaddbegin \DIFadd{can cause }\DIFaddend gradient descent updates to \DIFdelbegin \DIFdel{local }\DIFdelend \DIFaddbegin \DIFadd{not reach the global }\DIFaddend minima. 
-    \item \OutDomain: Sound-matching with out-of-domain sounds is \DIFdelbegin \DIFdel{an }\DIFdelend \DIFaddbegin \DIFadd{a largely }\DIFaddend unexplored area, yet a necessary one for practical applications for sound designers.
+    \item \OutDomain: Sound-matching with out-of-domain sounds is an un\DIFaddbegin \DIFadd{der-}\DIFaddend explored  area, yet a necessary one for practical applications for sound designers.
 \end{enumerate}
 
 \DIFdelbegin \section{\DIFdel{Programs, Methodology, and Results}}
@@ -990,7 +980,7 @@ of 1-5 are assigned to a subset of final outputs and the corresponding targets.
 %DIFDELCMD < \label{sec:evaluation_manual_auto}
 %DIFDELCMD < %%%
 \DIFdel{The two automatic evaluation methods used here are P-Loss and MSS, as described in Section~\ref{sec:loss_funcs}. For P-Loss, the parameters are normalized between 0-1 based on the valid ranges defined in the Faust program, and the L1 distance between the normalized parameters is calculated. MSS is computed using a hop size of $100$ samples, and FFT window lengths of $(512, 1024, 2048, 4096)$}\DIFdelend \DIFaddbegin \DIFadd{Together, these design choices supply the controlled experimental evidence missing from the literature, 
-clarifying how losses and synthesis methods interact in differentiable, iterative settings, 
+clarifying how losses and synthesis methods interact in iterative sound-matching,
 and offering insights likely to generalize to more complex domains}\DIFaddend .
 
 
@@ -1034,10 +1024,10 @@ to maximum rank of 4 (worst, with lowest distribution values). NPSK may determin
 across four differentiable synthesizers (Section~\ref{sec:programs}). For
 each loss–synthesizer pair, we run a large number of trials and evaluate
 their outcomes automatically and manually
-(Section~\ref{sec:evaluation_manual_auto}). ``Experiments'' in this context
-refer to one complete iterative sound-matching run, from random parameter
-initialization through gradient-based optimization until termination. Scores
-from these experiments are then aggregated and statistically compared to
+(Section~\ref{sec:evaluation_manual_auto}). ``Experiment'' in this context
+refers to one complete iterative sound-matching run, from random parameter
+initialization through iterative gradient-based optimization until termination. Scores
+from these experiments are then aggregated and compared to
 determine best-performing losses and synth–loss pairings.
 }\DIFaddend 
 
@@ -1787,25 +1777,25 @@ Table~\ref{tab:combined_ranks} shows the SNPK rankings of bootstrapped evaluatio
 
 %DIFDELCMD < %%%
 \DIFdel{Finally, we surprisingly see }\DIFdelend \DIFaddbegin \textbf{\DIFadd{Q1}}\DIFadd{: To what extent do automatic evaluation metrics agree with manual listening tests? 
-}\\\DIFadd{We see }\DIFaddend somewhat consistent results between the rankings assigned by manual hearing tests (which we take as the ground truth), and automatic measures of P-Loss and MSS. \DIFdelbegin \DIFdel{Due to the }\DIFdelend \DIFaddbegin \DIFadd{With the exception of P-Loss in \BPNoise{} narrowly selecting a different spectrogram based loss, all measures of performance selected the same top performer. However, given the }\DIFaddend simplicity of our programs and the occasional deviations, we cannot conclude that these automatic measures are substitutes for human hearing tests. \DIFaddbegin \DIFadd{As many previous works have done (see Table~\ref{tab:summary}, the use of MSS and/or P-Loss as general loss functions does seem appropriate, however, we advise the use of listening tests or custom made loss functions for more specific analysis. 
+}\\\DIFadd{We see }\DIFaddend somewhat consistent results between the rankings assigned by manual hearing tests (which we take as the ground truth), and automatic measures of P-Loss and MSS. \DIFdelbegin \DIFdel{Due to the }\DIFdelend \DIFaddbegin \DIFadd{With the exception of P-Loss in \BPNoise{} narrowly selecting a different spectrogram based loss, all measures of performance selected the same top performer. However, given the }\DIFaddend simplicity of our programs and the occasional deviations, we cannot conclude that these automatic measures are substitutes for human hearing tests. \DIFaddbegin \DIFadd{As many previous works have done (see Table~\ref{tab:summary}), the use of MSS and/or P-Loss as general loss functions does seem appropriate in general cases, however, the use of listening tests or custom made loss functions in specific contexts remains necessary. 
 }\DIFaddend 
 
 \DIFaddbegin \textbf{\DIFadd{Q2}}\DIFadd{: Are DTW and SIMSE effective measures of loss? If so, in what contexts?}\\
-\DTWEnv{} \DIFadd{consistently outperformed other measures in amplitude-modulated synthesis, where envelope alignment is critical. }\SIMSESpec{} \DIFadd{performed best in subtractive synthesis, where scale-invariance captures noise-filtering effects more robustly than L1-based measures. These results suggest that the advantages of these novel losses are context-dependent, underscoring the need for further exploration of creative differentiable similarity measures. 
+\DTWEnv{} \DIFadd{consistently outperformed other measures in amplitude-modulated synthesis, where envelope alignment is critical. }\SIMSESpec{} \DIFadd{performed best in subtractive synthesis, where scale-invariance captures noise-filtering effects more robustly than L1-based measures. These results suggest that the advantages of loss functions are context-dependent, underscoring the need for further exploration of creative differentiable similarity measures. 
 }
 
 
-\textbf{\DIFadd{Q3}}\DIFadd{: Can iterative differentiable optimization be applied effectively in synthesizers using classical DSP functions? }\\
-\DIFadd{The approach of designing DSP functions in Faust and transpiling to differentiable Faust code yielded meaningful outputs and enabled comparative evaluation of losses. The use of Faust for synthesizer definition was convenient, and transpiling to Jax enabled quick gradient optimization. We were able to run our 1200 experiments within 72 hours on a laptop without a GPU}\footnote{\DIFadd{Lenovo ThinkPad T480, i5-8350U CPU at 1.70GHz, 32 GB RAM.}}\DIFadd{.
+\textbf{\DIFadd{Q3}}\DIFadd{: Can iterative differentiable optimization be applied effectively with synthesizers using classical DSP functions? }\\
+\DIFadd{The approach of designing DSP functions in Faust and transpiling to differentiable Faust code was convenient, yielded meaningful outputs, and enabled comparative evaluation of losses. We were able to run our 1200 experiments within 72 hours on a laptop without a GPU}\footnote{\DIFadd{Lenovo ThinkPad T480, i5-8350U CPU at 1.70GHz, 32 GB RAM.}}\DIFadd{.
 }
 
 \subsection{\DIFadd{Practical Recommendations}}
-    \DIFadd{Our findings not only provide answers to the research questions proposed in the introduction, but also serve as guidelines for practitioners in selecting appropriate similarity measures and synthesis methods for future sound-matching experiments.
+    \DIFadd{Our findings not only provide answers to the research questions proposed in the introduction, but also serve as guidelines for practitioners in selecting appropriate similarity measures and synthesis methods for future experiments.
 }\begin{itemize}
-    \item \DIFadd{In lieu of listening tests, MSS or P-Loss are generally useful for large-scale benchmarking. However, we encourage confirmation of conclusions with manual listening, particularly if specificity is important. 
+    \item \DIFadd{In lieu of listening tests, MSS or P-Loss are generally useful for large-scale benchmarking. However, we encourage confirmation of such results with manual listening, particularly if specificity is important. 
     }\item \DIFadd{For amplitude-modulated synthesis, DTW-based losses such as }\DTWEnv{} \DIFadd{are recommended over spectrogram differences and JTFS.
     }\item  \DIFadd{For subtractive/noise-filtered synthesis, spectrogram based losses are most effective. Based on our results, SIMSE appears to be the better method of spectrogram comparisons relative to L1, but the amplitude agnosticism of SIMSE likely plays a role in its poor performance in additive synthesis.  
-    }\item \DIFadd{Iterative differentiable optimization via the Faust-to-JAX pipeline is a viable strategy for defining various differentiable DSP functions, requiring only modest hardware resource and providing a more natural approach to synthesizer definition.
+    }\item \DIFadd{Iterative differentiable optimization via the Faust-to-JAX pipeline is a viable strategy for defining various differentiable DSP functions, requiring only modest hardware resources and providing a more natural approach to synthesizer definition.
     }\item \DIFadd{In our amplitude modulation experiments, \JTFS{} did not outperform other measures, contradicting prior claims of its superiority for mesostructures~\mbox{%DIFAUXCMD
 \cite{vahidi2023mesostructures}}\hskip0pt%DIFAUXCMD
 . Thus, our results call into question its effectiveness as a general mesostructure measure, and highlight a need for further research into its utility.
@@ -1867,11 +1857,9 @@ Table~\ref{tab:combined_ranks} shows the SNPK rankings of bootstrapped evaluatio
 \label{sec:summary_conclusion}
 \textbf{Summary:} Sound-matching is an umbrella term for the algorithmic programming of audio synthesizers, often with the goal of assisting sound designers. Here we provided a history of sound-matching, major issues in the field, and discussed the importance of ``differentiable iterative sound-matching'' as a natural extension of current literature.
 
-The main hypothesis tested here is whether the performance of differentiable loss functions is influenced by the synthesis techniques used for sound-matching. We \DIFdelbegin \DIFdel{created }\DIFdelend \DIFaddbegin \DIFadd{conducted systematic }\DIFaddend iterative sound-matching experiments by combining four different loss functions with four different sound synthesis programs. We ranked the performance of the iterative sound-matching pipelines for every loss function and program, and observed that the success of the pipeline (that is, how closely the output sound matches the target sound) is program dependent. In other words, different synthesizer programs work best with different loss functions. Notably, we see that our novel use of DTW and SIMSE based differentiable loss functions (\DTWEnv{} and \SIMSESpec) can outperform what are regarded as the SOTA loss functions in 3 of 4 cases, although this is highly synthesizer dependent. 
+The main hypothesis tested here is whether the performance of differentiable loss functions is influenced by the synthesis techniques used for sound-matching. We \DIFdelbegin \DIFdel{created }\DIFdelend \DIFaddbegin \DIFadd{conducted systematic }\DIFaddend iterative sound-matching experiments by combining four different loss functions with four different sound synthesis programs. We ranked the performance of the iterative sound-matching pipelines for every loss function and program, and observed that the success of the pipeline (that is, how closely the output sound matches the target sound) is program dependent. In other words, different synthesizer programs work best with different loss functions. Notably, we see that our novel use of DTW and SIMSE based differentiable loss functions (\DTWEnv{} and \SIMSESpec) can outperform what are regarded as the SOTA loss functions in 3 of 4 cases, although \DIFdelbegin \DIFdel{this }\DIFdelend \DIFaddbegin \DIFadd{their success }\DIFaddend is highly synthesizer dependent. 
 
-
-
-P-Loss and MSS have frequently been used as automatic performance measures, yet their ``preference'' has rarely been compared to human rankings. We observed that automatic performance measures and manual listening tests were often in agreement, despite this, manual verification of sound-matching results remains a necessity for future works.  
+P-Loss and MSS have frequently been used as automatic performance measures, yet their ``preference'' has rarely been compared to human rankings. We observed that automatic performance measures and manual listening tests were \DIFdelbegin \DIFdel{often }\DIFdelend \DIFaddbegin \DIFadd{generally }\DIFaddend in agreement, despite this, manual verification of sound-matching results remains a necessity \DIFdelbegin \DIFdel{for future works}\DIFdelend \DIFaddbegin \DIFadd{in non-general experiments due to occasional divergences between automatic and manual tests}\DIFaddend .
 
 \textbf{Weaknesses:} 
 While we cannot prove that a universally best similarity measure does not exist, we can advocate for more creativity in the field based on our findings. Compared to previous work, we presented a more cohesive approach to iterative sound-matching which utilizes a variety of loss functions and synthesis methods. However, there are many other methods of synthesis and sound-similarity that can be combined in practically infinite ways. Due to this large search space, we set arbitrary parameters for the various signal processing functions. We used bare-bones versions of STFT and JTFS with fixed parameters. We did not test complex synthesizers using parallel and sequential DSP functions. Arbitrary hyperparameters such as learning rate and max number of iterations were selected for the DL pipeline, and only the RMSProp optimizer was tested. 
@@ -1883,7 +1871,7 @@ While we cannot prove that a universally best similarity measure does not exist,
 
 Contemporary works often involve the application of domain specific and computationally expensive loss functions~\cite{han2023perceptual,uzrad2024diffmoog}, use of large neural networks~\cite{hershey2017cnn,cramer2019look}, or complex ensemble methods~\cite{turian2022hear}. Such models are useful but intractable; furthermore, training them requires the definition of simpler loss functions, which emphasizes the need for further development of differentiable and expressive loss function implementations. 
 
-Like nearly all previous work in sound-matching, the main measure of success here was the accurate \textit{replication} of sounds (or synth parameters) rather than imitation of sounds outside of the synthesizer's domain. Replication of arbitrary features of sounds is an important component of sound-design, though it is much harder to define or measure. Future works could explore loss functions which only measure certain characteristics of sound (such as \DTWEnv), and whether they can pave the way for better imitation in sound-matching.
+Like nearly all previous work in sound-matching, the main measure of success here was the accurate \textit{replication} of sounds (or synth\DIFaddbegin \DIFadd{esizer}\DIFaddend{}  parameters) rather than \DIFdelbegin \DIFdel{imitation }\DIFdelend \DIFaddbegin \textit{\DIFadd{imitation}} \DIFaddend of sounds outside of the synthesizer's domain. Replication of arbitrary features of sounds is an important component of sound-design, though it is much harder to define or measure. Future works could explore loss functions which only measure certain characteristics of sound (such as \DTWEnv), and whether they can pave the way for better imitation in sound-matching.
 
 
 \DIFdelbegin %DIFDELCMD < \bibliographystyle{IEEEtran}
