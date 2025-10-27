@@ -9,7 +9,7 @@ Following prior works~\cite{vahidi2023mesostructures,han2023perceptual}, we defi
 The key components are:
 \begin{itemize}
     \item $g(\theta)$: A parametric audio synthesizer $g$ with parameters $\theta$.
-    \item $x_\theta$: The synthesizer output, $x_\theta = g(\theta)$.”.
+    \item $x_\theta$: The synthesizer output, $x_\theta = g(\theta)$”.
     \item $\xzero$: The target sound to be replicated or imitated. 
     \item $\phi(\cdot)$: A representation (feature extraction) function mapping signals into a comparison space.
     \item $L$: A loss function that measures distance between $\xtheta$ and $\xzero$, typically via $L(\theta,\xzero) = d(\phi(\xtheta), \phi(\xzero))$ for some metric $d$.
@@ -76,7 +76,7 @@ Implementing complex DSP functions in a differentiable manner remains challengin
 \label{sec:loss_funcs}
 A digital sound (or an audio signal) is a series of numbers~\cite{smith1991viewpoints,smith2007mathematics}. To compare two digital sounds, the two corresponding series are passed to a function that measures their similarity. Two signals can sound identical to our ears, without having any values in common~\cite{moore2012introduction}. This necessitates the use of proxy representations (or feature extractors) when comparing sounds automatically. Similarity between the target sound and the synthesizer output is then measured by some form of subtraction and summation of the proxy representations.
 
-In sound-matching, particularly in a Deep Learning (\gls{DL}) context~\cite{goodfellow2016deep}, the similarity function can also be called a \textit{loss} function, where the emphasis is on measurement and reduction of the distance between target and output. It is important to note that there is a close relationship between the loss function $L$ and the sound representation function $\phi$. $L$ is the result of a distance measure $d$ applied to the features extracted by $\phi$. 
+In sound-matching, particularly in a deep learning (\gls{DL}) context~\cite{goodfellow2016deep}, the similarity function can also be called a \textit{loss} function, where the emphasis is on measurement and reduction of the distance between target and output. It is important to note that there is a close relationship between the loss function $L$ and the sound representation function $\phi$. $L$ is the result of a distance measure $d$ applied to the features extracted by $\phi$. 
 
 \[
 L(\theta, \xzero) = d(\phi(\xtheta), \phi(\xzero))
@@ -123,14 +123,14 @@ To our knowledge, DTW applied in this way has not been used as a loss in sound-m
 
 \subsection{In-Domain Versus Out-of-Domain}
 \label{sec:in-domain}
-The choice of domain depends on whether we want to use the same synthesizer for the target and output sounds, the scenario that is called \textit{in-domain}, or have target sounds that came from sources other than the synthesizer, or \textit{out-of-domain}. To paraphrase the description given by Masuda \textit{et al.}~\cite{masuda2021soundmatch}, if $g$, the synthesizer of choice, can accurately replicate the target sound $\xzero$, or put differently, if $\xzero$ itself is an output of $g$, then the sound-matching task is \textit{in-domain}. If $\xzero$ is not an output of $g$, then the sound-matching task is \textit{out-of-domain}. In-domain tasks in general are simpler, and often there is a guarantee that there is a correct answer to the sound-matching problem, particularly if the goal is accurate replication of the sound. If the target sound is out-of-domain, replication is not guaranteed, and the goal becomes the \textit{imitation} of some aspect of sound. 
+The choice of domain depends on whether we want to use the same synthesizer for the target and output sounds, known as the \textit{in-domain} scenario, or have target sounds that came from sources other than the synthesizer, known as the \textit{out-of-domain} scenario. To paraphrase the description given by Masuda \textit{et al.}~\cite{masuda2021soundmatch}, if $g$, the synthesizer of choice, can accurately replicate the target sound $\xzero$, or put differently, if $\xzero$ itself is an output of $g$, then the sound-matching task is \textit{in-domain}. If $\xzero$ is not an output of $g$, then the sound-matching task is \textit{out-of-domain}. In-domain tasks in general are simpler, and often there is a guarantee that there is a correct answer to the sound-matching problem, particularly if the goal is accurate replication of the sound. If the target sound is out-of-domain, replication is not guaranteed, and the goal becomes the \textit{imitation} of some aspects of sound. 
 
 Regardless of the domain, the generation goal can be \textit{replication} or \textit{imitation} of the target sound. In replication, the goal is to make an identical copy of the target sound. Imitation is an artistic pursuit and harder to define, since the goal is to make new sounds that only retain a subset of the target's sonic features. While closely related to the in-domain versus out-of-domain problem, the choice of replication versus imitation is more dependent on how the loss and representation functions are defined. 
 
 \subsection{Supervised Versus Direct Optimization}
 \label{sec:optimization}
 
-The choice of \textit{heuristics} is yet another important attribute sound-matching. The goal of sound-matching is to find the optimal parameters $\theta^*$ that minimize the loss between the synthesizer output and the target sound. 
+The choice of \textit{heuristics} is yet another important attribute of sound-matching. The goal of sound-matching is to find the optimal parameters $\theta^*$ that minimize the loss between the synthesizer output and the target sound. 
 \[
 \theta^* = \arg\min_{\theta} L(\theta,\xzero)
 \]
@@ -142,7 +142,7 @@ Genetic algorithms (\gls{GA})~\cite{holland1992genetic} have been the earliest a
 
 \begin{table*}[t]
 \centering
-\caption{Summary of select works in sound-matching. Gen. refers to whether the generations are done in 1-shot (generally, output by a neural network) or a search is conducted with the goal of iteratively getting closer to the target sound.}
+\caption{Summary of select works in sound-matching. The \textbf{Gen.} column shows whether the generations are done in 1-shot (generally, output by a neural network) or a search is conducted with the goal of iteratively getting closer to the target sound.}
 \setlength{\tabcolsep}{3pt} % Reduce horizontal spacing
 \renewcommand{\arraystretch}{1.05} % Reduce vertical spacing
 \scriptsize % Reduce font size
@@ -153,7 +153,7 @@ Genetic algorithms (\gls{GA})~\cite{holland1992genetic} have been the earliest a
 \hline
 Horner \textit{\textit{et al.}}~\cite{horner1993machine} & Non-differentiable FM & STFT (McAulay-Quatieri) & GA & Replicate & In & 1991 & Iter \\
 \hline
-Mitchel \textit{\textit{et al.}}~\cite{mitchell2007evolutionary} & Non-differentiable FM & Spectral Relative & Evolutionary & Replicate & In (Contrived) & 2007 & Iter \\
+Mitchell and Creasy~\cite{mitchell2007evolutionary} & Non-differentiable FM & Spectral Relative & Evolutionary & Replicate & In (Contrived) & 2007 & Iter \\
 \hline
 Yee-King \textit{\textit{et al.}}~\cite{yee2018automatic} & Non-differentiable VST & P-Loss (for Supervised), Spectral (MFCC) & Supervised \& Evolutionary & Replicate & In & 2018 & Both \\
 \hline
@@ -200,7 +200,7 @@ Recent years have seen more works in sound-matching using supervised machine lea
 
 Masuda \textit{et al.} also applied supervised learning~\cite{masuda2021soundmatch}. Their work highlights the issue of non-linearity in parameter-to-synthesizer outputs and out-of-domain search. This work uses a differentiable subtractive synthesizer (two oscillators and an LP filter) alongside a NN model pre-trained with P-Loss on an in-domain dataset of randomly selected parameters. After training, the model was fine-tuned using 20,000 out-of-domain sounds from the NSynth dataset~\cite{engel2017neural} and multi-scale spectrogram loss~\cite{engel2020ddsp}. This approach proved more effective---i.e., achieved lower multi-level spectral difference in out-of-domain tests---than baseline models, which were either not exposed to out-of-domain sounds or trained exclusively with P-Loss. Subjective hearing tests were conducted, showing a preference for the fine-tuned model~\cite{masuda2021soundmatch}. Masuda \textit{et al.} later extended this work with semi-supervised learning, highlighting significant gaps in in-domain and out-of-domain performance~\cite{masuda2023improving}.
 
-Rather than focusing on a particular implementation, Shier \textit{et al.} presented Spieglib, a library for implementation of sound-matching pipelines~\cite{shier2020spiegelib}. This library provides different choices for DNNs, GAs, synthesizers, and feature extractors. Shier \textit{et al.} presented an experiment with a similar setup to Yee-King \textit{et al.}~\cite{yee2018automatic}, however, they found a genetic algorithm as the best performing.
+Rather than focusing on a particular implementation, Shier \textit{et al.} presented Spieglib, a library for implementation of sound-matching pipelines~\cite{shier2020spiegelib}. This library provides different choices for DNNs, GAs, synthesizers, and feature extractors. Shier \textit{et al.} presented an experiment with a similar setup to Yee-King \textit{et al.}~\cite{yee2018automatic}, however, they found a genetic algorithm as the best-performing.
 
 Differentiable loss functions that use spectrogram differences can be computationally expensive. To mitigate this, Han \textit{et al.}~\cite{han2023perceptual} introduced ``perceptual-neural-physical loss'' (PNP). PNP is an approximation of loss functions; specifically, a loss function that uses the L2 norm of the difference between the features of two sounds, or $||\phi(t) - \phi(x)||^2_2$, where $\phi$ could be a spectrogram or JTFS function. PNP loss functions are fast and differentiable, but require training and parameter estimation. A Riemannian metric M needs to be calculated for the minimization of locally linear approximation of the ``true" spectral loss function~\cite{han2023perceptual}. 
 
@@ -225,7 +225,7 @@ Uzrad \textit{et al.}~\cite{uzrad2024diffmoog} took another unique approach to s
 %p-loss bad : masuda-improving, han2023, esling-flowsynth
 % manual performance measure: barkan, masuda2021soundmatch, yee-king 
 
-\subsection{What is Lacking In the Field}
+\subsection{What Is Lacking In the Field}
 \label{sec:lacking}
 %-----> much of the original text (available in older version) is removed for brevity)
 
