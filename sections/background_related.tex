@@ -24,9 +24,9 @@ Moreover, the ``correct'' solution may not exist in a strict sense: depending on
 \begin{tikzpicture}[node distance=2cm, auto]
 
 % Nodes
-\node (start) [text centered] {\( g(\hat{\theta}) = x_{\theta} \)};
+\node (start) [text centered] {\( g(\hat{\theta}) = x_{\hat{\theta}} \)};
 \node (L) [above of=start, right of=start, text centered] 
-    {\( L(\hat{\theta}, x_{0}) \propto \phi(x_{\theta}) - \phi(x_{0}) \)};
+    {\( L(\hat{\theta}, x_{0}) \propto \phi(x_{\hat{\theta}}) - \phi(x_{0}) \)};
 \node (optimize) [below of=L, right of=L, text centered] {Optimize $\hat{\theta}$};
 \node (new_theta) [below of=optimize, right of=start, text centered] {New \( \hat{\theta} \)};
 
