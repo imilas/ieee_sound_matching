@@ -9,7 +9,7 @@ Following prior works~\cite{vahidi2023mesostructures,han2023perceptual}, we defi
 The key components are:
 \begin{itemize}
     \item $g(\theta)$: A parametric audio synthesizer $g$ with parameters $\theta$.
-    \item $x_\theta$: The synthesizer output, $x_\theta = g(\theta)$”.
+    \item $x_\theta$: The synthesizer output, $x_\theta = g(\theta)$.
     \item $\xzero$: The target sound to be replicated or imitated. 
     \item $\phi(\cdot)$: A representation (feature extraction) function mapping signals into a comparison space.
     \item $L$: A loss function that measures distance between $\xtheta$ and $\xzero$, typically via $L(\theta,\xzero) = d(\phi(\xtheta), \phi(\xzero))$ for some metric $d$.
